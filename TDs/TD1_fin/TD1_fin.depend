@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1424938618 source:c:\users\bperraud\documents\tds\td1_exo8\main.cpp
+	<iostream>
+	"fonction.h"
+
+1424939144 source:c:\users\bperraud\documents\tds\td1_exo8\fonction.cpp
+	<iostream>
+	"fonction.h"
+
+1424939132 c:\users\bperraud\documents\tds\td1_exo8\fonction.h
+
+1426147523 source:z:\tds\td1_exo8\main.cpp
+	<iostream>
+	"fonction.h"
+
+1424939134 z:\tds\td1_exo8\fonction.h
+
+1426147523 source:z:\tds\td1_fin\main.cpp
+	<iostream>
+	"fonction.h"
+
+1424939134 z:\tds\td1_fin\fonction.h
+
+1426148379 source:z:\tds\td1_fin\fonction.cpp
+	<iostream>
+	"fonction.h"
+

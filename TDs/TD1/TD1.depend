@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1424937701 source:c:\users\bperraud\documents\tds\td1\fonction.cpp
+	<iostream>
+
+1424937526 source:c:\users\bperraud\documents\tds\td1\main.cpp
+	"fonction.h"
+
+1424936253 c:\users\bperraud\documents\tds\td1\fonction.cpp
+	<iostream>
+	<string>
+
+1424937526 c:\users\bperraud\documents\tds\td1\fonction.h
+	"essai.h"
+
+1424937224 c:\users\bperraud\documents\tds\td1\essai.h
+

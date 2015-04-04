@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1426156179 source:z:\tds\td2\main.cpp
+	<iostream>
+	"fonction.h"
+
+1426155676 source:z:\tds\td2\fonction.cpp
+	<iostream>
+	<string>
+	<cstring>
+	"fonction.h"
+
+1426155583 z:\tds\td2\fonction.h
+

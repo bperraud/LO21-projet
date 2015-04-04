@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1426762996 source:z:\tds\td3\main.cpp
+	<iostream>
+	"fraction.h"
+
+1426763014 source:z:\tds\td3\fraction.cpp
+	"fraction.h"
+
+1427354206 z:\tds\td3\fraction.h
+	<iostream>
+	<cstring>
+

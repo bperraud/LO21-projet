@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1427369807 source:z:\tds\td4\main.cpp
+	<iostream>
+	"timing.h"
+	"Calendar.h"
+
+1427359228 z:\tds\td4\timing.h
+	<iostream>
+	<iomanip>
+
+1427359224 source:z:\tds\td4\timing.cpp
+	<iomanip>
+	"timing.h"
+	<ctime>
+
+1427369814 source:z:\tds\td4\calendar.cpp
+	"Calendar.h"
+
+1427957196 z:\tds\td4\calendar.h
+	<string>
+	<iostream>
+	"timing.h"
+
