@@ -6,7 +6,7 @@
 
 namespace TIME {
 	/*! \class TimeException
-			\brief Classe permettant de gérer les exceptions des classes du namespace TIME 		
+			\brief Classe permettant de gérer les exceptions des classes du namespace TIME
 	*/
 	class TimeException{
 	public:
@@ -18,10 +18,10 @@ namespace TIME {
 	};
 
 	/*! \class Date
-			\brief Classe permettant de manipuler des dates standards 		
-			L'utilisation de cette classe nécessite des dates valides au sens commun du terme. 
+			\brief Classe permettant de manipuler des dates standards
+			L'utilisation de cette classe nécessite des dates valides au sens commun du terme.
 			Déclenchement d'exception dans le cas contraire
-	*/	
+	*/
 	class Date {
 	public:
 		//! Constructeur à partir d'un jour, mois, année
@@ -46,14 +46,14 @@ namespace TIME {
 		// attributs
 		unsigned short int jour; // jour entre 1 et 31
 		unsigned short int mois; // mois entre 1 et 12
-		unsigned int annee; 
+		unsigned int annee;
 	};
 
 	/*! \class Duree
-			\brief Classe permettant de manipuler des durees	
-			L'utilisation de cette classe nécessite des dates valides au sens commun du terme. 
+			\brief Classe permettant de manipuler des durees
+			L'utilisation de cette classe nécessite des dates valides au sens commun du terme.
 			Déclenchement d'exception dans le cas contraire
-	*/	
+	*/
 	class Duree{
 	public:
 		//! Constructeur à partir de heure et minute
@@ -74,10 +74,10 @@ namespace TIME {
 	};
 
 	/*! \class Horaire
-			\brief Classe permettant de manipuler des horaires	
-			L'utilisation de cette classe nécessite des dates valides au sens commun du terme. 
+			\brief Classe permettant de manipuler des horaires
+			L'utilisation de cette classe nécessite des dates valides au sens commun du terme.
 			Déclenchement d'exception dans le cas contraire
-	*/	
+	*/
 	class Horaire{
 	public:
 		//! Constructeur à partir de heure et minute
@@ -96,16 +96,16 @@ namespace TIME {
 	};
 
 	/*! \class Periode
-			\brief Classe permettant de manipuler des periodes exprimées en jours/mois/années	
-			L'utilisation de cette classe nécessite des dates valides au sens commun du terme. 
+			\brief Classe permettant de manipuler des periodes exprimées en jours/mois/années
+			L'utilisation de cette classe nécessite des dates valides au sens commun du terme.
 			Déclenchement d'exception dans le cas contraire
-	*/	
+	*/
 	class Periode{
 	public :
 		//! Constructeur à partir de jour/mois/année
 		/*! \param j nombre de jours avec 0<=j<=364
 			\param m nombre de mois avec 0<=m<=11
-			\param a nombre d'années 
+			\param a nombre d'années
 			*/
 		Periode(unsigned int j, unsigned int m, unsigned int a);
 		void afficher(std::ostream& f=std::cout) const { f<<"{"<<nb_jours<<" jours, "<<nb_mois<<" mois, "<<nb_annees<<" ans}"; }
@@ -117,9 +117,9 @@ namespace TIME {
 
 	/*! \class Intervalle
 			\brief Classe permettant de manipuler des intervalles de dates
-			L'utilisation de cette classe nécessite des dates valides au sens commun du terme. 
+			L'utilisation de cette classe nécessite des dates valides au sens commun du terme.
 			Déclenchement d'exception dans le cas contraire
-	*/	
+	*/
 	class Intervalle{
 	public:
 		//! Constructeur à partir de deux dates
@@ -140,7 +140,7 @@ namespace TIME {
 
 }
 
-std::ostream& operator<<(std::ostream&, const TIME::Date&);
+std::ostream& operator<<(std::ostream& f, const TIME::Date& d);
 std::ostream& operator<<(std::ostream& f, const TIME::Duree & d);
 std::ostream& operator<<(std::ostream& f, const TIME::Horaire & h);
 std::ostream& operator<<(std::ostream& f, const TIME::Periode & p);

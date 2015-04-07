@@ -3,10 +3,11 @@
 #include<string>
 #include<iostream>
 #include "timing.h"
+
 using namespace std;
 using namespace TIME;
 
-
+/* Exception pour le Calendar*/
 class CalendarException{
 public:
 	CalendarException(const string& message):info(message){}
@@ -15,10 +16,18 @@ private:
 	string info;
 };
 
+/* Déclaration de Tache pour TacheManager*/
 class Tache;
 
-class TacheManager {
+/*------------------------------------------------------
+Classe TacheManager, Singleton (avec Handler) contenant
+plusieurs classes iterator
+--------------------------------------------------------*/
+
+class TacheManager{
+
 private:
+
     struct Handler{
         TacheManager* TM;
         Handler():TM(0){};
@@ -29,6 +38,7 @@ private:
 	Tache** taches;
 	unsigned int nb;
 	unsigned int nbMax;
+
 	void addItem(Tache* t);
 	Tache* trouverTache(const string& id) const;
 	string file;
@@ -45,54 +55,58 @@ public:
 	Tache& ajouterTache(const string& id, const string& t, const Duree& dur, const Date& dispo, const Date& deadline);
 	Tache& getTache(const string& id);
 	const Tache& getTache(const string& code) const;
+
 	void load(const string& f);
 	void save(const string& f);
 
     friend class Iterator;
+
     class Iterator{
-        private:
+    private:
         // infos
         int indice_tache;
-        public:
-        Iterator():indice_tache(0){}
-	    Tache& current() const {
-	        if (indice_tache >= getTacheManager().nb)
+    public:
+        Iterator(): indice_tache(0){}
+        Tache& current() const {
+            if (indice_tache >= getTacheManager().nb)
                 throw "indirection d'un iterateur en fin de sequence";
             return *getTacheManager().taches[indice_tache];
         }
-	    bool isDone() const {return indice_tache==getTacheManager().nb;};
-	    void next() {
-	        if (indice_tache >= getTacheManager().nb)
+        bool isDone() const {return indice_tache==getTacheManager().nb;};
+        void next() {
+            if (indice_tache >= getTacheManager().nb)
                 throw "incrementation d'un iterateur en fin de sequence";
-	        ++indice_tache;
+            ++indice_tache;
         }
 	};
 
 	Iterator getIterator() {return Iterator();}
 
     class iterator{
-        private:
+    private:
         int indice_tache;
-        public:
+    public:
         iterator(): indice_tache(0){}
+
+        // Surchage des opérateurs
         Tache& operator*() const {
             if (indice_tache >= getTacheManager().nb)
                 throw "indirection d'un iterateur en fin de sequence";
             return *getTacheManager().taches[indice_tache];
         }
         iterator& operator++() {
-	        if (indice_tache >= getTacheManager().nb)
+            if (indice_tache >= getTacheManager().nb)
                 throw "incrementation d'un iterateur en fin de sequence";
-	        ++indice_tache;
-	        return *this;
+            ++indice_tache;
+            return *this;
         }
-
         bool operator!=(iterator it) const {
             return indice_tache != it.indice_tache;
         }
         bool operator==(iterator it) const {
             return indice_tache == it.indice_tache;
         }
+
         friend class TacheManager;
 	};
 
@@ -102,7 +116,6 @@ public:
 	iterator end(){
 	    iterator tmp; tmp.indice_tache = nb; return tmp;
 	}
-
 
 	friend class DisponibiliteFilterIterator;
     class DisponibiliteFilterIterator{
@@ -125,32 +138,37 @@ public:
 	getDisponibiliteFilterIterator(Date& d){
 	    return DisponibiliteFilterIterator(d);
     }
-
 };
 
+/*------------------------------------------------------
+Classe Tache
+--------------------------------------------------------*/
 
-class Tache {
-    private:
-	string identificateur;
-	string titre;
-	Duree duree;
-	Date disponibilite;
-	Date echeance;
-	Tache(const Tache& t);
-	Tache& operator=(const Tache& t);
+class Tache{
+private:
+    string identificateur;
+    string titre;
+    Duree duree;
+    Date disponibilite;
+    Date echeance;
+    Tache(const Tache& t);
+    Tache& operator=(const Tache& t);
     Tache(const string& id, const string& t, const Duree& dur, const Date& dispo, const Date& deadline):
-			identificateur(id),titre(t),duree(dur),disponibilite(dispo),echeance(deadline){}
+        identificateur(id),titre(t),duree(dur),disponibilite(dispo),echeance(deadline){}
     friend Tache& TacheManager::ajouterTache(const string& id, const string& t, const Duree& dur, const Date& dispo, const Date& deadline);
-    public:
-	string getId() const { return identificateur; }
-	string getTitre() const { return titre; }
-	Duree getDuree() const { return duree; }
-	Date getDateDisponibilite() const {  return disponibilite; }
-	Date getDateEcheance() const {  return echeance; }
+public:
+    string getId() const { return identificateur; }
+    string getTitre() const { return titre; }
+    Duree getDuree() const { return duree; }
+    Date getDateDisponibilite() const {  return disponibilite; }
+    Date getDateEcheance() const {  return echeance; }
 };
 
+/*------------------------------------------------------
+Classe Programmation
+--------------------------------------------------------*/
 
-class Programmation {
+class Programmation{
 	const Tache* tache;
 	Date date;
 	Horaire horaire;
@@ -161,7 +179,11 @@ public:
 	Horaire getHoraire() const { return horaire; }
 };
 
-class ProgrammationManager {
+/*------------------------------------------------------
+Classe ProgrammationManager
+--------------------------------------------------------*/
+
+class ProgrammationManager{
 private:
 	Programmation** programmations;
 	unsigned int nb;

@@ -211,10 +211,3 @@ ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager
 	for(unsigned int i=0; i<um.nb; i++) addItem(new Programmation(*um.programmations[i]));
 	return *this;
 }
-
-/*
-	const Tache* tache;
-	Date date;
-	Horaire horaire;
-*/
-
