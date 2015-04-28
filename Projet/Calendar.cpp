@@ -48,7 +48,7 @@ QTextStream& operator<<(QTextStream& fout, const Tache& t){
 QTextStream& operator<<(QDataStream& f, const Programmation& p);
 
 void Tache::setId(const QString& str){
-  if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
+  if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id dÃ©jÃ  existante");
   identificateur=str;
 }
 
@@ -104,7 +104,7 @@ void TacheManager::load(const QString& f){
     QFile fin(file);
     // If we can't open it, let's show an error message.
     if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw CalendarException("Erreur ouverture fichier tâches");
+        throw CalendarException("Erreur ouverture fichier tÃ¢ches");
     }
     // QXmlStreamReader takes any QIODevice.
     QXmlStreamReader xml(&fin);
@@ -196,7 +196,7 @@ void  TacheManager::save(const QString& f){
     file=f;
     QFile newfile( file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
-        throw CalendarException(QString("erreur sauvegarde tâches : ouverture fichier xml"));
+        throw CalendarException(QString("erreur sauvegarde tÃ¢ches : ouverture fichier xml"));
     QXmlStreamWriter stream(&newfile);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
@@ -230,7 +230,10 @@ void TacheManager::libererInstance(){
 	if (handler.instance!=0) delete handler.instance;
 	handler.instance=0;
 }
+
 //******************************************************************************************
+// ProgrammationManager, Ã  transformer en Singleton (donc y'a du code qui va sauter, en
+// particulier la dÃ©finition de l'opÃ©rateur =.
 
 ProgrammationManager::ProgrammationManager():programmations(0),nb(0),nbMax(0){}
 void ProgrammationManager::addItem(Programmation* t){
@@ -264,7 +267,7 @@ ProgrammationManager::~ProgrammationManager(){
 	delete[] programmations;
 }
 
-ProgrammationManager::ProgrammationManager(const ProgrammationManager& um):nb(um.nb),nbMax(um.nbMax), programmations(new Programmation*[um.nb]){
+ProgrammationManager::ProgrammationManager(const ProgrammationManager& um):programmations(new Programmation*[um.nb]), nb(um.nb), nbMax(um.nbMax){
 	for(unsigned int i=0; i<nb; i++) programmations[i]=new Programmation(*um.programmations[i]);
 }
 
@@ -274,10 +277,3 @@ ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager
 	for(unsigned int i=0; i<um.nb; i++) addItem(new Programmation(*um.programmations[i]));
 	return *this;
 }
-
-/*
-	const Tache* tache;
-	Date date;
-	Horaire horaire;
-*/
-

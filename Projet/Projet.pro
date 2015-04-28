@@ -1,6 +1,6 @@
 QT += widgets
 QT += xml
-CONFIG += warn_off
+#CONFIG += warn_off
 
 HEADERS += \
     Calendar.h \

@@ -99,8 +99,7 @@ void TacheEditeur::sauverTache(){
             return;
     }
     if (tache.getId() != identificateur->text()) tache.setId(identificateur->text());
-    if (preemptive->isChecked()) tache.setPreemptive();
-    else tache.setNonPreemptive();
+    preemptive->isChecked() ? tache.setPreemptive(true) : tache.setPreemptive(false);
     tache.setTitre(titre->toPlainText());
     tache.setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
     tache.setDuree(Duree(dureeH->value(), dureeM->value()));
