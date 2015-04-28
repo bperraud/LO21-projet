@@ -108,7 +108,7 @@ public:
 	static TacheManager& getInstance();
 	static void libererInstance();
 
-    // Il faut qu'on choisisse quel itérator l'on garde, celui avec les isDone, next, ou celui avec les begin et end (conforme aux standards cpp)
+    // Il faut qu'on choisisse quel iterator l'on garde, celui avec les isDone, next, ou celui avec les begin et end (conforme aux standards cpp)
 
     /*class Iterator {
         friend class TacheManager;

@@ -1,13 +1,15 @@
 #include <QObject>
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include "TacheEditeur.h"
 #include "Calendar.h"
 
 TacheEditeur::TacheEditeur(Tache& tacheToEdit, QWidget* parent) : QWidget(parent), tache(tacheToEdit){
 
-    this->setWindowTitle(QString("Edition de la tâche ")+tache.getId());
+    //this->setWindowTitle(QString("Edition de la tâche ")+tache.getId());
     this->setFixedSize(600, 400);
+    //this->setEnabled(false);
 
     identificateurLabel = new QLabel("identificateur", this);
     identificateur = new QLineEdit(tache.getId(), this);
@@ -103,7 +105,7 @@ void TacheEditeur::sauverTache(){
     tache.setTitre(titre->toPlainText());
     tache.setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
     tache.setDuree(Duree(dureeH->value(), dureeM->value()));
-
+    QString cheminSauver = QFileDialog::getSaveFileName();
+    TM.save(cheminSauver);
     QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
-    close();
 }
