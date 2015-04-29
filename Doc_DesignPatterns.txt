@@ -1,0 +1,12 @@
+# La liste exhaustive des DP, avec leur utilité (en très, très, très résumé)
+http://cs.lmu.edu/~ray/notes/designpatterns/
+# Quelques explications pour Factory, Singleton, Decorator et Observer
+http://design-patterns.fr/introduction-aux-design-patterns
+# Présentation des 5 DP de construction/creation : Abstract Factory, Builder, Factory Method, Prototype et Singleton
+http://jormes.developpez.com/articles/design-pattern-construction/#L3.2
+# Présentation des DP Prototype, Singleton, Factory, Decorator, Composite, Observer et Strategy bien détaillée, avec exemples d'implémentation en cpp
+http://come-david.developpez.com/tutoriels/dps/
+# Wikipédia, l'incontournable, qui a, passé sa fadeur d'écriture, le mérite d'être complet
+http://fr.wikipedia.org/wiki/Patron_de_conception
+# Présentation courte mais assez claire des DP Factory, Adapter, Chain of Responsibility, Decorator, Double dispatch, Singleton, Strategy, Visitor (embranchement Tutoriels/Conception)
+http://www.informatix.fr/recherches
