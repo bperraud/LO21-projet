@@ -53,35 +53,23 @@ void Tache::setId(const QString& str){
 }
 
 
-TacheManager::TacheManager():taches(0),nb(0),nbMax(0){}
-void TacheManager::addItem(Tache* t){
-	if (nb==nbMax){
-		Tache** newtab=new Tache*[nbMax+10];
-		for(unsigned int i=0; i<nb; i++) newtab[i]=taches[i];
-		// ou memcpy(newtab,taches,nb*sizeof(Tache*));
-		nbMax+=10;
-		Tache** old=taches;
-		taches=newtab;
-		delete[] old;
-	}
-	taches[nb++]=t;
-}
 
 Tache* TacheManager::trouverTache(const QString& id)const{
-	for(unsigned int i=0; i<nb; i++)
-		if (id==taches[i]->getId()) return taches[i];
+    for (int i = 0; i < taches.size(); ++i){
+        if (id == (taches.at(i))->getId()) return taches[i];
+    }
 	return 0;
 }
 
 Tache& TacheManager::ajouterTache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
-	if (trouverTache(id)) throw CalendarException("erreur, TacheManager, tache deja existante");	
+    if (trouverTache(id)) {throw CalendarException("erreur, TacheManager, tache deja existante");}
     Tache* newt=new Tache(id,t,dur,dispo,deadline,preempt);
-	addItem(newt);
-	return *newt;
+    taches.append(newt);
+    return *newt;
 }
 
 Tache& TacheManager::getTache(const QString& id){
-	Tache* t=trouverTache(id);
+    Tache* t=trouverTache(id);
 	if (!t) throw CalendarException("erreur, TacheManager, tache inexistante");
 	return *t;
 }
@@ -92,8 +80,7 @@ const Tache& TacheManager::getTache(const QString& id)const{
 
 TacheManager::~TacheManager(){
 	if (file!="") save(file);
-	for(unsigned int i=0; i<nb; i++) delete taches[i];
-	delete[] taches;
+    for (int i = 0; i < taches.size(); ++i) delete taches[i];
 	file="";
 }
 
@@ -121,7 +108,7 @@ void TacheManager::load(const QString& f){
             if(xml.name() == "taches") continue;
             // If it's named tache, we'll dig the information from there.
             if(xml.name() == "tache") {
-                qDebug()<<"new tache\n";
+                //qDebug()<<"new tache\n";
                 QString identificateur;
                 QString titre;
                 QDate disponibilite;
@@ -179,7 +166,6 @@ void TacheManager::load(const QString& f){
                 }
                 //qDebug()<<"ajout tache "<<identificateur<<"\n";
                 ajouterTache(identificateur,titre,duree,disponibilite,echeance,preemptive);
-
             }
         }
     }
@@ -201,7 +187,7 @@ void  TacheManager::save(const QString& f){
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("taches");
-    for(unsigned int i=0; i<nb; i++){
+    for (int i = 0; i < taches.size(); ++i){
         stream.writeStartElement("tache");
         stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");
         stream.writeTextElement("identificateur",taches[i]->getId());

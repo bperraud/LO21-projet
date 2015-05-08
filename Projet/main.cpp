@@ -9,7 +9,6 @@
 #include <QMenuBar>
 #include <QMenu>
 
-
 #include "Calendar.h"
 #include "TacheEditeur.h"
 
@@ -41,11 +40,19 @@ int main(int argc, char *argv[]){
     QLabel hello("Hello world. Bon j'imagine que le premier onglet pourrait être cette fameuse vue hebdomadaire synthétique.\n"
                  "Par rapport aux recherches que j'ai faites, la meilleure piste qui s'offre à nous c'est d'utiliser un tableau\n"
                  "avec soit QTableView ou QTableWidget (à voir la différence entre les deux).");
+
+    QLabel labelLDT;
+    QString listeDeTaches = "Liste des tâches :\n";
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
+        listeDeTaches.append((*i).getId()).append("\n");
+
+    labelLDT.setText(listeDeTaches);
     QVBoxLayout layout1, layout2;
 
     layout1.addWidget(&hello);
 
     layout2.addWidget(&buttonChargerTache);
+    layout2.addWidget(&labelLDT);
     layout2.addWidget(&TE);
     onglet1.setLayout(&layout1);
     onglet2.setLayout(&layout2);

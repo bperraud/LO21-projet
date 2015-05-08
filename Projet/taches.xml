@@ -7,7 +7,7 @@
         <echeance>2015-04-15</echeance>
         <duree>600</duree>
     </tache>
-    <tache preemptive="false">
+    <tache preemptive="true">
         <identificateur>T2</identificateur>
         <titre>Répartir les classes entre développeurs</titre>
         <disponibilite>2015-02-28</disponibilite>
