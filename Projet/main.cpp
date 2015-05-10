@@ -60,9 +60,9 @@ int main(int argc, char *argv[]){
 
     QTreeView* treeView = new QTreeView;
     treeView->setHeaderHidden(true);
-    QStandardItemModel* standardModel = new QStandardItemModel;
-    //standardModel->setHorizontalHeaderLabels (QStringList(QString("toto")));
-    QStandardItem *rootNode = standardModel->invisibleRootItem();
+    QStandardItemModel* TacheModel = new QStandardItemModel;
+    //TacheModel->setHorizontalHeaderLabels (QStringList(QString("toto")));
+    QStandardItem *rootNode = TacheModel->invisibleRootItem();
 
     //defining a couple of items
     QStandardItem *americaItem = new QStandardItem(QString("America"));
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]){
     italyItem->   appendRow(veronaItem);
 
     //register the model
-    treeView->setModel(standardModel);
+    treeView->setModel(TacheModel);
     //treeView->expandAll();
 
 
@@ -108,17 +108,17 @@ int main(int argc, char *argv[]){
         QString demiheure = (i % 2 == 0) ? "00" : "30";
         ListHeures << QString("%0h%1").arg(heure+8).arg(demiheure);
     }
-    QStandardItemModel* autreModel = new QStandardItemModel(10, 7);
+    QStandardItemModel* WeekModel = new QStandardItemModel(10, 7);
     for (int jour = 0; jour < 7; ++jour){
-        autreModel->setHorizontalHeaderLabels(ListJours);
+        WeekModel->setHorizontalHeaderLabels(ListJours);
         for (int heure = 0; heure < 24; ++heure){
-            autreModel->setVerticalHeaderLabels(ListHeures);
+            WeekModel->setVerticalHeaderLabels(ListHeures);
             QStandardItem *item = new QStandardItem("blabla");
-            autreModel->setItem(heure, jour, item);
-            autreModel->item(heure, jour)->setFlags(autreModel->item(heure, jour)->flags() & ~Qt::ItemIsEditable);
+            WeekModel->setItem(heure, jour, item);
+            WeekModel->item(heure, jour)->setFlags(WeekModel->item(heure, jour)->flags() & ~Qt::ItemIsEditable);
         }
     }
-    tableView->setModel(autreModel);
+    tableView->setModel(WeekModel);
 
 
     QVBoxLayout layout1, layout2;
