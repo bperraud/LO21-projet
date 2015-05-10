@@ -49,7 +49,8 @@ QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
 
 
-class Tache {
+class Tache{
+private:
     QString identificateur;
     QString titre;
     Duree duree;
@@ -80,7 +81,10 @@ public:
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
 
-class TacheManager {
+Q_DECLARE_METATYPE(Tache*)
+//Q_DECLARE_OPAQUE_POINTER(Tache*)
+
+class TacheManager{
 private:
     typedef QList<Tache*> ListTaches;
     ListTaches taches;

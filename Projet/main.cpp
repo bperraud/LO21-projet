@@ -9,6 +9,12 @@
 #include <QMenuBar>
 #include <QMenu>
 
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QVariant>
+#include <QTreeView>
+#include <QTableView>
+
 #include "Calendar.h"
 #include "TacheEditeur.h"
 
@@ -41,18 +47,85 @@ int main(int argc, char *argv[]){
     QWidget onglet1, onglet2;
     QLabel hello("Hello world. Bon j'imagine que le premier onglet pourrait être cette fameuse vue hebdomadaire synthétique.\n"
                  "Par rapport aux recherches que j'ai faites, la meilleure piste qui s'offre à nous c'est d'utiliser un tableau\n"
-                 "avec soit QTableView ou QTableWidget (à voir la différence entre les deux).");
+                 "avec soit QTableView ou QTableWidget (à voir la différence entre les deux).\n"
+                 "Apparemment, on peut partir sur QTableView qui permet la fusion de cellules, utile dans notre cas\n"
+                 "lorsque des événements couvrent plusieures heures. Je pense aussi que c'est plus simple qu'on\n"
+                 "restreigne les durées aux demi-heures (ou quarts d'heure).");
 
     QLabel labelLDT;
     QString listeDeTaches = "Liste des tâches :\n";
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
         listeDeTaches.append((*i).getId()).append("\n");
-
     labelLDT.setText(listeDeTaches);
+
+    QTreeView* treeView = new QTreeView;
+    treeView->setHeaderHidden(true);
+    QStandardItemModel* standardModel = new QStandardItemModel;
+    //standardModel->setHorizontalHeaderLabels (QStringList(QString("toto")));
+    QStandardItem *rootNode = standardModel->invisibleRootItem();
+
+    //defining a couple of items
+    QStandardItem *americaItem = new QStandardItem(QString("America"));
+    QStandardItem *mexicoItem =  new QStandardItem("Canada");
+    QStandardItem *usaItem =     new QStandardItem("USA");
+    QStandardItem *bostonItem =  new QStandardItem("Boston");
+    QStandardItem *europeItem =  new QStandardItem("Europe");
+    QStandardItem *italyItem =   new QStandardItem("Italy");
+    QStandardItem *romeItem =    new QStandardItem("Rome");
+    QStandardItem *veronaItem =  new QStandardItem("Verona");
+
+    QList<QStandardItem*> ItemList;
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
+        ItemList.append(new QStandardItem((*i).getId()));
+
+    // Pour empêcher l'édition des lignes
+    for (int i = 0; i < ItemList.size(); ++i)
+        ItemList[i]->setFlags(ItemList[i]->flags() & ~Qt::ItemIsEditable);
+
+    //building up the hierarchy
+
+    rootNode->appendRows(ItemList);
+
+    rootNode->    appendRow(americaItem);
+    rootNode->    appendRow(europeItem);
+    americaItem-> appendRow(mexicoItem);
+    americaItem-> appendRow(usaItem);
+    usaItem->     appendRow(bostonItem);
+    europeItem->  appendRow(italyItem);
+    italyItem->   appendRow(romeItem);
+    italyItem->   appendRow(veronaItem);
+
+    //register the model
+    treeView->setModel(standardModel);
+    //treeView->expandAll();
+
+
+    QTableView* tableView = new QTableView;
+    QStringList ListJours, ListHeures;
+    ListJours << "Lundi" << "Mardi" << "Mercredi" << "Jeudi" << "Vendredi" << "Samedi" << "Dimanche";
+    for (unsigned int i = 0; i<24 ; ++i){
+        int heure = (i % 2 == 0) ? i/2 : i/2;
+        QString demiheure = (i % 2 == 0) ? "00" : "30";
+        ListHeures << QString("%0h%1").arg(heure+8).arg(demiheure);
+    }
+    QStandardItemModel* autreModel = new QStandardItemModel(10, 7);
+    for (int jour = 0; jour < 7; ++jour){
+        autreModel->setHorizontalHeaderLabels(ListJours);
+        for (int heure = 0; heure < 24; ++heure){
+            autreModel->setVerticalHeaderLabels(ListHeures);
+            QStandardItem *item = new QStandardItem("blabla");
+            autreModel->setItem(heure, jour, item);
+            autreModel->item(heure, jour)->setFlags(autreModel->item(heure, jour)->flags() & ~Qt::ItemIsEditable);
+        }
+    }
+    tableView->setModel(autreModel);
+
+
     QVBoxLayout layout1, layout2;
 
     layout1.addWidget(&hello);
-
+    layout1.addWidget(treeView);
+    layout1.addWidget(tableView);
     layout2.addWidget(&buttonChargerTache);
     layout2.addWidget(&labelLDT);
     layout2.addWidget(&TE);
@@ -60,8 +133,6 @@ int main(int argc, char *argv[]){
     onglet2.setLayout(&layout2);
     OngletsManager.addTab(&onglet1, "Onglet no 1");
     OngletsManager.addTab(&onglet2, "Onglet Tache Editeur");
-
-
 
 
     fenetre.show();
