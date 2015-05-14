@@ -47,26 +47,30 @@ private:
 QTextStream& operator<<(QTextStream& f, const Duree & d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
+/*class Tache{
+private:
 
+
+};*/
 
 class Tache{
 private:
-    QString identificateur;
     QString titre;
+    QString description;
     Duree duree;
     QDate disponibilite;
     QDate echeance;
     bool preemptive;
     Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
-            identificateur(id),titre(t),duree(dur),disponibilite(dispo),echeance(deadline),preemptive(preempt){}
+            titre(id),description(t),duree(dur),disponibilite(dispo),echeance(deadline),preemptive(preempt){}
 	Tache(const Tache& t);
 	Tache& operator=(const Tache&);
 	friend class TacheManager;
 public:
-    QString getId() const { return identificateur; }
-    void setId(const QString& str);
     QString getTitre() const { return titre; }
-    void setTitre(const QString& str) { titre=str; }
+    void setTitre(const QString& str);
+    QString getDescription() const { return description; }
+    void setDescription(const QString& str) { description=str; }
     Duree getDuree() const { return duree; }
     void setDuree(const Duree& d) { duree=d; }
     QDate getDateDisponibilite() const {  return disponibilite; }
@@ -80,9 +84,6 @@ public:
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
-
-Q_DECLARE_METATYPE(Tache*)
-//Q_DECLARE_OPAQUE_POINTER(Tache*)
 
 class TacheManager{
 private:
@@ -104,9 +105,9 @@ private:
     static Handler handler;
 public:
     Tache& ajouterTache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false);
-    Tache& getTache(const QString& id);
-    bool isTacheExistante(const QString& id) const { return trouverTache(id)!=0; }
-    const Tache& getTache(const QString& code) const;
+    Tache& getTache(const QString& titre);
+    bool isTacheExistante(const QString& titre) const { return trouverTache(titre)!=0; }
+    const Tache& getTache(const QString& titre) const;
     void load(const QString& f);
     void save(const QString& f);
 	static TacheManager& getInstance();

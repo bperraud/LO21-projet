@@ -29,6 +29,7 @@ int main(int argc, char *argv[]){
     menubar.addMenu(&menu1);
 
 
+
     TacheManager& TM = TacheManager::getInstance();
     //QString chemin = QFileDialog::getOpenFileName();
     QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]){
     QLabel labelLDT;
     QString listeDeTaches = "Liste des tâches :\n";
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
-        listeDeTaches.append((*i).getId()).append("\n");
+        listeDeTaches.append((*i).getTitre()).append("\n");
     labelLDT.setText(listeDeTaches);
 
     QTreeView* treeView = new QTreeView;
@@ -76,7 +77,7 @@ int main(int argc, char *argv[]){
 
     QList<QStandardItem*> ItemList;
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
-        ItemList.append(new QStandardItem((*i).getId()));
+        ItemList.append(new QStandardItem((*i).getTitre()));
 
     // Pour empêcher l'édition des lignes
     for (int i = 0; i < ItemList.size(); ++i)
@@ -118,6 +119,10 @@ int main(int argc, char *argv[]){
             WeekModel->item(heure, jour)->setFlags(WeekModel->item(heure, jour)->flags() & ~Qt::ItemIsEditable);
         }
     }
+
+    tableView->setSpan(0, 0, 2, 1); //sets the 1st row 1st column cell to span over 2 rows and 1 column
+
+
     tableView->setModel(WeekModel);
 
 

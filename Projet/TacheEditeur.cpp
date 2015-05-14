@@ -11,15 +11,15 @@ TacheEditeur::TacheEditeur(Tache& tacheToEdit, QWidget* parent) : QWidget(parent
     this->setFixedSize(600, 400);
     //this->setEnabled(false);
 
-    identificateurLabel = new QLabel("identificateur", this);
-    identificateur = new QLineEdit(tache.getId(), this);
+    titreLabel = new QLabel("titre", this);
+    titre = new QLineEdit(tache.getTitre(), this);
 
     preemptive = new QCheckBox(this);
-    preemptive->setChecked(tache.isPreemptive());
+        preemptive->setChecked(tache.isPreemptive());
     preemptiveLabel = new QLabel("preemptive", this);
 
-    titreLabel = new QLabel("titre", this);
-    titre = new QTextEdit(tache.getTitre(), this);
+    descriptionLabel = new QLabel("description", this);
+    description = new QTextEdit(tache.getDescription(), this);
 
     dispoLabel = new QLabel("disponibilité", this);
     dispo = new QDateEdit(tache.getDateDisponibilite(), this);
@@ -29,28 +29,28 @@ TacheEditeur::TacheEditeur(Tache& tacheToEdit, QWidget* parent) : QWidget(parent
 
     dureeLabel = new QLabel("durée", this);
     dureeH = new QSpinBox(this);
-    dureeH->setMinimum(0);
-    dureeH->setSuffix(" heure(s)");
-    dureeH->setValue(tache.getDuree().getHeure());
+        dureeH->setMinimum(0);
+        dureeH->setSuffix(" heure(s)");
+        dureeH->setValue(tache.getDuree().getHeure());
     dureeM = new QSpinBox(this);
-    dureeM->setRange(0, 59);
-    dureeM->setSuffix(" minute(s)");
-    dureeM->setValue(tache.getDuree().getMinute());
+        dureeM->setRange(0, 59);
+        dureeM->setSuffix(" minute(s)");
+        dureeM->setValue(tache.getDuree().getMinute());
 
     annuler = new QPushButton("Annuler", this);
     sauver = new QPushButton("Sauver", this);
-    sauver->setEnabled(false);
+        sauver->setEnabled(false);
 
     // Gestion des Layouts
 
     HC1 = new QHBoxLayout;
-        HC1->addWidget(identificateurLabel);
-        HC1->addWidget(identificateur);
+        HC1->addWidget(titreLabel);
+        HC1->addWidget(titre);
         HC1->addWidget(preemptive);
         HC1->addWidget(preemptiveLabel);
     HC2 = new QHBoxLayout;
-        HC2->addWidget(titreLabel);
-        HC2->addWidget(titre);
+        HC2->addWidget(descriptionLabel);
+        HC2->addWidget(description);
     HC3 = new QHBoxLayout;
         HC3->addWidget(dispoLabel);
         HC3->addWidget(dispo);
@@ -74,9 +74,9 @@ TacheEditeur::TacheEditeur(Tache& tacheToEdit, QWidget* parent) : QWidget(parent
     // Gestion des signaux
 
         // Activation du bouton Sauver
-        QObject::connect(identificateur, SIGNAL(textEdited(const QString&)), this, SLOT(activerSauver()));
+        QObject::connect(titre, SIGNAL(textEdited(const QString&)), this, SLOT(activerSauver()));
         QObject::connect(preemptive, SIGNAL(stateChanged(int)), this, SLOT(activerSauver()));
-        QObject::connect(titre, SIGNAL(textChanged()), this, SLOT(activerSauver()));
+        QObject::connect(description, SIGNAL(textChanged()), this, SLOT(activerSauver()));
         QObject::connect(dispo, SIGNAL(dateChanged(const QDate&)), this, SLOT(activerSauver()));
         QObject::connect(echeance, SIGNAL(dateChanged(const QDate&)), this, SLOT(activerSauver()));
         QObject::connect(dureeH, SIGNAL(valueChanged(int)), this, SLOT(activerSauver()));
@@ -89,10 +89,10 @@ TacheEditeur::TacheEditeur(Tache& tacheToEdit, QWidget* parent) : QWidget(parent
 
 void TacheEditeur::sauverTache(){
     TacheManager& TM = TacheManager::getInstance();
-    // Si l'id de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
-    if (TM.isTacheExistante(identificateur->text())
-        && &(TM.getTache(identificateur->text())) != &tache){
-        QMessageBox::warning(this, "Sauvegarde impossible", "Identificateur tâche déjà existant...");
+    // Si le titre de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
+    if (TM.isTacheExistante(titre->text())
+        && &(TM.getTache(titre->text())) != &tache){
+        QMessageBox::warning(this, "Sauvegarde impossible", "titre tâche déjà existant...");
         return;
     }
     // Si les dates de dispo et d'échéance sont incohérentes
@@ -100,9 +100,9 @@ void TacheEditeur::sauverTache(){
             QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
             return;
     }
-    if (tache.getId() != identificateur->text()) tache.setId(identificateur->text());
+    if (tache.getTitre() != titre->text()) tache.setTitre(titre->text());
     preemptive->isChecked() ? tache.setPreemptive(true) : tache.setPreemptive(false);
-    tache.setTitre(titre->toPlainText());
+    tache.setDescription(description->toPlainText());
     tache.setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
     tache.setDuree(Duree(dureeH->value(), dureeM->value()));
     QString cheminSauver = QFileDialog::getSaveFileName();

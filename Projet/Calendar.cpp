@@ -37,8 +37,8 @@ QTextStream& operator>>(QTextStream& flot, Duree& duree){
  }
 
 QTextStream& operator<<(QTextStream& fout, const Tache& t){
-	fout<<t.getId()<<"\n";
-	fout<<t.getTitre()<<"\n";
+    fout<<t.getTitre()<<"\n";
+    fout<<t.getDescription()<<"\n";
 	fout<<t.getDuree()<<"\n";
     fout<<t.getDateDisponibilite().toString()<<"\n";
     fout<<t.getDateEcheance().toString()<<"\n";
@@ -47,35 +47,38 @@ QTextStream& operator<<(QTextStream& fout, const Tache& t){
 
 QTextStream& operator<<(QDataStream& f, const Programmation& p);
 
-void Tache::setId(const QString& str){
+void Tache::setTitre(const QString& str){
   if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
-  identificateur=str;
+  titre=str;
 }
 
 
 
-Tache* TacheManager::trouverTache(const QString& id)const{
+Tache* TacheManager::trouverTache(const QString& titre)const{
+    qDebug() << "debut trouverTache\n";
     for (int i = 0; i < taches.size(); ++i){
-        if (id == (taches.at(i))->getId()) return taches[i];
+        if (titre == (taches.at(i))->getTitre()) return taches[i];
     }
 	return 0;
 }
 
 Tache& TacheManager::ajouterTache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
+    qDebug() << "debut  ajouterTache\n";
     if (trouverTache(id)) {throw CalendarException("erreur, TacheManager, tache deja existante");}
     Tache* newt=new Tache(id,t,dur,dispo,deadline,preempt);
     taches.append(newt);
     return *newt;
 }
 
-Tache& TacheManager::getTache(const QString& id){
-    Tache* t=trouverTache(id);
+Tache& TacheManager::getTache(const QString& titre){
+    qDebug() << "debut getTache Tache\n";
+    Tache* t=trouverTache(titre);
 	if (!t) throw CalendarException("erreur, TacheManager, tache inexistante");
 	return *t;
 }
 
-const Tache& TacheManager::getTache(const QString& id)const{
-	return const_cast<TacheManager*>(this)->getTache(id);
+const Tache& TacheManager::getTache(const QString& titre)const{
+    return const_cast<TacheManager*>(this)->getTache(titre);
 }
 
 TacheManager::~TacheManager(){
@@ -85,7 +88,7 @@ TacheManager::~TacheManager(){
 }
 
 void TacheManager::load(const QString& f){
-    //qDebug()<<"debut load\n";
+    qDebug()<<"debut load\n";
     this->~TacheManager();
     file=f;
     QFile fin(file);
@@ -109,8 +112,8 @@ void TacheManager::load(const QString& f){
             // If it's named tache, we'll dig the information from there.
             if(xml.name() == "tache") {
                 //qDebug()<<"new tache\n";
-                QString identificateur;
                 QString titre;
+                QString description;
                 QDate disponibilite;
                 QDate echeance;
                 Duree duree;
@@ -132,15 +135,15 @@ void TacheManager::load(const QString& f){
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "tache")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         // We've found identificteur.
-                        if(xml.name() == "identificateur") {
-                            xml.readNext(); identificateur=xml.text().toString();
-                            //qDebug()<<"id="<<identificateur<<"\n";
-                        }
-
-                        // We've found titre.
                         if(xml.name() == "titre") {
                             xml.readNext(); titre=xml.text().toString();
-                            //qDebug()<<"titre="<<titre<<"\n";
+                            //qDebug()<<"id="<<titre<<"\n";
+                        }
+
+                        // We've found description.
+                        if(xml.name() == "description") {
+                            xml.readNext(); description=xml.text().toString();
+                            //qDebug()<<"description="<<description<<"\n";
                         }
                         // We've found disponibilite
                         if(xml.name() == "disponibilite") {
@@ -164,8 +167,8 @@ void TacheManager::load(const QString& f){
                     // ...and next...
                     xml.readNext();
                 }
-                //qDebug()<<"ajout tache "<<identificateur<<"\n";
-                ajouterTache(identificateur,titre,duree,disponibilite,echeance,preemptive);
+                //qDebug()<<"ajout tache "<<titre<<"\n";
+                ajouterTache(titre,description,duree,disponibilite,echeance,preemptive);
             }
         }
     }
@@ -190,8 +193,8 @@ void  TacheManager::save(const QString& f){
     for (int i = 0; i < taches.size(); ++i){
         stream.writeStartElement("tache");
         stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");
-        stream.writeTextElement("identificateur",taches[i]->getId());
         stream.writeTextElement("titre",taches[i]->getTitre());
+        stream.writeTextElement("description",taches[i]->getDescription());
         stream.writeTextElement("disponibilite",taches[i]->getDateDisponibilite().toString(Qt::ISODate));
         stream.writeTextElement("echeance",taches[i]->getDateEcheance().toString(Qt::ISODate));
         QString str;

@@ -21,10 +21,10 @@ Q_OBJECT
 private:
     QVBoxLayout *VC;
     QHBoxLayout *HC1, *HC2, *HC3, *HC4;
-    QLabel *identificateurLabel, *preemptiveLabel, *titreLabel, *dispoLabel, *echeanceLabel, *dureeLabel;
-    QLineEdit *identificateur;
+    QLabel *titreLabel, *descriptionLabel, *preemptiveLabel, *dispoLabel, *echeanceLabel, *dureeLabel;
+    QLineEdit *titre;
     QCheckBox *preemptive;
-    QTextEdit *titre;
+    QTextEdit *description;
     QSpinBox *dureeH, *dureeM;
     QDateEdit *dispo, *echeance;
     QPushButton *annuler, *sauver;
