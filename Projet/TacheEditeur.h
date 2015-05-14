@@ -28,14 +28,14 @@ private:
     QDateEdit *dispo, *echeance;
     QPushButton *annuler, *sauver;
 
-    Tache& tache;
+    TacheUnitaire& tache;
 
 public slots:
     void activerSauver(){ sauver->setEnabled(true); }
     void sauverTache();
 
 public:
-    explicit TacheEditeur(Tache& tacheToEdit, QWidget* parent = 0);
+    explicit TacheEditeur(TacheUnitaire& tacheToEdit, QWidget* parent = 0);
 
 };
 

@@ -5,6 +5,8 @@
 #include <QDate>
 #include <QTextStream>
 #include <QDebug>
+#include <QTextCodec>
+#include <QtXml>
 
 using namespace std;
 
@@ -55,10 +57,12 @@ private:
     QString description;
     QDate disponibilite;
     QDate echeance;
+
     Tache(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
             titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
     Tache(const Tache& t);
     Tache& operator=(const Tache&);
+
     friend class TacheUnitaire;
     friend class TacheComposite;
 public:
@@ -73,10 +77,19 @@ public:
         if (e<disp) throw CalendarException("erreur Tâche : date echéance < date disponibilité");
         disponibilite=disp; echeance=e;
     }
-    virtual Duree getDuree() const =0;
+    /*virtual Duree getDuree() const =0;
     virtual void setDuree(const Duree& d) =0;
     virtual bool isPreemptive() const =0;
-    virtual void setPreemptive(bool b = true) =0;
+    virtual void setPreemptive(bool b = true) =0;*/
+
+    virtual void ajouterInfos(QString& liste){
+        liste.append(this->getTitre()).append("\n")
+                .append(this->getDescription()).append("\n")
+                .append(this->getDateDisponibilite().toString()).append("\n")
+                .append(this->getDateEcheance().toString()).append("\n");
+    }
+
+    virtual void saveTache(QXmlStreamWriter& stream) =0;
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
@@ -96,7 +109,28 @@ public:
     void setDuree(const Duree& d) { duree=d; }
     bool isPreemptive() const { return preemptive; }
     void setPreemptive(bool b = true) { preemptive=b; }
+
+    void ajouterInfos(QString& liste){
+        Tache::ajouterInfos(liste);
+        liste.append(QString::number(this->getDuree().getDureeEnMinutes())).append("min\n")
+                .append(QString(this->isPreemptive() ? "preemptive" : "non preemptive")).append("\n")
+                .append("\n\n");
+    }
+
+    void saveTache(QXmlStreamWriter& stream){
+        stream.writeStartElement("tache");
+        stream.writeAttribute("preemptive", (this->isPreemptive())?"true":"false");
+        stream.writeTextElement("titre", this->getTitre());
+        stream.writeTextElement("description", this->getDescription());
+        stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
+        stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+        QString str;
+        str.setNum(this->getDuree().getDureeEnMinutes());
+        stream.writeTextElement("duree",str);
+        stream.writeEndElement();
+    }
 };
+
 
 class TacheComposite : public Tache{
 private:
@@ -112,6 +146,28 @@ public:
     void setDuree(const Duree&){}
     bool isPreemptive() const { return false; }
     void setPreemptive(bool){}
+
+    void ajouterInfos(QString& liste){
+        Tache::ajouterInfos(liste);
+        liste.append("composite").append("\n")
+                .append("\n\n");
+    }
+
+    void saveTache(QXmlStreamWriter& stream){
+        stream.writeStartElement("tache");
+        stream.writeTextElement("titre", this->getTitre());
+        stream.writeTextElement("description", this->getDescription());
+        stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
+        stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+        stream.writeStartElement("sous-taches");
+        for (int i = 0; i < this->getSousTaches().size(); ++i){
+            stream.writeStartElement("sous-tache");
+            stream.writeTextElement("titre", this->getSousTaches()[i]->getTitre());
+            stream.writeEndElement();
+        }
+        stream.writeEndElement();
+        stream.writeEndElement();
+    }
 };
 
 class TacheManager{
@@ -204,12 +260,12 @@ public:
 };
 
 class Programmation{
-	const Tache* tache;
+    const TacheUnitaire* tache;
     QDate date;
     QTime horaire;
 public:
-    Programmation(const Tache& t, const QDate& d, const QTime& h):tache(&t), date(d), horaire(h){}
-	const Tache& getTache() const { return *tache; }
+    Programmation(const TacheUnitaire& t, const QDate& d, const QTime& h):tache(&t), date(d), horaire(h){}
+    const TacheUnitaire& getTache() const { return *tache; }
     QDate getDate() const { return date; }
     QTime getHoraire() const { return horaire; }
 };
@@ -226,7 +282,7 @@ public:
 	~ProgrammationManager();
 	ProgrammationManager(const ProgrammationManager& um);
 	ProgrammationManager& operator=(const ProgrammationManager& um);
-    void ajouterProgrammation(const Tache& t, const QDate& d, const QTime& h);
+    void ajouterProgrammation(const TacheUnitaire& t, const QDate& d, const QTime& h);
 };
 
 #endif

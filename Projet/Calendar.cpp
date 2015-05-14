@@ -52,6 +52,8 @@ QTextStream& operator<<(QTextStream& fout, const Tache& t){
 
 QTextStream& operator<<(QDataStream& f, const Programmation& p);
 
+
+
 void Tache::setTitre(const QString& str){
   if (TacheManager::getInstance().isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
   titre=str;
@@ -205,20 +207,8 @@ void  TacheManager::save(const QString& f){
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("taches");
-    for (int i = 0; i < taches.size(); ++i){
-
-        stream.writeStartElement("tache");
-        stream.writeAttribute("preemptive", (taches[i]->isPreemptive())?"true":"false");
-        stream.writeTextElement("titre",taches[i]->getTitre());
-        stream.writeTextElement("description",taches[i]->getDescription());
-        stream.writeTextElement("disponibilite",taches[i]->getDateDisponibilite().toString(Qt::ISODate));
-        stream.writeTextElement("echeance",taches[i]->getDateEcheance().toString(Qt::ISODate));
-        QString str;
-        str.setNum(taches[i]->getDuree().getDureeEnMinutes());
-        stream.writeTextElement("duree",str);
-        stream.writeEndElement();
-
-    }
+    for (int i = 0; i < taches.size(); ++i)
+        taches[i]->saveTache(stream);
     stream.writeEndElement();
     stream.writeEndDocument();
     newfile.close();
@@ -261,7 +251,7 @@ Programmation* ProgrammationManager::trouverProgrammation(const Tache& t)const{
 	return 0;
 }
 
-void ProgrammationManager::ajouterProgrammation(const Tache& t, const QDate& d, const QTime& h){
+void ProgrammationManager::ajouterProgrammation(const TacheUnitaire &t, const QDate& d, const QTime& h){
 	if (trouverProgrammation(t)) throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");	
 	Programmation* newt=new Programmation(t,d,h);
 	addItem(newt);

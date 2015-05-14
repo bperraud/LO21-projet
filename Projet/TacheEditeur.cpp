@@ -5,7 +5,7 @@
 #include "TacheEditeur.h"
 #include "Calendar.h"
 
-TacheEditeur::TacheEditeur(Tache& tacheToEdit, QWidget* parent) : QWidget(parent), tache(tacheToEdit){
+TacheEditeur::TacheEditeur(TacheUnitaire& tacheToEdit, QWidget* parent) : QWidget(parent), tache(tacheToEdit){
 
     //this->setWindowTitle(QString("Edition de la tâche ")+tache.getId());
     this->setFixedSize(600, 400);

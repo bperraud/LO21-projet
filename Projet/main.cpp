@@ -19,6 +19,7 @@
 #include "Calendar.h"
 #include "TacheEditeur.h"
 
+
 int main(int argc, char *argv[]){
 
     QApplication app(argc, argv);
@@ -39,8 +40,10 @@ int main(int argc, char *argv[]){
     /* Utiliser la ligne ci-dessus pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
     TM.load(chemin);
+    Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
-    TacheEditeur TE(T2);
+    TacheUnitaire& T2U = dynamic_cast<TacheUnitaire&>(T2);
+    TacheEditeur TE(T2U);
 
     QPushButton buttonChargerTache("Charger tâche");
     buttonChargerTache.setFixedWidth(128);
@@ -60,20 +63,15 @@ int main(int argc, char *argv[]){
                  "restreigne les durées aux demi-heures (ou quarts d'heure).");
 
     TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
-    ListTaches LT; LT << &T2;
+    ListTaches LT; LT << &T1 << &T2;
     TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT);
 
+
+
     QLabel labelLDT;
-    QString listeDeTaches = "Liste des tâches :\n";
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
-        listeDeTaches.append((*i).getTitre()).append("\n")
-                .append((*i).getDescription()).append("\n")
-                .append(QString::number((*i).getDuree().getDureeEnMinutes())).append("min\n")
-                .append((*i).getDateDisponibilite().toString()).append("\n")
-                .append((*i).getDateEcheance().toString()).append("\n")
-                .append(QString((*i).isPreemptive() ? "preemptive" : "non preemptive")).append("\n")
-                .append("\n\n");
-    }
+    QString listeDeTaches = "Liste des tâches :\n\n";
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
+        (*i).ajouterInfos(listeDeTaches);
     labelLDT.setText(listeDeTaches);
 
     QTreeView* treeView = new QTreeView;
