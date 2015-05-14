@@ -47,50 +47,78 @@ private:
 QTextStream& operator<<(QTextStream& f, const Duree & d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
-/*class Tache{
-private:
 
-
-};*/
 
 class Tache{
 private:
     QString titre;
     QString description;
-    Duree duree;
     QDate disponibilite;
     QDate echeance;
-    bool preemptive;
-    Tache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
-            titre(id),description(t),duree(dur),disponibilite(dispo),echeance(deadline),preemptive(preempt){}
-	Tache(const Tache& t);
-	Tache& operator=(const Tache&);
-	friend class TacheManager;
+    Tache(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
+            titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
+    Tache(const Tache& t);
+    Tache& operator=(const Tache&);
+    friend class TacheUnitaire;
+    friend class TacheComposite;
 public:
+    virtual ~Tache(){}
     QString getTitre() const { return titre; }
     void setTitre(const QString& str);
     QString getDescription() const { return description; }
     void setDescription(const QString& str) { description=str; }
-    Duree getDuree() const { return duree; }
-    void setDuree(const Duree& d) { duree=d; }
     QDate getDateDisponibilite() const {  return disponibilite; }
     QDate getDateEcheance() const {  return echeance; }
     void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e) {
         if (e<disp) throw CalendarException("erreur Tâche : date echéance < date disponibilité");
         disponibilite=disp; echeance=e;
     }
-    bool isPreemptive() const { return preemptive; }
-    void setPreemptive(bool b = true) { preemptive=b; }
+    virtual Duree getDuree() const =0;
+    virtual void setDuree(const Duree& d) =0;
+    virtual bool isPreemptive() const =0;
+    virtual void setPreemptive(bool b = true) =0;
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
 
+typedef QList<Tache*> ListTaches;
+
+class TacheUnitaire : public Tache{
+private:
+    Duree duree;
+    bool preemptive;
+    TacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
+            Tache(t, desc, dispo, deadline), duree(dur), preemptive(preempt){}
+    friend class TacheManager;
+public:
+    ~TacheUnitaire(){}
+    Duree getDuree() const { return duree; }
+    void setDuree(const Duree& d) { duree=d; }
+    bool isPreemptive() const { return preemptive; }
+    void setPreemptive(bool b = true) { preemptive=b; }
+};
+
+class TacheComposite : public Tache{
+private:
+    ListTaches sousTaches;
+    TacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT):
+            Tache(t, desc, dispo, deadline), sousTaches(sT){}
+    friend class TacheManager;
+public:
+    ~TacheComposite(){}
+    const ListTaches& getSousTaches() const { return sousTaches; }
+    void setSousTaches(const ListTaches& sT);
+    Duree getDuree() const { return Duree(); }
+    void setDuree(const Duree&){}
+    bool isPreemptive() const { return false; }
+    void setPreemptive(bool){}
+};
+
 class TacheManager{
 private:
-    typedef QList<Tache*> ListTaches;
     ListTaches taches;
 
-    Tache* trouverTache(const QString& id) const;
+    Tache* trouverTache(const QString& titre) const;
     QString file;
     TacheManager(){}
 	~TacheManager();
@@ -99,12 +127,12 @@ private:
 	struct Handler{
 		TacheManager* instance;
 		Handler():instance(0){}
-        // destructeur appelé à la fin du programme
 		~Handler(){ if (instance) delete instance; }
 	};
     static Handler handler;
 public:
-    Tache& ajouterTache(const QString& id, const QString& t, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false);
+    Tache& ajouterTacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false);
+    Tache& ajouterTacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& LT);
     Tache& getTache(const QString& titre);
     bool isTacheExistante(const QString& titre) const { return trouverTache(titre)!=0; }
     const Tache& getTache(const QString& titre) const;

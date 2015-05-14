@@ -14,7 +14,6 @@
 
 #include "Calendar.h"
 
-
 class TacheEditeur : public QWidget{
 Q_OBJECT
 

@@ -8,6 +8,7 @@
 #include <QTabWidget>
 #include <QMenuBar>
 #include <QMenu>
+#include <QAbstractScrollArea>
 
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -22,11 +23,13 @@ int main(int argc, char *argv[]){
 
     QApplication app(argc, argv);
     QWidget fenetre;
-    fenetre.setFixedSize(1024, 768);
+    //fenetre.setFixedSize(1024, 768);
+    fenetre.setMinimumWidth(800);
+    fenetre.setMinimumHeight(768);
 
-    QMenuBar menubar(&fenetre);
+    /*QMenuBar menubar(&fenetre);
     QMenu menu1("menu 1");
-    menubar.addMenu(&menu1);
+    menubar.addMenu(&menu1);*/
 
 
 
@@ -44,7 +47,10 @@ int main(int argc, char *argv[]){
     //QObject::connect(&buttonChargerTache, SIGNAL(clicked()),
 
     QTabWidget OngletsManager(&fenetre);
-    OngletsManager.setGeometry(32, 32, 800, 600);
+    //OngletsManager.setGeometry(32, 32, 800, 600);
+    OngletsManager.setMinimumWidth(800);
+
+
     QWidget onglet1, onglet2;
     QLabel hello("Hello world. Bon j'imagine que le premier onglet pourrait être cette fameuse vue hebdomadaire synthétique.\n"
                  "Par rapport aux recherches que j'ai faites, la meilleure piste qui s'offre à nous c'est d'utiliser un tableau\n"
@@ -53,10 +59,21 @@ int main(int argc, char *argv[]){
                  "lorsque des événements couvrent plusieures heures. Je pense aussi que c'est plus simple qu'on\n"
                  "restreigne les durées aux demi-heures (ou quarts d'heure).");
 
+    TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
+    ListTaches LT; LT << &T2;
+    TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT);
+
     QLabel labelLDT;
     QString listeDeTaches = "Liste des tâches :\n";
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
-        listeDeTaches.append((*i).getTitre()).append("\n");
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        listeDeTaches.append((*i).getTitre()).append("\n")
+                .append((*i).getDescription()).append("\n")
+                .append(QString::number((*i).getDuree().getDureeEnMinutes())).append("min\n")
+                .append((*i).getDateDisponibilite().toString()).append("\n")
+                .append((*i).getDateEcheance().toString()).append("\n")
+                .append(QString((*i).isPreemptive() ? "preemptive" : "non preemptive")).append("\n")
+                .append("\n\n");
+    }
     labelLDT.setText(listeDeTaches);
 
     QTreeView* treeView = new QTreeView;
@@ -76,14 +93,21 @@ int main(int argc, char *argv[]){
     QStandardItem *veronaItem =  new QStandardItem("Verona");
 
     QList<QStandardItem*> ItemList;
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
-        ItemList.append(new QStandardItem((*i).getTitre()));
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        QStandardItem* tache = new QStandardItem((*i).getTitre());
+        tache->setData(QVariant::fromValue(5));
+        ItemList.append(tache);
+    }
 
     // Pour empêcher l'édition des lignes
     for (int i = 0; i < ItemList.size(); ++i)
         ItemList[i]->setFlags(ItemList[i]->flags() & ~Qt::ItemIsEditable);
 
     //building up the hierarchy
+
+    /*void ajouterFils(QStandardItem* pere){
+
+    }*/
 
     rootNode->appendRows(ItemList);
 

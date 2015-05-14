@@ -100,6 +100,11 @@ void TacheEditeur::sauverTache(){
             QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
             return;
     }
+    if (!(dureeH->value() || dureeM->value())){
+            QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
+            return;
+    }
+    // Si la durée est nulle
     if (tache.getTitre() != titre->text()) tache.setTitre(titre->text());
     preemptive->isChecked() ? tache.setPreemptive(true) : tache.setPreemptive(false);
     tache.setDescription(description->toPlainText());
