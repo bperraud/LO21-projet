@@ -74,7 +74,7 @@ public:
     QDate getDateDisponibilite() const {  return disponibilite; }
     QDate getDateEcheance() const {  return echeance; }
     void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e) {
-        if (e<disp) throw CalendarException("erreur Tâche : date echéance < date disponibilité");
+        if (e<disp) throw CalendarException("erreur tâche : date echéance < date disponibilité");
         disponibilite=disp; echeance=e;
     }
     /*virtual Duree getDuree() const =0;
@@ -101,7 +101,9 @@ private:
     Duree duree;
     bool preemptive;
     TacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
-            Tache(t, desc, dispo, deadline), duree(dur), preemptive(preempt){}
+            Tache(t, desc, dispo, deadline), duree(dur), preemptive(preempt){
+        if (!preempt && dur.getDureeEnHeures()>12) throw CalendarException("erreur tâche unitaire non preemptive et durée > 12h");
+    }
     friend class TacheManager;
 public:
     ~TacheUnitaire(){}
@@ -269,24 +271,62 @@ public:
     }*/
 };
 
-class Programmation{
-    const TacheUnitaire* tache;
+class Evenement{
+private:
     QDate date;
     QTime horaire;
 public:
-    Programmation(const TacheUnitaire& t, const QDate& d, const QTime& h):tache(&t), date(d), horaire(h){}
-    const TacheUnitaire& getTache() const { return *tache; }
+    Evenement(const QDate& d, const QTime& h): date(d), horaire(h){}
     QDate getDate() const { return date; }
     QTime getHoraire() const { return horaire; }
 };
 
-class ProgrammationManager {
+class ProgrammationActivite : public Evenement{
 private:
-	Programmation** programmations;
+    QString titre;
+    QString description;
+    QString lieu;
+public:
+    ProgrammationActivite(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l)
+        :Evenement(d, h), titre(t), description(desc), lieu(l){}
+    QString getTitre() const { return titre; }
+    QString getDescription() const { return description; }
+    QString getLieu() const { return lieu; }
+};
+
+class ProgrammationTache : public Evenement{
+private:
+    const TacheUnitaire* tache;
+public:
+    ProgrammationTache(const QDate& d, const QTime& h, const TacheUnitaire& t): Evenement(d, h), tache(&t){}
+    const TacheUnitaire& getTache() const { return *tache; }
+};
+
+
+template<class Prog, class Obj> class ProgManager{
+private:
+    QList<Prog*> programmations;
+    Prog* trouverProgrammation(const Obj& P) const;
+public:
+    QString a;
+};
+/*template<> class ProgManager<ProgrammationActivite, ProgrammationActivite>{
+
+};*/
+
+class PMTache : public ProgManager<ProgrammationTache, TacheUnitaire>{
+public:
+    QString b;
+};
+
+
+class ProgrammationManager{
+private:
+    ProgrammationTache** programmations;
 	unsigned int nb;
 	unsigned int nbMax;
-	void addItem(Programmation* t);
-	Programmation* trouverProgrammation(const Tache& t) const;
+    void addItem(ProgrammationTache* t);
+    ProgrammationTache* trouverProgrammation(const TacheUnitaire& t) const;
 public:
 	ProgrammationManager();
 	~ProgrammationManager();

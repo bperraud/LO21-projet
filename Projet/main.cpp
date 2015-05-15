@@ -169,6 +169,10 @@ int main(int argc, char *argv[]){
     OngletsManager.addTab(&onglet2, "Onglet Tache Editeur");
 
 
+    /*PMTache Test;
+    Test.a = "hello";
+    Test.b = "bonjour";*/
+
     fenetre.show();
 
     return app.exec();
