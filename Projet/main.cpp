@@ -39,7 +39,9 @@ int main(int argc, char *argv[]){
     QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
     /* Utiliser la ligne ci-dessus pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
+
     TM.load(chemin);
+
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
     TacheUnitaire& T2U = dynamic_cast<TacheUnitaire&>(T2);
@@ -62,11 +64,16 @@ int main(int argc, char *argv[]){
                  "lorsque des événements couvrent plusieures heures. Je pense aussi que c'est plus simple qu'on\n"
                  "restreigne les durées aux demi-heures (ou quarts d'heure).");
 
-    TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
-    ListTaches LT; LT << &T1 << &T2;
-    TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT);
+    //TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
+    //ListTaches LT; LT << &T1 << &T2;
+    //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT);
 
-
+    Tache& T4 = TM.getTache("T4");
+    TacheComposite& T4C = dynamic_cast<TacheComposite&>(T4);
+    T4C.addSousTache(&TM.getTache("T3"));
+    T4C.rmSousTache(&T2);
+    ListTaches LT; LT << &T2 << &T4;
+    dynamic_cast<TacheComposite&>(TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches())).setSousTaches(LT);
 
     QLabel labelLDT;
     QString listeDeTaches = "Liste des tâches :\n\n";
@@ -93,7 +100,7 @@ int main(int argc, char *argv[]){
     QList<QStandardItem*> ItemList;
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
         QStandardItem* tache = new QStandardItem((*i).getTitre());
-        tache->setData(QVariant::fromValue(5));
+        //tache->setData(QVariant::fromValue(5));
         ItemList.append(tache);
     }
 

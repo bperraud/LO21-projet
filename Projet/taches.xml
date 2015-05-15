@@ -7,11 +7,26 @@
         <echeance>2015-04-15</echeance>
         <duree>600</duree>
     </tache>
-    <tache preemptive="false">
+    <tache preemptive="true">
         <titre>T2</titre>
         <description>Répartir les classes entre développeurs</description>
         <disponibilite>2015-02-28</disponibilite>
         <echeance>2015-04-25</echeance>
         <duree>90</duree>
+    </tache>
+    <tache preemptive="true">
+        <titre>T3</titre>
+        <description>Petit test !</description>
+        <disponibilite>2015-02-06</disponibilite>
+        <echeance>2015-06-04</echeance>
+        <duree>140</duree>
+    </tache>
+    <tache>
+        <titre>T4</titre>
+        <description>autre test</description>
+        <disponibilite>2015-07-10</disponibilite>
+        <echeance>2015-08-12</echeance>
+        <sous-tache>T1</sous-tache>
+        <sous-tache>T2</sous-tache>
     </tache>
 </taches>

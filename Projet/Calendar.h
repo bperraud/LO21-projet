@@ -142,15 +142,19 @@ public:
     ~TacheComposite(){}
     const ListTaches& getSousTaches() const { return sousTaches; }
     void setSousTaches(const ListTaches& sT);
-    Duree getDuree() const { return Duree(); }
+    void addSousTache(const Tache* t);
+    void rmSousTache(const Tache* t);
+    /*Duree getDuree() const { return Duree(); }
     void setDuree(const Duree&){}
     bool isPreemptive() const { return false; }
-    void setPreemptive(bool){}
+    void setPreemptive(bool){}*/
 
     void ajouterInfos(QString& liste){
         Tache::ajouterInfos(liste);
-        liste.append("composite").append("\n")
-                .append("\n\n");
+        liste.append("composite").append("\n");
+        for (int i = 0; i < sousTaches.size(); ++i)
+            liste.append("sous-tache : ").append(sousTaches[i]->getTitre()).append("\n");
+        liste.append("\n\n");
     }
 
     void saveTache(QXmlStreamWriter& stream){
@@ -159,16 +163,22 @@ public:
         stream.writeTextElement("description", this->getDescription());
         stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
         stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
-        stream.writeStartElement("sous-taches");
-        for (int i = 0; i < this->getSousTaches().size(); ++i){
-            stream.writeStartElement("sous-tache");
-            stream.writeTextElement("titre", this->getSousTaches()[i]->getTitre());
-            stream.writeEndElement();
-        }
-        stream.writeEndElement();
+        for (int i = 0; i < this->getSousTaches().size(); ++i)
+            stream.writeTextElement("sous-tache", this->getSousTaches()[i]->getTitre());
         stream.writeEndElement();
     }
 };
+
+struct HierarchyTachesC{
+    QString mere;
+    QString fille;
+    HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
+};
+
+
+
+
+
 
 class TacheManager{
 private:
@@ -284,5 +294,7 @@ public:
 	ProgrammationManager& operator=(const ProgrammationManager& um);
     void ajouterProgrammation(const TacheUnitaire& t, const QDate& d, const QTime& h);
 };
+
+
 
 #endif

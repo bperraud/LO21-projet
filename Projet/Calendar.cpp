@@ -62,10 +62,27 @@ void Tache::setTitre(const QString& str){
 void TacheComposite::setSousTaches(const ListTaches &sT){
     for (int i = 0; i < sT.size(); ++i)
         if (!TacheManager::getInstance().isTacheExistante(sT[i]->getTitre()))
-            throw CalendarException("Erreur tâche composite, unitaire not found");
+            throw CalendarException("Erreur tâche composite, tâche unitaire non trouvée");
     sousTaches = sT;
 }
 
+void TacheComposite::addSousTache(const Tache* t){
+    for (int i = 0; i < sousTaches.size(); ++i)
+        if (sousTaches[i] == t) throw CalendarException("erreur, TacheComposite, tâche déjà existante");
+    sousTaches.append(const_cast<Tache*>(t));
+}
+
+void TacheComposite::rmSousTache(const Tache* t){
+    for (int i = 0; i < sousTaches.size(); ++i){
+        if (sousTaches[i] == t){
+            sousTaches.removeAt(i);
+            return;
+        }
+    }
+    throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");
+}
+
+/* ----- [BEGIN]TacheManager ----- */
 
 Tache* TacheManager::trouverTache(const QString& titre)const{
     for (int i = 0; i < taches.size(); ++i){
@@ -109,15 +126,16 @@ void TacheManager::load(const QString& f){
     this->~TacheManager();
     file=f;
     QFile fin(file);
+
+    QList<HierarchyTachesC> TachesC;
     // If we can't open it, let's show an error message.
-    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text))
         throw CalendarException("Erreur ouverture fichier tâches");
-    }
     // QXmlStreamReader takes any QIODevice.
     QXmlStreamReader xml(&fin);
     //qDebug()<<"debut fichier\n";
     // We'll parse the XML until we reach end of it.
-    while(!xml.atEnd() && !xml.hasError()) {
+    while(!xml.atEnd() && !xml.hasError()){
         // Read next element.
         QXmlStreamReader::TokenType token = xml.readNext();
         // If token is just StartDocument, we'll go to next.
@@ -127,7 +145,7 @@ void TacheManager::load(const QString& f){
             // If it's named taches, we'll go to the next.
             if(xml.name() == "taches") continue;
             // If it's named tache, we'll dig the information from there.
-            if(xml.name() == "tache") {
+            if(xml.name() == "tache"){
                 //qDebug()<<"new tache\n";
                 QString titre;
                 QString description;
@@ -136,11 +154,13 @@ void TacheManager::load(const QString& f){
                 Duree duree;
                 bool preemptive;
 
+                bool unitaire = true;
+
                 QXmlStreamAttributes attributes = xml.attributes();
                 /* Let's check that Task has attribute. */
-                if(attributes.hasAttribute("preemptive")) {
-                    QString val =attributes.value("preemptive").toString();
-                    preemptive=(val == "true" ? true : false);
+                if(attributes.hasAttribute("preemptive")){
+                    QString val = attributes.value("preemptive").toString();
+                    preemptive= (val == "true" ? true : false);
                 }
                 //qDebug()<<"preemptive="<<preemptive<<"\n";
 
@@ -149,52 +169,69 @@ void TacheManager::load(const QString& f){
                 //We'll continue the loop until we hit an EndElement named tache.
 
 
-                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "tache")) {
-                    if(xml.tokenType() == QXmlStreamReader::StartElement) {
-                        // We've found identificteur.
-                        if(xml.name() == "titre") {
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "tache")){
+                    if(xml.tokenType() == QXmlStreamReader::StartElement){
+                        // We've found identificateur
+                        if(xml.name() == "titre"){
                             xml.readNext(); titre=xml.text().toString();
                             //qDebug()<<"id="<<titre<<"\n";
                         }
 
-                        // We've found description.
-                        if(xml.name() == "description") {
+                        // We've found description
+                        if(xml.name() == "description"){
                             xml.readNext(); description=xml.text().toString();
                             //qDebug()<<"description="<<description<<"\n";
                         }
                         // We've found disponibilite
-                        if(xml.name() == "disponibilite") {
+                        if(xml.name() == "disponibilite"){
                             xml.readNext();
                             disponibilite=QDate::fromString(xml.text().toString(),Qt::ISODate);
                             //qDebug()<<"disp="<<disponibilite.toString()<<"\n";
                         }
                         // We've found echeance
-                        if(xml.name() == "echeance") {
+                        if(xml.name() == "echeance"){
                             xml.readNext();
                             echeance=QDate::fromString(xml.text().toString(),Qt::ISODate);
                             //qDebug()<<"echeance="<<echeance.toString()<<"\n";
                         }
                         // We've found duree
-                        if(xml.name() == "duree") {
+                        if(xml.name() == "duree"){
                             xml.readNext();
                             duree.setDuree(xml.text().toString().toUInt());
                             //qDebug()<<"duree="<<duree.getDureeEnMinutes()<<"\n";
                         }
+                        // We've found sous-tache
+                        if(xml.name() == "sous-tache"){
+                            xml.readNext();
+                            TachesC.append(HierarchyTachesC(titre, xml.text().toString()));
+                            unitaire = false;
+                            //sousTaches.append(&getTache(xml.text().toString()));
+                            //qDebug()<<"sous-tache\n";
+                        }
+
                     }
                     // ...and next...
                     xml.readNext();
                 }
                 //qDebug()<<"ajout tache "<<titre<<"\n";
-                ajouterTacheUnitaire(titre,description,duree,disponibilite,echeance,preemptive);
+                // Tache unitaire
+                if(unitaire) ajouterTacheUnitaire(titre,description,duree,disponibilite,echeance,preemptive);
+                // Tache composite
+                else{
+                    ajouterTacheComposite(titre,description,disponibilite,echeance,ListTaches());
+                    unitaire = true;
+                }
             }
         }
     }
     // Error handling.
-    if(xml.hasError()) {
+    if(xml.hasError())
         throw CalendarException("Erreur lecteur fichier taches, parser xml");
-    }
     // Removes any device() or data from the reader * and resets its internal state to the initial state.
     xml.clear();
+    // Traitement des taches composites (ajout de leurs sous-taches
+    for (int i = 0; i < TachesC.size(); ++i)
+        dynamic_cast<TacheComposite&>(getTache(TachesC[i].mere)).addSousTache(&getTache(TachesC[i].fille));
     //qDebug()<<"fin load\n";
 }
 
@@ -226,6 +263,8 @@ void TacheManager::libererInstance(){
 	if (handler.instance!=0) delete handler.instance;
 	handler.instance=0;
 }
+
+/* ----- [END]TacheManager ----- */
 
 //******************************************************************************************
 // ProgrammationManager, à transformer en Singleton (donc y'a du code qui va sauter, en
