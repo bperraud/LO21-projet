@@ -75,11 +75,18 @@ int main(int argc, char *argv[]){
     ListTaches LT; LT << &T2 << &T4;
     dynamic_cast<TacheComposite&>(TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches())).setSousTaches(LT);
 
+    //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";
+
     QLabel labelLDT;
     QString listeDeTaches = "Liste des tâches :\n\n";
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
         (*i).ajouterInfos(listeDeTaches);
     labelLDT.setText(listeDeTaches);
+
+    // Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*
+    TacheInformateur informateur;
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
+        (*i).accept(&informateur);
 
     QTreeView* treeView = new QTreeView;
     treeView->setHeaderHidden(true);

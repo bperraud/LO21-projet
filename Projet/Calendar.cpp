@@ -311,3 +311,19 @@ ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager
     for(unsigned int i=0; i<um.nb; i++) addItem(new ProgrammationTache(*um.programmations[i]));
 	return *this;
 }
+
+/* --- Design Pattern Visitor --- */
+
+void TacheUnitaire::accept(TacheVisitor* v){
+    v->visitTacheUnitaire(this);
+}
+void TacheComposite::accept(TacheVisitor* v){
+    v->visitTacheComposite(this);
+}
+
+void TacheInformateur::visitTacheUnitaire(TacheUnitaire* TU){
+    qDebug() << "durée en min : " << QString(QString::number(static_cast<int>(TU->getDuree().getDureeEnMinutes()))) << "\n";
+}
+void TacheInformateur::visitTacheComposite(TacheComposite* TC){
+    qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
+}

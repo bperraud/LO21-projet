@@ -1,6 +1,8 @@
 #ifndef CALENDAR_h
 #define CALENDAR_h
 
+#include <typeinfo>
+
 #include <QString>
 #include <QDate>
 #include <QTextStream>
@@ -50,6 +52,7 @@ QTextStream& operator<<(QTextStream& f, const Duree & d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
 
+class TacheVisitor;
 
 class Tache{
 private:
@@ -90,6 +93,9 @@ public:
     }
 
     virtual void saveTache(QXmlStreamWriter& stream) =0;
+    virtual bool isTacheUnitaire() const =0;
+
+    virtual void accept(TacheVisitor* v) =0;
 };
 
 QTextStream& operator<<(QTextStream& f, const Tache& t);
@@ -131,6 +137,8 @@ public:
         stream.writeTextElement("duree",str);
         stream.writeEndElement();
     }
+    bool isTacheUnitaire() const { return true; }
+    void accept(TacheVisitor* v);
 };
 
 
@@ -169,6 +177,8 @@ public:
             stream.writeTextElement("sous-tache", this->getSousTaches()[i]->getTitre());
         stream.writeEndElement();
     }
+    bool isTacheUnitaire() const { return false; }
+    void accept(TacheVisitor* v);
 };
 
 struct HierarchyTachesC{
@@ -177,6 +187,21 @@ struct HierarchyTachesC{
     HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
 };
 
+/* --- [BEGIN]Design Pattern Visitor --- */
+
+class TacheVisitor{
+public:
+    virtual void visitTacheUnitaire(TacheUnitaire* TU) =0;
+    virtual void visitTacheComposite(TacheComposite* TC) =0;
+};
+
+class TacheInformateur : public TacheVisitor{
+public:
+    void visitTacheUnitaire(TacheUnitaire* TU);
+    void visitTacheComposite(TacheComposite* TC);
+};
+
+/* --- [END]Design Pattern Visitor --- */
 
 
 
