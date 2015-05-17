@@ -255,66 +255,53 @@ void  TacheManager::save(const QString& f){
     newfile.close();
 }
 
-
 TacheManager::Handler TacheManager::handler=TacheManager::Handler();
 
 TacheManager& TacheManager::getInstance(){
-	if (handler.instance==0) handler.instance=new TacheManager;
-	return *(handler.instance);
+    if (handler.instance==0) handler.instance=new TacheManager;
+    return *(handler.instance);
 }
 
 void TacheManager::libererInstance(){
-	if (handler.instance!=0) delete handler.instance;
-	handler.instance=0;
+    if (handler.instance!=0) delete handler.instance;
+    handler.instance=0;
 }
+
 
 /* ----- [END]TacheManager ----- */
 
 //******************************************************************************************
-// ProgrammationManager, à transformer en Singleton
+// ProgTacheManager
 
-ProgrammationManager::ProgrammationManager():programmations(0),nb(0),nbMax(0){}
-void ProgrammationManager::addItem(ProgrammationTache* t){
-	if (nb==nbMax){
-        ProgrammationTache** newtab=new ProgrammationTache*[nbMax+10];
-		for(unsigned int i=0; i<nb; i++) newtab[i]=programmations[i];
-		// ou memcpy(newtab,Programmations,nb*sizeof(Programmation*));
-		nbMax+=10;
-        ProgrammationTache** old=programmations;
-		programmations=newtab;
-		delete[] old;
-	}
-	programmations[nb++]=t;
+
+
+// Classe Singleton //
+
+Singleton::Handler Singleton::handler = Singleton::Handler();
+Singleton& Singleton::getInstance(){
+    if (handler.instance==0) handler.instance=new Singleton;
+    return *(handler.instance);
 }
-
-ProgrammationTache* ProgrammationManager::trouverProgrammation(const TacheUnitaire& t)const{
-	for(unsigned int i=0; i<nb; i++)
-		if (&t==&programmations[i]->getTache()) return programmations[i];
-	return 0;
-}
-
-void ProgrammationManager::ajouterProgrammation(const TacheUnitaire &t, const QDate& d, const QTime& h){
-	if (trouverProgrammation(t)) throw CalendarException("erreur, ProgrammationManager, Programmation deja existante");	
-    ProgrammationTache* newt=new ProgrammationTache(d,h,t);
-	addItem(newt);
+void Singleton::libererInstance(){
+    if (handler.instance!=0) delete handler.instance;
+    handler.instance=0;
 }
 
 
-ProgrammationManager::~ProgrammationManager(){
-	for(unsigned int i=0; i<nb; i++) delete programmations[i];
-	delete[] programmations;
+ProgrammationTache* ProgTacheManager::trouverProgrammation(const TacheUnitaire& TU) const{
+    for (int i = 0; i < programmations.size(); ++i)
+        if (&TU == &programmations[i]->getTache()) return programmations[i];
+    return 0;
 }
 
-ProgrammationManager::ProgrammationManager(const ProgrammationManager& um):programmations(new ProgrammationTache*[um.nb]), nb(um.nb), nbMax(um.nbMax){
-    for(unsigned int i=0; i<nb; i++) programmations[i]=new ProgrammationTache(*um.programmations[i]);
+void ProgTacheManager::ajouterProgrammation(const QDate& d, const QTime& h, const TacheUnitaire& TU){
+if (trouverProgrammation(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgTacheManager, tâche non préemptive déjà existante");}
+// Rajouter les contraintes de précédence, de disponiblité et d'échéance
+ProgrammationTache* PT = new ProgrammationTache(d, h, TU);
+programmations.append(PT);
 }
 
-ProgrammationManager& ProgrammationManager::operator=(const ProgrammationManager& um){
-	if (this==&um) return *this;
-	this->~ProgrammationManager();
-    for(unsigned int i=0; i<um.nb; i++) addItem(new ProgrammationTache(*um.programmations[i]));
-	return *this;
-}
+
 
 /* --- Design Pattern Visitor --- */
 

@@ -375,8 +375,12 @@ class Evenement{
 private:
     QDate date;
     QTime horaire;
-public:
+
     Evenement(const QDate& d, const QTime& h): date(d), horaire(h){}
+    friend class ProgrammationActivite;
+    friend class ProgrammationTache;
+public:
+
     QDate getDate() const { return date; }
     QTime getHoraire() const { return horaire; }
 };
@@ -386,9 +390,11 @@ private:
     QString titre;
     QString description;
     QString lieu;
-public:
+
     ProgrammationActivite(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l)
         :Evenement(d, h), titre(t), description(desc), lieu(l){}
+public:
+
     QString getTitre() const { return titre; }
     QString getDescription() const { return description; }
     QString getLieu() const { return lieu; }
@@ -397,52 +403,47 @@ public:
 class ProgrammationTache : public Evenement{
 private:
     const TacheUnitaire* tache;
-public:
     ProgrammationTache(const QDate& d, const QTime& h, const TacheUnitaire& t): Evenement(d, h), tache(&t){}
+    friend class ProgTacheManager;
+public:
     const TacheUnitaire& getTache() const { return *tache; }
 };
 
 
-template<class Prog, class Obj> class ProgManager{
+
+
+class Singleton{
 private:
-    QList<Prog*> programmations;
-    Prog* trouverProgrammation(const Obj& P) const;
-    ProgManager();
-    virtual ~ProgManager(){}
-    ProgManager(const ProgManager&);
-    ProgManager& operator=(const ProgManager&);
+    Singleton(){}
+    virtual ~Singleton(){}
+    Singleton(const Singleton&);
+    Singleton& operator= (const Singleton&);
     struct Handler{
-        ProgManager* instance;
+        Singleton* instance;
         Handler():instance(0){}
         ~Handler(){ if (instance) delete instance; }
     };
     static Handler handler;
-
 public:
+    static Singleton& getInstance();
+    static void libererInstance();
+};
 
+template<typename T> class ProgManager : public Singleton{
+protected:
+    QList<T*> programmations;
 };
 
 
-class PMTache : public ProgManager<ProgrammationTache, TacheUnitaire>{
-public:
-    QString b;
-};
-
-
-class ProgrammationManager{
+class ProgTacheManager : public ProgManager<ProgrammationTache>{
 private:
-    ProgrammationTache** programmations;
-	unsigned int nb;
-	unsigned int nbMax;
-    void addItem(ProgrammationTache* t);
-    ProgrammationTache* trouverProgrammation(const TacheUnitaire& t) const;
+    ProgrammationTache* trouverProgrammation(const TacheUnitaire& TU) const;
 public:
-	ProgrammationManager();
-	~ProgrammationManager();
-	ProgrammationManager(const ProgrammationManager& um);
-	ProgrammationManager& operator=(const ProgrammationManager& um);
-    void ajouterProgrammation(const TacheUnitaire& t, const QDate& d, const QTime& h);
+    void ajouterProgrammation(const QDate& d, const QTime& h, const TacheUnitaire& TU);
 };
+
+
+
 
 
 
