@@ -4,9 +4,12 @@ QT += xml
 
 HEADERS += \
     Calendar.h \
-    TacheEditeur.h
+    TacheEditeur.h \
+    Duree.h \
+    CalendarException.h
 
 SOURCES += \
     Calendar.cpp \
     main.cpp \
-    TacheEditeur.cpp
+    TacheEditeur.cpp \
+    Duree.cpp

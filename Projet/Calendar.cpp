@@ -7,40 +7,7 @@
 #include <QtXml>
 #include <QMessageBox>
 
-/* ----- [BEGIN]Duree ----- */
 
-QTextStream& operator<<(QTextStream& f, const Duree & d){ d.afficher(f); return f; }
-
-QTextStream& operator>>(QTextStream& flot, Duree& duree){
-    unsigned int h,m;
-    bool ok=true;
-    flot>>h;
-    if (flot.status()!=QTextStream::Ok) ok=false;
-
-    if(flot.read(1)=="H") {
-        flot>>m;
-        if (flot.status()!=QTextStream::Ok) ok=false;
-    }
-    else {
-        ok=false;
-    }
-    if (ok) duree=Duree(h,m);
-    return flot;
-}
-
- void Duree::afficher(QTextStream& f) const {
-     f.setPadChar('0');
-     f.setFieldWidth(2);
-     f<<nb_minutes/60;
-     f.setFieldWidth(0);
-     f<<"H";
-     f.setFieldWidth(2);
-     f<<nb_minutes%60;
-     f.setFieldWidth(0);
-     f.setPadChar(' ');
- }
-
-/* ----- [END]Duree ----- */
 
 QTextStream& operator<<(QTextStream& fout, const Tache& t){
     fout<<t.getTitre()<<"\n";
@@ -296,10 +263,25 @@ ProgrammationTache* ProgTacheManager::trouverProgrammation(const TacheUnitaire& 
 
 void ProgTacheManager::ajouterProgrammation(const QDate& d, const QTime& h, const TacheUnitaire& TU){
 if (trouverProgrammation(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgTacheManager, tâche non préemptive déjà existante");}
-// Rajouter les contraintes de précédence, de disponiblité et d'échéance
+// Rajouter les contraintes de précédence, de préemption, de disponibilité et d'échéance
 ProgrammationTache* PT = new ProgrammationTache(d, h, TU);
 programmations.append(PT);
 }
+
+
+
+ProgrammationActivite* ProgActiviteManager::trouverProgrammation(const ProgrammationActivite& PA) const{
+    for (int i = 0; i < programmations.size(); ++i)
+        if (&PA == programmations[i]) return programmations[i];
+    return 0;
+}
+
+void ProgActiviteManager::ajouterProgrammation(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l){
+if (trouverProgrammation(ProgrammationActivite(d, h, t, desc, l))) {throw CalendarException("erreur, ProgActiviteManager, activité déjà existante");}
+ProgrammationActivite* PA = new ProgrammationActivite(d, h, t, desc, l);
+programmations.append(PA);
+}
+
 
 
 
