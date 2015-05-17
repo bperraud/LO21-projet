@@ -73,7 +73,13 @@ int main(int argc, char *argv[]){
     T4C.addSousTache(&TM.getTache("T3"));
     T4C.rmSousTache(&T2);
     ListTaches LT; LT << &T2 << &T4;
-    dynamic_cast<TacheComposite&>(TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches())).setSousTaches(LT);
+    TM.ajouterTacheComposite(
+                FabriqueTacheC::getInstance().creerTacheC(
+                    "T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches()
+                    )
+                ).setSousTaches(LT);
+
+    //dynamic_cast<TacheComposite&>(TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches())).setSousTaches(LT);
 
     //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";
 

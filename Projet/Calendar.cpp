@@ -91,18 +91,18 @@ Tache* TacheManager::trouverTache(const QString& titre)const{
 	return 0;
 }
 
-Tache& TacheManager::ajouterTacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
-    if (trouverTache(t)) {throw CalendarException("erreur, TacheManager, tache deja existante");}
-    Tache* newt = new TacheUnitaire(t,desc,dur,dispo,deadline,preempt);
-    taches.append(newt);
-    return *newt;
+Tache& TacheManager::ajouterTache(Tache& T){
+    if (trouverTache(T.getTitre())) {throw CalendarException("erreur, TacheManager, tache deja existante");}
+    taches.append(&T);
+    return T;
 }
 
-Tache& TacheManager::ajouterTacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& LT){
-    if (trouverTache(t)) {throw CalendarException("erreur, TacheManager, tache deja existante");}
-    Tache* newt = new TacheComposite(t,desc,dispo,deadline,LT);
-    taches.append(newt);
-    return *newt;
+TacheUnitaire& TacheManager::ajouterTacheUnitaire(TacheUnitaire& TU){
+    return dynamic_cast<TacheUnitaire&>(ajouterTache(TU));
+}
+
+TacheComposite& TacheManager::ajouterTacheComposite(TacheComposite& TC){
+    return dynamic_cast<TacheComposite&>(ajouterTache(TC));
 }
 
 Tache& TacheManager::getTache(const QString& titre){
@@ -215,10 +215,14 @@ void TacheManager::load(const QString& f){
                 }
                 //qDebug()<<"ajout tache "<<titre<<"\n";
                 // Tache unitaire
-                if(unitaire) ajouterTacheUnitaire(titre,description,duree,disponibilite,echeance,preemptive);
+                if(unitaire){
+                    ajouterTache(FabriqueTacheU::getInstance().creerTacheU(titre, description, duree, disponibilite, echeance, preemptive));
+                    //ajouterTacheUnitaire(titre,description,duree,disponibilite,echeance,preemptive);
+                }
                 // Tache composite
                 else{
-                    ajouterTacheComposite(titre,description,disponibilite,echeance,ListTaches());
+                    ajouterTache(FabriqueTacheC::getInstance().creerTacheC(titre, description, disponibilite, echeance, ListTaches()));
+                    //ajouterTacheComposite(titre,description,disponibilite,echeance,ListTaches());
                     unitaire = true;
                 }
             }
@@ -326,4 +330,30 @@ void TacheInformateur::visitTacheUnitaire(TacheUnitaire* TU){
 }
 void TacheInformateur::visitTacheComposite(TacheComposite* TC){
     qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
+}
+
+/* --- Design Pattern Abstract Factory --- */
+
+FabriqueTacheU::Handler FabriqueTacheU::handler=FabriqueTacheU::Handler();
+
+FabriqueTacheU& FabriqueTacheU::getInstance(){
+    if (handler.instance==0) handler.instance=new FabriqueTacheU;
+    return *(handler.instance);
+}
+
+void FabriqueTacheU::libererInstance(){
+    if (handler.instance!=0) delete handler.instance;
+    handler.instance=0;
+}
+
+FabriqueTacheC::Handler FabriqueTacheC::handler=FabriqueTacheC::Handler();
+
+FabriqueTacheC& FabriqueTacheC::getInstance(){
+    if (handler.instance==0) handler.instance=new FabriqueTacheC;
+    return *(handler.instance);
+}
+
+void FabriqueTacheC::libererInstance(){
+    if (handler.instance!=0) delete handler.instance;
+    handler.instance=0;
 }

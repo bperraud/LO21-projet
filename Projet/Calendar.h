@@ -56,7 +56,7 @@ class TacheVisitor;
 
 /* ----- [BEGIN] Design Pattern Composite ----- */
 
-class Tache{
+class Tache{ // Abstraite
 protected:
     QString titre;
     QString description;
@@ -64,30 +64,25 @@ protected:
     QDate echeance;
 
 private:
-    Tache(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
-            titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
     Tache(const Tache& t);
     Tache& operator=(const Tache&);
 
-    // Amitiés pour que les classes filles puissent utiliser le constructeur de Tache
-    friend class TacheUnitaire;
-    friend class TacheComposite;
 public:
+    Tache(){}
+    Tache(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
+            titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
     virtual ~Tache(){}
+
     QString getTitre() const { return titre; }
     void setTitre(const QString& str);
     QString getDescription() const { return description; }
     void setDescription(const QString& str) { description=str; }
     QDate getDateDisponibilite() const {  return disponibilite; }
     QDate getDateEcheance() const {  return echeance; }
-    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e) {
+    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
         if (e<disp) throw CalendarException("erreur tâche : date echéance < date disponibilité");
         disponibilite=disp; echeance=e;
     }
-    /*virtual Duree getDuree() const =0;
-    virtual void setDuree(const Duree& d) =0;
-    virtual bool isPreemptive() const =0;
-    virtual void setPreemptive(bool b = true) =0;*/
 
     virtual void ajouterInfos(QString& liste){
         liste.append(this->getTitre()).append("\n")
@@ -110,11 +105,12 @@ class TacheUnitaire : public Tache{
 private:
     Duree duree;
     bool preemptive;
+    TacheUnitaire(){}
     TacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
             Tache(t, desc, dispo, deadline), duree(dur), preemptive(preempt){
         if (!preempt && dur.getDureeEnHeures()>12) throw CalendarException("erreur tâche unitaire non preemptive et durée > 12h");
     }
-    friend class TacheManager;
+    friend class FabriqueTacheU;
 public:
     ~TacheUnitaire(){}
     Duree getDuree() const { return duree; }
@@ -149,19 +145,16 @@ public:
 class TacheComposite : public Tache{
 private:
     ListTaches sousTaches;
+    TacheComposite(){}
     TacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT):
             Tache(t, desc, dispo, deadline), sousTaches(sT){}
-    friend class TacheManager;
+    friend class FabriqueTacheC;
 public:
     ~TacheComposite(){}
     const ListTaches& getSousTaches() const { return sousTaches; }
     void setSousTaches(const ListTaches& sT);
     void addSousTache(const Tache* t);
     void rmSousTache(const Tache* t);
-    /*Duree getDuree() const { return Duree(); }
-    void setDuree(const Duree&){}
-    bool isPreemptive() const { return false; }
-    void setPreemptive(bool){}*/
 
     void ajouterInfos(QString& liste){
         Tache::ajouterInfos(liste);
@@ -211,9 +204,79 @@ public:
 
 
 
+/* ----- [BEGIN]Design Pattern Abstract Factory ----- */
+
+class FabriqueTache{
+    virtual Tache& creerTache() =0;
+public:
+    virtual ~FabriqueTache(){}
+};
+
+class FabriqueTacheU : public FabriqueTache{ // Singleton
+private:
+    FabriqueTacheU():FabriqueTache(){}
+    ~FabriqueTacheU(){}
+    FabriqueTacheU(const FabriqueTacheU&);
+    FabriqueTacheU& operator=(const FabriqueTacheU&);
+    struct Handler{
+        FabriqueTacheU* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; }
+    };
+    static Handler handler;
+    TacheUnitaire& creerTache(){ return *(new TacheUnitaire); }
+public:
+    static FabriqueTacheU& getInstance();
+    static void libererInstance();
+    TacheUnitaire& creerTacheU(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
+        TacheUnitaire& TU = creerTache();
+        TU.setTitre(t);
+        TU.setDescription(desc);
+        TU.setDuree(dur);
+        TU.setDatesDisponibiliteEcheance(dispo, deadline);
+        TU.setPreemptive(preempt);
+        return TU;
+    }
+};
+
+class FabriqueTacheC : public FabriqueTache{ // Singleton
+private:
+    FabriqueTacheC():FabriqueTache(){}
+    ~FabriqueTacheC(){}
+    FabriqueTacheC(const FabriqueTacheC&);
+    FabriqueTacheC& operator=(const FabriqueTacheC&);
+    struct Handler{
+        FabriqueTacheC* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; }
+    };
+    static Handler handler;
+    TacheComposite& creerTache(){ return *(new TacheComposite); }
+public:
+    static FabriqueTacheC& getInstance();
+    static void libererInstance();
+    TacheComposite& creerTacheC(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT){
+        TacheComposite& TC = creerTache();
+        TC.setTitre(t);
+        TC.setDescription(desc);
+        TC.setDatesDisponibiliteEcheance(dispo, deadline);
+        TC.setSousTaches(sT);
+        return TC;
+    }
+};
 
 
-class TacheManager{
+
+
+
+
+/* ----- [END]Design Pattern Factory ----- */
+
+
+
+
+
+class TacheManager{ // Singleton
 private:
     ListTaches taches;
 
@@ -221,19 +284,21 @@ private:
     QString file;
     TacheManager(){}
 	~TacheManager();
-	TacheManager(const TacheManager& um);
-    TacheManager& operator=(const TacheManager& um);
+    TacheManager(const TacheManager&);
+    TacheManager& operator=(const TacheManager&);
 	struct Handler{
 		TacheManager* instance;
 		Handler():instance(0){}
 		~Handler(){ if (instance) delete instance; }
 	};
     static Handler handler;
+    Tache& ajouterTache(Tache& T);
 public:
-    Tache& ajouterTacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false);
-    Tache& ajouterTacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& LT);
-    Tache& getTache(const QString& titre);
+    TacheUnitaire& ajouterTacheUnitaire(TacheUnitaire& TU);
+    TacheComposite& ajouterTacheComposite(TacheComposite& TC);
+
     bool isTacheExistante(const QString& titre) const { return trouverTache(titre)!=0; }
+    Tache& getTache(const QString& titre);
     const Tache& getTache(const QString& titre) const;
     void load(const QString& f);
     void save(const QString& f);
@@ -302,6 +367,10 @@ public:
     }*/
 };
 
+
+
+
+
 class Evenement{
 private:
     QDate date;
@@ -338,12 +407,21 @@ template<class Prog, class Obj> class ProgManager{
 private:
     QList<Prog*> programmations;
     Prog* trouverProgrammation(const Obj& P) const;
-public:
-    QString a;
-};
-/*template<> class ProgManager<ProgrammationActivite, ProgrammationActivite>{
+    ProgManager();
+    virtual ~ProgManager(){}
+    ProgManager(const ProgManager&);
+    ProgManager& operator=(const ProgManager&);
+    struct Handler{
+        ProgManager* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; }
+    };
+    static Handler handler;
 
-};*/
+public:
+
+};
+
 
 class PMTache : public ProgManager<ProgrammationTache, TacheUnitaire>{
 public:
