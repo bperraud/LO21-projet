@@ -83,6 +83,9 @@ int main(int argc, char *argv[]){
 
     //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";
 
+    ProgTacheManager* PTM = ProgTacheManager::getInstance();
+    PTM->ajouterProgrammation(QDate(2016, 2, 15), QTime(2, 0), T2U);
+
     QLabel labelLDT;
     QString listeDeTaches = "Liste des tâches :\n\n";
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)

@@ -3,6 +3,7 @@
 
 #include "CalendarException.h"
 #include "Duree.h"
+#include "Singleton.h"
 
 #include <typeinfo>
 
@@ -168,7 +169,12 @@ public:
 
 
 
-/* ----- [BEGIN]Design Pattern Abstract Factory ----- */
+
+
+
+
+
+/* ----- [BEGIN]Design Pattern Factory ----- */
 
 class FabriqueTache{
     virtual Tache& creerTache() =0;
@@ -367,6 +373,8 @@ public:
     QString getLieu() const { return lieu; }
 };
 
+
+
 class ProgrammationTache : public Evenement{
 private:
     const TacheUnitaire* tache;
@@ -379,38 +387,24 @@ public:
 
 
 
-class Singleton{
+
+class ProgTacheManager : public Singleton<ProgTacheManager>{
 private:
-    Singleton(){}
-    virtual ~Singleton(){}
-    Singleton(const Singleton&);
-    Singleton& operator= (const Singleton&);
-    struct Handler{
-        Singleton* instance;
-        Handler():instance(0){}
-        ~Handler(){ if (instance) delete instance; }
-    };
-    static Handler handler;
-public:
-    static Singleton& getInstance();
-    static void libererInstance();
-};
-
-template<typename T> class ProgManager : public Singleton{
-protected:
-    QList<T*> programmations;
-};
-
-
-class ProgTacheManager : public ProgManager<ProgrammationTache>{
-private:
+    ProgTacheManager():Singleton<ProgTacheManager>(){}
+    friend class Singleton<ProgTacheManager>;
+    QList<ProgrammationTache*> programmations;
     ProgrammationTache* trouverProgrammation(const TacheUnitaire& TU) const;
 public:
     void ajouterProgrammation(const QDate& d, const QTime& h, const TacheUnitaire& TU);
 };
 
-class ProgActiviteManager : public ProgManager<ProgrammationActivite>{
+class ProgTacheManager;
+
+class ProgActiviteManager : public Singleton<ProgActiviteManager>{
 private:
+    ProgActiviteManager():Singleton<ProgActiviteManager>(){}
+    friend class Singleton<ProgActiviteManager>;
+    QList<ProgrammationActivite*> programmations;
     ProgrammationActivite* trouverProgrammation(const ProgrammationActivite& PA) const;
 public:
     void ajouterProgrammation(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l);

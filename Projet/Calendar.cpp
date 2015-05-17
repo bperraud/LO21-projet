@@ -242,17 +242,6 @@ void TacheManager::libererInstance(){
 
 
 
-// Classe Singleton //
-
-Singleton::Handler Singleton::handler = Singleton::Handler();
-Singleton& Singleton::getInstance(){
-    if (handler.instance==0) handler.instance=new Singleton;
-    return *(handler.instance);
-}
-void Singleton::libererInstance(){
-    if (handler.instance!=0) delete handler.instance;
-    handler.instance=0;
-}
 
 
 ProgrammationTache* ProgTacheManager::trouverProgrammation(const TacheUnitaire& TU) const{
@@ -301,7 +290,7 @@ void TacheInformateur::visitTacheComposite(TacheComposite* TC){
     qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
 }
 
-/* --- Design Pattern Abstract Factory --- */
+/* --- Design Pattern Factory --- */
 
 FabriqueTacheU::Handler FabriqueTacheU::handler=FabriqueTacheU::Handler();
 

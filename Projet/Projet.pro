@@ -6,7 +6,8 @@ HEADERS += \
     Calendar.h \
     TacheEditeur.h \
     Duree.h \
-    CalendarException.h
+    CalendarException.h \
+    Singleton.h
 
 SOURCES += \
     Calendar.cpp \
