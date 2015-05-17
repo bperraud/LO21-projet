@@ -371,6 +371,7 @@ public:
 
 
 
+
 class Evenement{
 private:
     QDate date;
@@ -393,9 +394,11 @@ private:
 
     ProgrammationActivite(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l)
         :Evenement(d, h), titre(t), description(desc), lieu(l){}
+    friend class ProgActiviteManager;
 public:
 
     QString getTitre() const { return titre; }
+
     QString getDescription() const { return description; }
     QString getLieu() const { return lieu; }
 };
@@ -442,7 +445,12 @@ public:
     void ajouterProgrammation(const QDate& d, const QTime& h, const TacheUnitaire& TU);
 };
 
-
+class ProgActiviteManager : public ProgManager<ProgrammationActivite>{
+private:
+    ProgrammationActivite* trouverProgrammation(const ProgrammationActivite& PA) const;
+public:
+    void ajouterProgrammation(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l);
+};
 
 
 
