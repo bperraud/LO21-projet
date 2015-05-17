@@ -51,21 +51,25 @@ private:
 QTextStream& operator<<(QTextStream& f, const Duree & d);
 QTextStream& operator>>(QTextStream&, Duree&); //lecture format hhHmm
 
-
+class TacheUnitaire;
 class TacheVisitor;
 
+/* ----- [BEGIN] Design Pattern Composite ----- */
+
 class Tache{
-private:
+protected:
     QString titre;
     QString description;
     QDate disponibilite;
     QDate echeance;
 
+private:
     Tache(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
             titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
     Tache(const Tache& t);
     Tache& operator=(const Tache&);
 
+    // Amitiés pour que les classes filles puissent utiliser le constructeur de Tache
     friend class TacheUnitaire;
     friend class TacheComposite;
 public:
@@ -181,13 +185,15 @@ public:
     void accept(TacheVisitor* v);
 };
 
+/* ----- [END] Design Pattern Composite ----- */
+
 struct HierarchyTachesC{
     QString mere;
     QString fille;
     HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
 };
 
-/* --- [BEGIN]Design Pattern Visitor --- */
+/* ----- [BEGIN]Design Pattern Visitor ----- */
 
 class TacheVisitor{
 public:
@@ -201,7 +207,7 @@ public:
     void visitTacheComposite(TacheComposite* TC);
 };
 
-/* --- [END]Design Pattern Visitor --- */
+/* ----- [END]Design Pattern Visitor ----- */
 
 
 
