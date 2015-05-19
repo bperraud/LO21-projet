@@ -3,25 +3,29 @@
 
 template <typename T> class Singleton{
 private:
-    static T* instance;
+    struct Handler{
+        T* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; }
+    };
+    static Handler handler;
 protected:
     Singleton(){}
     ~Singleton(){}
 public:
     static T* getInstance(){
-        if (!instance) instance = new T;
-        return (static_cast<T*>(instance));
+        if (!handler.instance) handler.instance = new T;
+        return (static_cast<T*>(handler.instance));
     }
     static void libererInstance(){
-        if (instance){
-            delete instance;
-            instance = 0;
+        if (handler.instance){
+            delete handler.instance;
+            handler.instance = 0;
         }
     }
 };
 
 template <typename T>
-T *Singleton<T>::instance = 0;
+typename Singleton<T>::Handler Singleton<T>::handler = Singleton<T>::Handler();
 
 #endif // SINGLETON_H
-
