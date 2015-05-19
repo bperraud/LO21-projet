@@ -229,8 +229,6 @@ public:
 
 class ProgTacheManager : public Singleton<ProgTacheManager>{
 private:
-    ProgTacheManager():Singleton<ProgTacheManager>(){}
-    friend class Singleton<ProgTacheManager>;
     QList<ProgrammationTache*> programmations;
     ProgrammationTache* trouverProgrammation(const TacheUnitaire& TU) const;
 public:
@@ -241,13 +239,46 @@ class ProgTacheManager;
 
 class ProgActiviteManager : public Singleton<ProgActiviteManager>{
 private:
-    ProgActiviteManager():Singleton<ProgActiviteManager>(){}
-    friend class Singleton<ProgActiviteManager>;
     QList<ProgrammationActivite*> programmations;
     ProgrammationActivite* trouverProgrammation(const ProgrammationActivite& PA) const;
 public:
     void ajouterProgrammation(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l);
 };
+
+
+
+
+
+
+
+/* ----- [BEGIN]Projet ----- */
+
+class Projet{
+private:
+    QString titre;
+    QString description;
+    QDate disponibilite;
+    QDate echeance; // L’échéance d’un projet est une borne supérieure de l’ensemble des échéances des tâches de ce projet
+    ListTaches taches;
+public:
+    QString getTitre() const { return titre; }
+    void setTitre(const QString& str);
+    QString getDescription() const { return description; }
+    void setDescription(const QString& str);
+    QDate getDateDisponibilite() const { return disponibilite; }
+    QDate getDateEcheance() const { return echeance; }
+    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
+        if (e<disp) throw CalendarException("erreur tâche : date échéance < date disponibilité");
+        for (int i = 0; i < taches.size(); ++i)
+            if(e<taches[i]->getDateEcheance()) throw CalendarException("erreur projet : date échéance < échéance d'une tache");
+        disponibilite=disp; echeance=e;
+    }
+};
+
+/* ----- [END]Projet ----- */
+
+
+
 
 
 
