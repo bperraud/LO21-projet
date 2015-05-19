@@ -2,8 +2,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "TacheEditeur.h"
 #include "Calendar.h"
+#include "TacheManager.h"
+#include "TacheEditeur.h"
 
 TacheEditeur::TacheEditeur(TacheUnitaire& tacheToEdit, QWidget* parent) : QWidget(parent), tache(tacheToEdit){
 
@@ -88,7 +89,7 @@ TacheEditeur::TacheEditeur(TacheUnitaire& tacheToEdit, QWidget* parent) : QWidge
 
 
 void TacheEditeur::sauverTache(){
-    TacheManager& TM = TacheManager::getInstance();
+    TacheManager& TM = *TacheManager::getInstance();
     // Si le titre de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
     if (TM.isTacheExistante(titre->text())
         && &(TM.getTache(titre->text())) != &tache){

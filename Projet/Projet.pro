@@ -7,10 +7,12 @@ HEADERS += \
     TacheEditeur.h \
     Duree.h \
     CalendarException.h \
-    Singleton.h
+    Singleton.h \
+    TacheManager.h
 
 SOURCES += \
     Calendar.cpp \
     main.cpp \
     TacheEditeur.cpp \
-    Duree.cpp
+    Duree.cpp \
+    TacheManager.cpp
