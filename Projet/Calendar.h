@@ -33,7 +33,6 @@ private:
     Tache& operator=(const Tache&);
 
 public:
-    Tache(){}
     Tache(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
             titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
     virtual ~Tache(){}
@@ -42,10 +41,10 @@ public:
     void setTitre(const QString& str);
     QString getDescription() const { return description; }
     void setDescription(const QString& str) { description=str; }
-    QDate getDateDisponibilite() const {  return disponibilite; }
-    QDate getDateEcheance() const {  return echeance; }
+    QDate getDateDisponibilite() const { return disponibilite; }
+    QDate getDateEcheance() const { return echeance; }
     void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
-        if (e<disp) throw CalendarException("erreur tâche : date echéance < date disponibilité");
+        if (e<disp) throw CalendarException("erreur tâche : date échéance < date disponibilité");
         disponibilite=disp; echeance=e;
     }
 
@@ -70,12 +69,12 @@ class TacheUnitaire : public Tache{
 private:
     Duree duree;
     bool preemptive;
-    TacheUnitaire(){}
     TacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
             Tache(t, desc, dispo, deadline), duree(dur), preemptive(preempt){
         if (!preempt && dur.getDureeEnHeures()>12) throw CalendarException("erreur tâche unitaire non preemptive et durée > 12h");
     }
     friend class FabriqueTacheU;
+    friend class TacheManager;
 public:
     ~TacheUnitaire(){}
     Duree getDuree() const { return duree; }
@@ -110,10 +109,10 @@ public:
 class TacheComposite : public Tache{
 private:
     ListTaches sousTaches;
-    TacheComposite(){}
     TacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT):
             Tache(t, desc, dispo, deadline), sousTaches(sT){}
     friend class FabriqueTacheC;
+    friend class TacheManager;
 public:
     ~TacheComposite(){}
     const ListTaches& getSousTaches() const { return sousTaches; }
@@ -174,168 +173,8 @@ public:
 
 
 
-/* ----- [BEGIN]Design Pattern Factory ----- */
-
-class FabriqueTache{
-    virtual Tache& creerTache() =0;
-public:
-    virtual ~FabriqueTache(){}
-};
-
-class FabriqueTacheU : public FabriqueTache{ // Singleton
-private:
-    FabriqueTacheU():FabriqueTache(){}
-    ~FabriqueTacheU(){}
-    FabriqueTacheU(const FabriqueTacheU&);
-    FabriqueTacheU& operator=(const FabriqueTacheU&);
-    struct Handler{
-        FabriqueTacheU* instance;
-        Handler():instance(0){}
-        ~Handler(){ if (instance) delete instance; }
-    };
-    static Handler handler;
-    TacheUnitaire& creerTache(){ return *(new TacheUnitaire); }
-public:
-    static FabriqueTacheU& getInstance();
-    static void libererInstance();
-    TacheUnitaire& creerTacheU(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
-        TacheUnitaire& TU = creerTache();
-        TU.setTitre(t);
-        TU.setDescription(desc);
-        TU.setDuree(dur);
-        TU.setDatesDisponibiliteEcheance(dispo, deadline);
-        TU.setPreemptive(preempt);
-        return TU;
-    }
-};
-
-class FabriqueTacheC : public FabriqueTache{ // Singleton
-private:
-    FabriqueTacheC():FabriqueTache(){}
-    ~FabriqueTacheC(){}
-    FabriqueTacheC(const FabriqueTacheC&);
-    FabriqueTacheC& operator=(const FabriqueTacheC&);
-    struct Handler{
-        FabriqueTacheC* instance;
-        Handler():instance(0){}
-        ~Handler(){ if (instance) delete instance; }
-    };
-    static Handler handler;
-    TacheComposite& creerTache(){ return *(new TacheComposite); }
-public:
-    static FabriqueTacheC& getInstance();
-    static void libererInstance();
-    TacheComposite& creerTacheC(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT){
-        TacheComposite& TC = creerTache();
-        TC.setTitre(t);
-        TC.setDescription(desc);
-        TC.setDatesDisponibiliteEcheance(dispo, deadline);
-        TC.setSousTaches(sT);
-        return TC;
-    }
-};
 
 
-
-
-
-
-/* ----- [END]Design Pattern Factory ----- */
-
-
-
-
-
-class TacheManager{ // Singleton
-private:
-    ListTaches taches;
-
-    Tache* trouverTache(const QString& titre) const;
-    QString file;
-    TacheManager(){}
-	~TacheManager();
-    TacheManager(const TacheManager&);
-    TacheManager& operator=(const TacheManager&);
-	struct Handler{
-		TacheManager* instance;
-		Handler():instance(0){}
-		~Handler(){ if (instance) delete instance; }
-	};
-    static Handler handler;
-    Tache& ajouterTache(Tache& T);
-public:
-    TacheUnitaire& ajouterTacheUnitaire(TacheUnitaire& TU);
-    TacheComposite& ajouterTacheComposite(TacheComposite& TC);
-
-    bool isTacheExistante(const QString& titre) const { return trouverTache(titre)!=0; }
-    Tache& getTache(const QString& titre);
-    const Tache& getTache(const QString& titre) const;
-    void load(const QString& f);
-    void save(const QString& f);
-	static TacheManager& getInstance();
-	static void libererInstance();
-
-    class iterator{
-        ListTaches::iterator current;
-        iterator(ListTaches::iterator u):current(u){}
-        friend class TacheManager;
-    public:
-        iterator(){}
-        Tache& operator*() const { return **current; }
-        bool operator!=(iterator it) const { return current != it.current; }
-        iterator& operator++(){ ++current ; return *this; }
-    };
-
-    iterator begin(){ return iterator(taches.begin()); }
-    iterator end(){ return iterator(taches.end()); }
-
-
-    class const_iterator{
-        ListTaches::const_iterator current;
-        const_iterator(ListTaches::const_iterator u):current(u){}
-        friend class TacheManager;
-    public:
-        const_iterator(){}
-        const Tache& operator*() const { return **current; }
-        bool operator!=(const_iterator it) const { return current != it.current; }
-        const_iterator& operator++(){ ++current; return *this; }
-
-    };
-    const_iterator begin() const { return const_iterator(taches.begin()); }
-    const_iterator end() const { return const_iterator(taches.end()); }
-
-
-    /*
-    class DisponibiliteFilterIterator {
-        friend class TacheManager;
-        Tache** currentTache;
-        unsigned int nbRemain;
-        QDate dispo;
-        DisponibiliteFilterIterator(Tache** u, unsigned nb, const QDate& d):currentTache(u),nbRemain(nb),dispo(d){
-            while(nbRemain>0 && dispo<(*currentTache)->getDateDisponibilite()){
-                nbRemain--; currentTache++;
-            }
-        }
-    public:
-        //DisponibiliteFilterIterator():nbRemain(0),currentTache(0){}
-        bool isDone() const { return nbRemain==0; }
-        void next() {
-            if (isDone())
-                throw CalendarException("error, next on an iterator which is done");
-            do {
-                nbRemain--; currentTache++;
-            }while(nbRemain>0 && dispo<(*currentTache)->getDateDisponibilite());
-        }
-        Tache& current() const {
-            if (isDone())
-                throw CalendarException("error, indirection on an iterator which is done");
-            return **currentTache;
-        }
-    };
-    DisponibiliteFilterIterator getDisponibiliteFilterIterator(const QDate& d) {
-        return DisponibiliteFilterIterator(taches,nb,d);
-    }*/
-};
 
 
 
