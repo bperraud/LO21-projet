@@ -18,13 +18,63 @@ QTextStream& operator<<(QTextStream& fout, const Tache& t){
 	return fout;
 }
 
-QTextStream& operator<<(QDataStream& f, const ProgrammationTache& p);
-
+QTextStream& operator<<(QTextStream& fout, const ProgrammationTache& p){
+    fout<<p.getDate().toString()<<"\n";
+    fout<<p.getHoraire().toString()<<"\n";
+    fout<<p.getTache().getTitre()<<"\n";
+    return fout;
+}
 
 
 void Tache::setTitre(const QString& str){
   if (TacheManager::getInstance()->isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
   titre=str;
+}
+
+void Tache::ajouterInfos(QString& liste){
+    liste.append(this->getTitre()).append("\n")
+            .append(this->getDescription()).append("\n")
+            .append(this->getDateDisponibilite().toString()).append("\n")
+            .append(this->getDateEcheance().toString()).append("\n");
+}
+
+void TacheUnitaire::ajouterInfos(QString& liste){
+    Tache::ajouterInfos(liste);
+    liste.append(QString::number(this->getDuree().getDureeEnMinutes())).append("min\n")
+            .append(QString(this->isPreemptive() ? "preemptive" : "non preemptive")).append("\n")
+            .append("\n\n");
+}
+
+void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
+    stream.writeStartElement("tache");
+    stream.writeAttribute("preemptive", (this->isPreemptive())?"true":"false");
+    stream.writeTextElement("titre", this->getTitre());
+    stream.writeTextElement("description", this->getDescription());
+    stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
+    stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+    QString str;
+    str.setNum(this->getDuree().getDureeEnMinutes());
+    stream.writeTextElement("duree",str);
+    stream.writeEndElement();
+}
+
+void TacheComposite::ajouterInfos(QString& liste){
+    Tache::ajouterInfos(liste);
+    liste.append("composite").append("\n");
+    for (int i = 0; i < sousTaches.size(); ++i)
+        liste.append("sous-tache : ").append(sousTaches[i]->getTitre()).append("\n");
+    liste.append("\n\n");
+}
+
+void TacheComposite::saveTache(QXmlStreamWriter& stream){
+    stream.writeStartElement("tache");
+    stream.writeTextElement("titre", this->getTitre());
+    stream.writeTextElement("description", this->getDescription());
+    stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
+    stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+    for (int i = 0; i < this->getSousTaches().size(); ++i)
+        stream.writeTextElement("sous-tache", this->getSousTaches()[i]->getTitre());
+    stream.writeEndElement();
 }
 
 void TacheComposite::setSousTaches(const ListTaches &sT){
@@ -105,6 +155,35 @@ void TacheInformateur::visitTacheComposite(TacheComposite* TC){
     qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
 }
 
-/* --- Design Pattern Factory --- */
 
 
+/* --- [BEGIN]ProjetManager --- */
+
+Projet* ProjetManager::trouverProjet(const QString& titre) const{
+    for (int i = 0; i < projets.size(); ++i){
+        if (titre == (projets.at(i))->getTitre()) return projets[i];
+    }
+    return 0;
+}
+
+Projet& ProjetManager::ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches){
+    Projet* P = new Projet(t, desc, dispo, deadline, Taches);
+    if (trouverProjet(P->getTitre())) {throw CalendarException("erreur, ProjetManager, projet déjà existant");}
+    projets.append(P);
+    return *P;
+}
+
+Projet& ProjetManager::getProjet(const QString& titre){
+    Projet* p=trouverProjet(titre);
+    if (!p) throw CalendarException("erreur, ProjetManager, projet inexistant");
+    return *p;
+}
+
+const Projet& ProjetManager::getProjet(const QString& titre) const{
+    return const_cast<ProjetManager*>(this)->getProjet(titre);
+}
+
+//void load(const QString& f);
+//void save(const QString& f);
+
+/* --- [END]ProjetManager --- */

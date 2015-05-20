@@ -13,8 +13,8 @@ private:
 public:
     ~TacheManager();
 
-    TacheUnitaire& ajouterTacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt);
-    TacheComposite& ajouterTacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT);
+    TacheUnitaire& ajouterTacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false);
+    TacheComposite& ajouterTacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT=ListTaches());
 
     bool isTacheExistante(const QString& titre) const { return trouverTache(titre)!=0; }
 

@@ -48,13 +48,7 @@ public:
         disponibilite=disp; echeance=e;
     }
 
-    virtual void ajouterInfos(QString& liste){
-        liste.append(this->getTitre()).append("\n")
-                .append(this->getDescription()).append("\n")
-                .append(this->getDateDisponibilite().toString()).append("\n")
-                .append(this->getDateEcheance().toString()).append("\n");
-    }
-
+    virtual void ajouterInfos(QString& liste);
     virtual void saveTache(QXmlStreamWriter& stream) =0;
     virtual bool isTacheUnitaire() const =0;
 
@@ -73,34 +67,16 @@ private:
             Tache(t, desc, dispo, deadline), duree(dur), preemptive(preempt){
         if (!preempt && dur.getDureeEnHeures()>12) throw CalendarException("erreur tâche unitaire non preemptive et durée > 12h");
     }
-    friend class FabriqueTacheU;
     friend class TacheManager;
 public:
-    ~TacheUnitaire(){}
     Duree getDuree() const { return duree; }
     void setDuree(const Duree& d) { duree=d; }
     bool isPreemptive() const { return preemptive; }
     void setPreemptive(bool b = true) { preemptive=b; }
 
-    void ajouterInfos(QString& liste){
-        Tache::ajouterInfos(liste);
-        liste.append(QString::number(this->getDuree().getDureeEnMinutes())).append("min\n")
-                .append(QString(this->isPreemptive() ? "preemptive" : "non preemptive")).append("\n")
-                .append("\n\n");
-    }
+    void ajouterInfos(QString& liste);
 
-    void saveTache(QXmlStreamWriter& stream){
-        stream.writeStartElement("tache");
-        stream.writeAttribute("preemptive", (this->isPreemptive())?"true":"false");
-        stream.writeTextElement("titre", this->getTitre());
-        stream.writeTextElement("description", this->getDescription());
-        stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
-        stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
-        QString str;
-        str.setNum(this->getDuree().getDureeEnMinutes());
-        stream.writeTextElement("duree",str);
-        stream.writeEndElement();
-    }
+    void saveTache(QXmlStreamWriter& stream);
     bool isTacheUnitaire() const { return true; }
     void accept(TacheVisitor* v);
 };
@@ -109,35 +85,18 @@ public:
 class TacheComposite : public Tache{
 private:
     ListTaches sousTaches;
-    TacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT):
+    TacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT=ListTaches()):
             Tache(t, desc, dispo, deadline), sousTaches(sT){}
-    friend class FabriqueTacheC;
     friend class TacheManager;
 public:
-    ~TacheComposite(){}
     const ListTaches& getSousTaches() const { return sousTaches; }
     void setSousTaches(const ListTaches& sT);
     void addSousTache(const Tache* t);
     void rmSousTache(const Tache* t);
 
-    void ajouterInfos(QString& liste){
-        Tache::ajouterInfos(liste);
-        liste.append("composite").append("\n");
-        for (int i = 0; i < sousTaches.size(); ++i)
-            liste.append("sous-tache : ").append(sousTaches[i]->getTitre()).append("\n");
-        liste.append("\n\n");
-    }
+    void ajouterInfos(QString& liste);
 
-    void saveTache(QXmlStreamWriter& stream){
-        stream.writeStartElement("tache");
-        stream.writeTextElement("titre", this->getTitre());
-        stream.writeTextElement("description", this->getDescription());
-        stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
-        stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
-        for (int i = 0; i < this->getSousTaches().size(); ++i)
-            stream.writeTextElement("sous-tache", this->getSousTaches()[i]->getTitre());
-        stream.writeEndElement();
-    }
+    void saveTache(QXmlStreamWriter& stream);
     bool isTacheUnitaire() const { return false; }
     void accept(TacheVisitor* v);
 };
@@ -165,18 +124,6 @@ public:
 };
 
 /* ----- [END]Design Pattern Visitor ----- */
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -248,9 +195,6 @@ public:
 
 
 
-
-
-
 /* ----- [BEGIN]Projet ----- */
 
 class Projet{
@@ -260,6 +204,9 @@ private:
     QDate disponibilite;
     QDate echeance; // L’échéance d’un projet est une borne supérieure de l’ensemble des échéances des tâches de ce projet
     ListTaches taches;
+    Projet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches):
+            titre(t), description(desc), disponibilite(dispo), echeance(deadline), taches(Taches){}
+    friend class ProjetManager;
 public:
     QString getTitre() const { return titre; }
     void setTitre(const QString& str);
@@ -275,7 +222,54 @@ public:
     }
 };
 
+typedef QList<Projet*> ListProjet;
+
 /* ----- [END]Projet ----- */
+
+class ProjetManager : public Singleton<ProjetManager>{
+private:
+    ListProjet projets;
+    Projet* trouverProjet(const QString& titre) const;
+public:
+    Projet& ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches=ListTaches());
+
+    bool isProjetExistant(const QString& titre) const { return trouverProjet(titre)!=0; }
+
+    Projet& getProjet(const QString& titre);
+    const Projet& getProjet(const QString& titre) const;
+
+    //void load(const QString& f);
+    //void save(const QString& f);
+
+    class iterator{
+        ListProjet::iterator current;
+        iterator(ListProjet::iterator u):current(u){}
+        friend class ProjetManager;
+    public:
+        iterator(){}
+        Projet& operator*() const { return **current; }
+        bool operator!=(iterator it) const { return current != it.current; }
+        iterator& operator++(){ ++current ; return *this; }
+    };
+
+    iterator begin(){ return iterator(projets.begin()); }
+    iterator end(){ return iterator(projets.end()); }
+
+
+    class const_iterator{
+        ListProjet::const_iterator current;
+        const_iterator(ListProjet::const_iterator u):current(u){}
+        friend class ProjetManager;
+    public:
+        const_iterator(){}
+        const Projet& operator*() const { return **current; }
+        bool operator!=(const_iterator it) const { return current != it.current; }
+        const_iterator& operator++(){ ++current; return *this; }
+
+    };
+    const_iterator begin() const { return const_iterator(projets.begin()); }
+    const_iterator end() const { return const_iterator(projets.end()); }
+};
 
 
 

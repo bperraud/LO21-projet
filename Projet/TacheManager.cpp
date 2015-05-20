@@ -1,9 +1,7 @@
 #include "TacheManager.h"
 #include "CalendarException.h"
 
-/* ----- [BEGIN]TacheManager ----- */
-
-Tache* TacheManager::trouverTache(const QString& titre)const{
+Tache* TacheManager::trouverTache(const QString& titre) const{
     for (int i = 0; i < taches.size(); ++i){
         if (titre == (taches.at(i))->getTitre()) return taches[i];
     }
@@ -11,7 +9,7 @@ Tache* TacheManager::trouverTache(const QString& titre)const{
 }
 
 void TacheManager::ajouterTache(Tache& T){
-    if (trouverTache(T.getTitre())) {throw CalendarException("erreur, TacheManager, tache deja existante");}
+    if (trouverTache(T.getTitre())) {throw CalendarException("erreur, TacheManager, tâche déjà existante");}
     taches.append(&T);
 }
 
@@ -176,8 +174,3 @@ void  TacheManager::save(const QString& f){
     stream.writeEndDocument();
     newfile.close();
 }
-
-
-
-
-/* ----- [END]TacheManager ----- */
