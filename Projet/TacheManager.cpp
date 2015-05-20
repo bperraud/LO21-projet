@@ -47,7 +47,6 @@ void TacheManager::load(const QString& f){
     file=f;
     QFile fin(file);
 
-    QList<HierarchyTachesC> TachesC;
     // If we can't open it, let's show an error message.
     if (!fin.open(QIODevice::ReadOnly | QIODevice::Text))
         throw CalendarException("Erreur ouverture fichier tâches");
@@ -123,7 +122,7 @@ void TacheManager::load(const QString& f){
                         // We've found sous-tache
                         if(xml.name() == "sous-tache"){
                             xml.readNext();
-                            TachesC.append(HierarchyTachesC(titre, xml.text().toString()));
+                            hierarchie.append(HierarchyTachesC(titre, xml.text().toString()));
                             unitaire = false;
                             //sousTaches.append(&getTache(xml.text().toString()));
                             //qDebug()<<"sous-tache\n";
@@ -141,7 +140,7 @@ void TacheManager::load(const QString& f){
                 }
                 // Tache composite
                 else{
-                    ajouterTacheComposite(titre, description, disponibilite, echeance, ListTaches());
+                    ajouterTacheComposite(titre, description, disponibilite, echeance);
                     //ajouterTacheComposite(titre,description,disponibilite,echeance,ListTaches());
                     unitaire = true;
                 }
@@ -154,8 +153,8 @@ void TacheManager::load(const QString& f){
     // Removes any device() or data from the reader * and resets its internal state to the initial state.
     xml.clear();
     // Traitement des taches composites (ajout de leurs sous-taches
-    for (int i = 0; i < TachesC.size(); ++i)
-        dynamic_cast<TacheComposite&>(getTache(TachesC[i].mere)).addSousTache(&getTache(TachesC[i].fille));
+    for (int i = 0; i < hierarchie.size(); ++i)
+        dynamic_cast<TacheComposite&>(getTache(hierarchie[i].mere)).addSousTache(&getTache(hierarchie[i].fille));
     //qDebug()<<"fin load\n";
 }
 

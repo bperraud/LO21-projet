@@ -15,7 +15,6 @@
 #include <QtXml>
 
 
-class TacheUnitaire;
 class TacheVisitor;
 
 
@@ -103,11 +102,7 @@ public:
 
 /* ----- [END] Design Pattern Composite ----- */
 
-struct HierarchyTachesC{
-    QString mere;
-    QString fille;
-    HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
-};
+
 
 /* ----- [BEGIN]Design Pattern Visitor ----- */
 
@@ -220,6 +215,10 @@ public:
             if(e<taches[i]->getDateEcheance()) throw CalendarException("erreur projet : date échéance < échéance d'une tache");
         disponibilite=disp; echeance=e;
     }
+    const ListTaches& getTaches() const { return taches; }
+    void setTaches(const ListTaches& T);
+    void addTache(const Tache* t);
+    void rmTache(const Tache* t);
 };
 
 typedef QList<Projet*> ListProjet;
@@ -229,11 +228,21 @@ typedef QList<Projet*> ListProjet;
 class ProjetManager : public Singleton<ProjetManager>{
 private:
     ListProjet projets;
+    struct HierarchyProjet{
+        QString projet;
+        QString tache;
+        HierarchyProjet(QString p, QString t):projet(p),tache(t){}
+    };
+    QList<HierarchyProjet> hierarchie;
+    friend void Projet::setTaches(const ListTaches& T);
+    friend void Projet::addTache(const Tache* t);
+    friend void ProjetrmTache(const Tache* t);
     Projet* trouverProjet(const QString& titre) const;
 public:
     Projet& ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches=ListTaches());
 
     bool isProjetExistant(const QString& titre) const { return trouverProjet(titre)!=0; }
+    bool isTacheInProjet(const Tache& t);
 
     Projet& getProjet(const QString& titre);
     const Projet& getProjet(const QString& titre) const;

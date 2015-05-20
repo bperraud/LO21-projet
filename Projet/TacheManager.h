@@ -8,6 +8,13 @@ private:
     ListTaches taches;
     QString file;
 
+    struct HierarchyTachesC{
+        QString mere;
+        QString fille;
+        HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
+    };
+    QList<HierarchyTachesC> hierarchie;
+
     Tache* trouverTache(const QString& titre) const;
     void ajouterTache(Tache& T);
 public:
@@ -53,6 +60,8 @@ public:
     };
     const_iterator begin() const { return const_iterator(taches.begin()); }
     const_iterator end() const { return const_iterator(taches.end()); }
+
+
 
 
     /*

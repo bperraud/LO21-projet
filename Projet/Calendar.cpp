@@ -80,7 +80,7 @@ void TacheComposite::saveTache(QXmlStreamWriter& stream){
 void TacheComposite::setSousTaches(const ListTaches &sT){
     for (int i = 0; i < sT.size(); ++i)
         if (!TacheManager::getInstance()->isTacheExistante(sT[i]->getTitre()))
-            throw CalendarException("Erreur tâche composite, tâche unitaire non trouvée");
+            throw CalendarException("Erreur tâche composite, tâche non trouvée");
     sousTaches = sT;
 }
 
@@ -155,7 +155,40 @@ void TacheInformateur::visitTacheComposite(TacheComposite* TC){
     qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
 }
 
+/* --- [BEGIN]Projet --- */
 
+
+void Projet::setTaches(const ListTaches &T){
+    for (int i = 0; i < T.size(); ++i){
+        if (!TacheManager::getInstance()->isTacheExistante(T[i]->getTitre()))
+            throw CalendarException("Erreur projet, tâche non trouvée");
+        if (ProjetManager::getInstance()->isTacheInProjet(*T[i]))
+            throw CalendarException("Erreur projet, tâche appartenant déjà à un projet");
+    }
+    for (int i = 0; i < T.size(); ++i)
+        ProjetManager::getInstance()->hierarchie.append(ProjetManager::HierarchyProjet(this->getTitre(), T[i]->getTitre()));
+    taches = T;
+}
+
+void Projet::addTache(const Tache* t){
+    for (int i = 0; i < taches.size(); ++i)
+        if (taches[i] == t) throw CalendarException("erreur, Projet, tâche déjà existante");
+    if (ProjetManager::getInstance()->isTacheInProjet(*t))
+        throw CalendarException("Erreur projet, tâche appartenant déjà à un projet");
+    taches.append(const_cast<Tache*>(t));
+}
+
+void Projet::rmTache(const Tache* t){
+    for (int i = 0; i < taches.size(); ++i){
+        if (taches[i] == t){
+            taches.removeAt(i);
+            return;
+        }
+    }
+    throw CalendarException("erreur, Projet, tâche à supprimer non trouvée");
+}
+
+/* --- [END]Projet --- */
 
 /* --- [BEGIN]ProjetManager --- */
 
@@ -169,6 +202,9 @@ Projet* ProjetManager::trouverProjet(const QString& titre) const{
 Projet& ProjetManager::ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches){
     Projet* P = new Projet(t, desc, dispo, deadline, Taches);
     if (trouverProjet(P->getTitre())) {throw CalendarException("erreur, ProjetManager, projet déjà existant");}
+    for (int i = 0; i < Taches.size(); ++i)
+        if (isTacheInProjet(*Taches[i]))
+            throw CalendarException("Erreur ProjetManager, tâche appartenant déjà à un projet");
     projets.append(P);
     return *P;
 }
@@ -181,6 +217,13 @@ Projet& ProjetManager::getProjet(const QString& titre){
 
 const Projet& ProjetManager::getProjet(const QString& titre) const{
     return const_cast<ProjetManager*>(this)->getProjet(titre);
+}
+
+bool ProjetManager::isTacheInProjet(const Tache& t){
+    for (int i = 0; i < hierarchie.size(); ++i)
+        if (hierarchie[i].tache == t.getTitre())
+            return true;
+    return false;
 }
 
 //void load(const QString& f);
