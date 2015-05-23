@@ -62,8 +62,8 @@ int main(int argc, char *argv[]){
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
 
-    //QString chemin = QFileDialog::getOpenFileName();
-    QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
+    QString chemin = QFileDialog::getOpenFileName();
+    //QString chemin = "C:/Users/Fabien/Documents/GitHub/LO21-projet/Projet/taches.xml";
     /* Utiliser la ligne ci-dessus pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
 
