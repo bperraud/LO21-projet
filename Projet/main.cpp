@@ -8,7 +8,7 @@
 #include <QTabWidget>
 #include <QMenuBar>
 #include <QMenu>
-#include <QAbstractScrollArea>
+#include <QScrollArea>
 
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -29,6 +29,10 @@ int main(int argc, char *argv[]){
     fenetre.setMinimumWidth(800);
     fenetre.setMinimumHeight(768);
 
+
+
+
+
     /*QMenuBar menubar(&fenetre);
     QMenu menu1("menu 1");
     menubar.addMenu(&menu1);*/
@@ -43,10 +47,14 @@ int main(int argc, char *argv[]){
 
     TM.load(chemin);
 
+    //qDebug() << "checkpoint 1\n";
+
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
     TacheUnitaire& T2U = dynamic_cast<TacheUnitaire&>(T2);
     TacheEditeur TE(T2U);
+
+
 
     QPushButton buttonChargerTache("Charger tâche");
     buttonChargerTache.setFixedWidth(128);
@@ -55,6 +63,8 @@ int main(int argc, char *argv[]){
     QTabWidget OngletsManager(&fenetre);
     //OngletsManager.setGeometry(32, 32, 800, 600);
     OngletsManager.setMinimumWidth(800);
+
+
 
 
     QWidget onglet1, onglet2;
@@ -68,6 +78,10 @@ int main(int argc, char *argv[]){
     //TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
     //ListTaches LT; LT << &T1 << &T2;
     //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT);
+
+
+
+
 
     Tache& T4 = TM.getTache("T4");
     TacheComposite& T4C = dynamic_cast<TacheComposite&>(T4);
@@ -143,6 +157,10 @@ int main(int argc, char *argv[]){
     //treeView->expandAll();
 
 
+
+
+
+
     QTableView* tableView = new QTableView;
     QStringList ListJours, ListHeures;
     ListJours << "Lundi" << "Mardi" << "Mercredi" << "Jeudi" << "Vendredi" << "Samedi" << "Dimanche";
@@ -169,17 +187,25 @@ int main(int argc, char *argv[]){
 
 
     QVBoxLayout layout1, layout2;
+    QScrollArea scrollareaLDT, scrollareaTE;
 
     layout1.addWidget(&hello);
     layout1.addWidget(treeView);
     layout1.addWidget(tableView);
     layout2.addWidget(&buttonChargerTache);
-    layout2.addWidget(&labelLDT);
-    layout2.addWidget(&TE);
+    layout2.addWidget(&scrollareaLDT);
+    layout2.addWidget(&scrollareaTE);
+
+    scrollareaLDT.setWidget(&labelLDT);
+    scrollareaTE.setWidget(&TE);
+
     onglet1.setLayout(&layout1);
     onglet2.setLayout(&layout2);
     OngletsManager.addTab(&onglet1, "Onglet no 1");
     OngletsManager.addTab(&onglet2, "Onglet Tache Editeur");
+
+
+
 
 
 

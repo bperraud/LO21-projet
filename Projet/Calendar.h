@@ -233,10 +233,10 @@ private:
         QString tache;
         HierarchyProjet(QString p, QString t):projet(p),tache(t){}
     };
-    QList<HierarchyProjet> hierarchie;
+    QList<HierarchyProjet*> hierarchie;
     friend void Projet::setTaches(const ListTaches& T);
     friend void Projet::addTache(const Tache* t);
-    friend void ProjetrmTache(const Tache* t);
+    friend void Projet::rmTache(const Tache* t);
     Projet* trouverProjet(const QString& titre) const;
 public:
     Projet& ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches=ListTaches());

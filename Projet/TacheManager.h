@@ -13,7 +13,10 @@ private:
         QString fille;
         HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
     };
-    QList<HierarchyTachesC> hierarchie;
+    QList<HierarchyTachesC*> hierarchie;
+    friend void TacheComposite::setSousTaches(const ListTaches& sT);
+    friend void TacheComposite::addSousTache(const Tache* t);
+    friend void TacheComposite::rmSousTache(const Tache* t);
 
     Tache* trouverTache(const QString& titre) const;
     void ajouterTache(Tache& T);
