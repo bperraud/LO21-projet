@@ -243,12 +243,14 @@ typedef QList<Projet*> ListProjet;
 class ProjetManager : public Singleton<ProjetManager>{
 private:
     ListProjet projets;
-    struct HierarchyProjet{
+    /*struct HierarchyProjet{
         QString projet;
         QString tache;
         HierarchyProjet(QString p, QString t):projet(p),tache(t){}
     };
-    QList<HierarchyProjet*> hierarchie;
+    QList<HierarchyProjet*> hierarchie;*/
+
+    QHash<QString, QString> tabParent;
     friend void Projet::setTaches(const ListTaches& T);
     friend void Projet::addTache(const Tache* t);
     friend void Projet::rmTache(const Tache* t);

@@ -34,6 +34,8 @@ void ajouterTacheTree(QStandardItem* pere, Tache& tache){// Fonction récursive 
 }
 
 
+
+
 int main(int argc, char *argv[]){
 
     QApplication app(argc, argv);
@@ -53,6 +55,8 @@ int main(int argc, char *argv[]){
 
 
     TacheManager& TM = *TacheManager::getInstance();
+    ProjetManager& PM = *ProjetManager::getInstance();
+
     //QString chemin = QFileDialog::getOpenFileName();
     QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
     /* Utiliser la ligne ci-dessus pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
@@ -109,6 +113,9 @@ int main(int argc, char *argv[]){
     ListTaches LT; LT << &T2 << &T4;
     TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
 
+
+    PM.ajouterProjet("P1", "Projet no1", QDate(2011, 01, 01), QDate(2020, 01, 01));
+    PM.getProjet("P1").addTache(&TM.getTache("T5"));
     //dynamic_cast<TacheComposite&>(TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches())).setSousTaches(LT);
 
     //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";

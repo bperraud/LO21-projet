@@ -9,19 +9,10 @@ class TacheManager : public Singleton<TacheManager>{
 private:
     ListTaches taches;
     QString file;
-
-    /*struct HierarchyTachesC{
-        QString mere;
-        QString fille;
-        HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
-    };
-    QList<HierarchyTachesC*> hierarchie;*/
-
+    QHash<QString, QString> tabParent;
     friend void TacheComposite::setSousTaches(const ListTaches& sT);
     friend void TacheComposite::addSousTache(const Tache* t);
     friend void TacheComposite::rmSousTache(const Tache* t);
-
-    QHash<QString, QString> tabParent;
 
     Tache* trouverTache(const QString& titre) const;
     void ajouterTache(Tache& T);
