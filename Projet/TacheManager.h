@@ -3,20 +3,25 @@
 
 #include "Calendar.h"
 
+#include <QHash>
+
 class TacheManager : public Singleton<TacheManager>{
 private:
     ListTaches taches;
     QString file;
 
-    struct HierarchyTachesC{
+    /*struct HierarchyTachesC{
         QString mere;
         QString fille;
         HierarchyTachesC(QString m, QString f):mere(m),fille(f){}
     };
-    QList<HierarchyTachesC*> hierarchie;
+    QList<HierarchyTachesC*> hierarchie;*/
+
     friend void TacheComposite::setSousTaches(const ListTaches& sT);
     friend void TacheComposite::addSousTache(const Tache* t);
     friend void TacheComposite::rmSousTache(const Tache* t);
+
+    QHash<QString, QString> tabParent;
 
     Tache* trouverTache(const QString& titre) const;
     void ajouterTache(Tache& T);
@@ -30,6 +35,9 @@ public:
 
     Tache& getTache(const QString& titre);
     const Tache& getTache(const QString& titre) const;
+
+    Tache* getTacheMere(const Tache& t);
+    const Tache* getTacheMere(const Tache& t) const;
 
     void load(const QString& f);
     void save(const QString& f);

@@ -35,6 +35,17 @@ const Tache& TacheManager::getTache(const QString& titre)const{
     return const_cast<TacheManager*>(this)->getTache(titre);
 }
 
+
+Tache* TacheManager::getTacheMere(const Tache& t){
+    if (tabParent.contains(t.getTitre()))
+        return &getTache(tabParent.value(t.getTitre()));
+    return 0;
+}
+
+const Tache* TacheManager::getTacheMere(const Tache& t)const{
+    return const_cast<TacheManager*>(this)->getTacheMere(t);
+}
+
 TacheManager::~TacheManager(){
     if (file!="") save(file);
     for (int i = 0; i < taches.size(); ++i) delete taches[i];
@@ -42,11 +53,11 @@ TacheManager::~TacheManager(){
 }
 
 void TacheManager::load(const QString& f){
-    //qDebug()<<"debut load\n";
+    qDebug()<<"debut load\n";
     this->~TacheManager();
     file=f;
     QFile fin(file);
-    QList<HierarchyTachesC*> hierarchieTemp;
+    //QList<HierarchyTachesC*> hierarchieTemp;
 
     // If we can't open it, let's show an error message.
     if (!fin.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -123,7 +134,8 @@ void TacheManager::load(const QString& f){
                         // We've found sous-tache
                         if(xml.name() == "sous-tache"){
                             xml.readNext();
-                            hierarchieTemp.append(new HierarchyTachesC(titre, xml.text().toString()));
+                            //hierarchieTemp.append(new HierarchyTachesC(titre, xml.text().toString()));
+                            tabParent.insert(xml.text().toString(), titre);
                             unitaire = false;
                             //qDebug()<<"sous-tache\n";
                         }
@@ -142,6 +154,7 @@ void TacheManager::load(const QString& f){
                     ajouterTacheComposite(titre, description, disponibilite, echeance);
                     unitaire = true;
                 }
+                //tabParent.insert(titre, "");
             }
         }
     }
@@ -152,11 +165,18 @@ void TacheManager::load(const QString& f){
     xml.clear();
     // Traitement des taches composites (ajout de leurs sous-taches
     //qDebug()<<"début traitement sous taches\n";
-    for (int i = 0; i < hierarchieTemp.size(); ++i){
+    /*for (int i = 0; i < hierarchieTemp.size(); ++i){
         dynamic_cast<TacheComposite&>(getTache(hierarchieTemp[i]->mere)).addSousTache(&getTache(hierarchieTemp[i]->fille));
+        //tabParent.insert(hierarchieTemp[i]->fille, hierarchieTemp[i]->mere);
         delete hierarchieTemp[i];
-    }
-    //qDebug()<<"fin load\n";
+    }*/
+    for (QHash<QString, QString>::const_iterator i = tabParent.constBegin(); i != tabParent.constEnd(); ++i)
+        dynamic_cast<TacheComposite&>(getTache(i.value())).addSousTache(&getTache(i.key()));
+
+    //if (tab.contains("T1")) qDebug() << "T1" << tab["T1"] << "\n";
+
+
+    qDebug()<<"fin load\n";
 }
 
 void  TacheManager::save(const QString& f){

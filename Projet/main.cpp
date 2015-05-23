@@ -20,6 +20,19 @@
 #include "TacheManager.h"
 #include "TacheEditeur.h"
 
+void ajouterTacheTree(QStandardItem* pere, Tache& tache){// Fonction récursive pour la tree-view
+    QStandardItem* newItem =  new QStandardItem(tache.getTitre());
+    pere->appendRow(newItem);
+    newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+    if(!tache.isTacheUnitaire()){
+        TacheComposite& TC = dynamic_cast<TacheComposite&>(tache);
+        if (!TC.getSousTaches().isEmpty()){
+            for (int i = 0; i < TC.getSousTaches().size(); ++i)
+                ajouterTacheTree(newItem, *TC.getSousTaches()[i]);
+        }
+    }
+}
+
 
 int main(int argc, char *argv[]){
 
@@ -29,7 +42,7 @@ int main(int argc, char *argv[]){
     fenetre.setMinimumWidth(800);
     fenetre.setMinimumHeight(768);
 
-
+    //try{
 
 
 
@@ -85,7 +98,13 @@ int main(int argc, char *argv[]){
 
     Tache& T4 = TM.getTache("T4");
     TacheComposite& T4C = dynamic_cast<TacheComposite&>(T4);
+
+    qDebug() << "checkpoint1\n";
+
     T4C.addSousTache(&TM.getTache("T3"));
+
+    qDebug() << "checkpoint2\n";
+
     T4C.rmSousTache(&T2);
     ListTaches LT; LT << &T2 << &T4;
     TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
@@ -112,49 +131,28 @@ int main(int argc, char *argv[]){
     treeView->setHeaderHidden(true);
     QStandardItemModel* TacheModel = new QStandardItemModel;
     //TacheModel->setHorizontalHeaderLabels (QStringList(QString("toto")));
-    QStandardItem *rootNode = TacheModel->invisibleRootItem();
+    QStandardItem* rootNode = TacheModel->invisibleRootItem();
 
-    //defining a couple of items
-    QStandardItem *americaItem = new QStandardItem(QString("America"));
-    QStandardItem *mexicoItem =  new QStandardItem("Canada");
-    QStandardItem *usaItem =     new QStandardItem("USA");
-    QStandardItem *bostonItem =  new QStandardItem("Boston");
-    QStandardItem *europeItem =  new QStandardItem("Europe");
-    QStandardItem *italyItem =   new QStandardItem("Italy");
-    QStandardItem *romeItem =    new QStandardItem("Rome");
-    QStandardItem *veronaItem =  new QStandardItem("Verona");
 
-    QList<QStandardItem*> ItemList;
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
-        QStandardItem* tache = new QStandardItem((*i).getTitre());
-        //tache->setData(QVariant::fromValue(5));
-        ItemList.append(tache);
-    }
-
-    // Pour empêcher l'édition des lignes
-    for (int i = 0; i < ItemList.size(); ++i)
-        ItemList[i]->setFlags(ItemList[i]->flags() & ~Qt::ItemIsEditable);
 
     //building up the hierarchy
 
-    /*void ajouterFils(QStandardItem* pere){
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        if (!TM.getTacheMere(*i)){
+            qDebug() << (*i).getTitre() << " n'a pas de parent\n";
+            ajouterTacheTree(rootNode, *i);
+        }
+    }
 
-    }*/
+    // Pour empêcher l'édition des lignes
+    /*for (int i = 0; i < ItemList.size(); ++i)
+        ItemList[i]->setFlags(ItemList[i]->flags() & ~Qt::ItemIsEditable);*/
 
-    rootNode->appendRows(ItemList);
 
-    rootNode->    appendRow(americaItem);
-    rootNode->    appendRow(europeItem);
-    americaItem-> appendRow(mexicoItem);
-    americaItem-> appendRow(usaItem);
-    usaItem->     appendRow(bostonItem);
-    europeItem->  appendRow(italyItem);
-    italyItem->   appendRow(romeItem);
-    italyItem->   appendRow(veronaItem);
 
     //register the model
     treeView->setModel(TacheModel);
-    //treeView->expandAll();
+    treeView->expandAll();
 
 
 
@@ -204,7 +202,7 @@ int main(int argc, char *argv[]){
     OngletsManager.addTab(&onglet1, "Onglet no 1");
     OngletsManager.addTab(&onglet2, "Onglet Tache Editeur");
 
-
+    //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}
 
 
 

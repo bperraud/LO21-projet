@@ -10,6 +10,7 @@
 #include <QString>
 #include <QDate>
 
+
 #include <QDebug>
 #include <QTextCodec>
 #include <QtXml>
@@ -101,6 +102,20 @@ public:
 };
 
 /* ----- [END] Design Pattern Composite ----- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

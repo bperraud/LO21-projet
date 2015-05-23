@@ -78,39 +78,45 @@ void TacheComposite::saveTache(QXmlStreamWriter& stream){
 }
 
 void TacheComposite::setSousTaches(const ListTaches &sT){
-    for (int i = 0; i < TacheManager::getInstance()->hierarchie.size(); ++i)
+    /*for (int i = 0; i < TacheManager::getInstance()->hierarchie.size(); ++i)
         if (TacheManager::getInstance()->hierarchie[i]->mere == this->getTitre()){
             delete TacheManager::getInstance()->hierarchie[i];
             TacheManager::getInstance()->hierarchie.removeAt(i);
-        }
+        }*/
     for (int i = 0; i < sT.size(); ++i){
         if (!TacheManager::getInstance()->isTacheExistante(sT[i]->getTitre()))
             throw CalendarException("Erreur tâche composite, tâche non trouvée");
-        TacheManager::getInstance()->hierarchie.append(new TacheManager::HierarchyTachesC(this->getTitre(), sT[i]->getTitre()));
+        //TacheManager::getInstance()->hierarchie.append(new TacheManager::HierarchyTachesC(this->getTitre(), sT[i]->getTitre()));
+        TacheManager::getInstance()->tabParent.insert(sT[i]->getTitre(), this->getTitre());
     }
     sousTaches = sT;
 }
 
 void TacheComposite::addSousTache(const Tache* t){
+    qDebug() << "début addSousTache\n";
+    qDebug() << "this : " << this->getTitre() << "\n";
+    qDebug() << "à rajouter : " << t->getTitre() << "\n";
     for (int i = 0; i < sousTaches.size(); ++i)
         if (sousTaches[i] == t) throw CalendarException("erreur, TacheComposite, tâche déjà existante");
     sousTaches.append(const_cast<Tache*>(t));
-    TacheManager::getInstance()->hierarchie.append(new TacheManager::HierarchyTachesC(this->getTitre(), t->getTitre()));
+    //TacheManager::getInstance()->hierarchie.append(new TacheManager::HierarchyTachesC(this->getTitre(), t->getTitre()));
+    TacheManager::getInstance()->tabParent.insert(t->getTitre(), this->getTitre());
 }
 
 void TacheComposite::rmSousTache(const Tache* t){
     for (int i = 0; i < sousTaches.size(); ++i){
         if (sousTaches[i] == t){
             sousTaches.removeAt(i);
-            for (int j = 0; j < TacheManager::getInstance()->hierarchie.size(); ++j){
+            /*for (int j = 0; j < TacheManager::getInstance()->hierarchie.size(); ++j){
                 if (TacheManager::getInstance()->hierarchie[j]->mere == this->getTitre()
                         && TacheManager::getInstance()->hierarchie[j]->fille == t->getTitre()){
                     delete TacheManager::getInstance()->hierarchie[j];
-                    TacheManager::getInstance()->hierarchie.removeAt(j);
+                    TacheManager::getInstance()->hierarchie.removeAt(j);*/
+                    TacheManager::getInstance()->tabParent.remove(t->getTitre());
                     return;
-                }
-            }
-            throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée (hiérarchie)");
+                //}
+            //}
+            //throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée (hiérarchie)");
         }
     }
     throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");
@@ -170,6 +176,8 @@ void TacheInformateur::visitTacheUnitaire(TacheUnitaire* TU){
 void TacheInformateur::visitTacheComposite(TacheComposite* TC){
     qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
 }
+
+
 
 /* --- [BEGIN]Projet --- */
 
