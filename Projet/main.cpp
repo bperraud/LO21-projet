@@ -23,7 +23,7 @@
 void ajouterTacheTree(QStandardItem* pere, Tache& tache){// Fonction récursive pour la tree-view
     QStandardItem* newItem =  new QStandardItem(tache.getTitre());
     pere->appendRow(newItem);
-    newItem->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
+    newItem->setEditable(false);
     if(!tache.isTacheUnitaire()){
         TacheComposite& TC = dynamic_cast<TacheComposite&>(tache);
         if (!TC.getSousTaches().isEmpty()){
@@ -33,6 +33,11 @@ void ajouterTacheTree(QStandardItem* pere, Tache& tache){// Fonction récursive 
     }
 }
 
+void ajouterProjetTree(QStandardItem* root, Projet& projet){
+    QStandardItem* newItem =  new QStandardItem(projet.getTitre());
+    root->appendRow(newItem);
+    newItem->setEditable(false);
+}
 
 
 
@@ -103,19 +108,19 @@ int main(int argc, char *argv[]){
     Tache& T4 = TM.getTache("T4");
     TacheComposite& T4C = dynamic_cast<TacheComposite&>(T4);
 
-    qDebug() << "checkpoint1\n";
 
     T4C.addSousTache(&TM.getTache("T3"));
 
-    qDebug() << "checkpoint2\n";
 
     T4C.rmSousTache(&T2);
     ListTaches LT; LT << &T2 << &T4;
     TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
 
+    TM.ajouterTacheUnitaire("T6", "tache sans projet", Duree(2, 0), QDate(2015, 4, 3), QDate(2015, 7, 23));
 
-    PM.ajouterProjet("P1", "Projet no1", QDate(2011, 01, 01), QDate(2020, 01, 01));
+    PM.ajouterProjet("P1", "Projet no1", QDate(2011, 01, 01), QDate(2020, 1, 1));
     PM.getProjet("P1").addTache(&TM.getTache("T5"));
+    PM.ajouterProjet("P2", "Projet no2", QDate(2012, 01, 01), QDate(2025, 1, 1));
     //dynamic_cast<TacheComposite&>(TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches())).setSousTaches(LT);
 
     //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";
@@ -134,34 +139,40 @@ int main(int argc, char *argv[]){
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
         (*i).accept(&informateur);
 
-    QTreeView* treeView = new QTreeView;
-    treeView->setHeaderHidden(true);
+
+
+    //treeViewProjets
+    QTreeView* treeViewProjets = new QTreeView;
+    QStandardItemModel* ProjetModel = new QStandardItemModel;
+    QList<QString> treePLabels; treePLabels << "Projets et tâches associées";
+    ProjetModel->setHorizontalHeaderLabels (QStringList(treePLabels));
+    //treeViewProjets->setHeaderHidden(true);
+    QStandardItem* rootNodeP = ProjetModel->invisibleRootItem();
+
+    //treeViewTaches
+    QTreeView* treeViewTaches = new QTreeView;
     QStandardItemModel* TacheModel = new QStandardItemModel;
-    //TacheModel->setHorizontalHeaderLabels (QStringList(QString("toto")));
-    QStandardItem* rootNode = TacheModel->invisibleRootItem();
-
-
+    QList<QString> treeTLabels; treeTLabels << "Tâches hors projet";
+    TacheModel->setHorizontalHeaderLabels (QStringList(treeTLabels));
+    //treeViewTaches->setHeaderHidden(true);
+    QStandardItem* rootNodeT = TacheModel->invisibleRootItem();
 
     //building up the hierarchy
 
+    for (ProjetManager::iterator i = PM.begin(); i != PM.end(); ++i)
+        ajouterProjetTree(rootNodeP, *i);
+
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
         if (!TM.getTacheMere(*i)){
-            qDebug() << (*i).getTitre() << " n'a pas de parent\n";
-            ajouterTacheTree(rootNode, *i);
+            Projet* P = PM.getProjet(*i);
+            if (P) ajouterTacheTree(ProjetModel->findItems(P->getTitre()).first(), *i);
+            else ajouterTacheTree(rootNodeT, *i);
         }
     }
-
-    // Pour empêcher l'édition des lignes
-    /*for (int i = 0; i < ItemList.size(); ++i)
-        ItemList[i]->setFlags(ItemList[i]->flags() & ~Qt::ItemIsEditable);*/
-
-
-
-    //register the model
-    treeView->setModel(TacheModel);
-    treeView->expandAll();
-
-
+    treeViewProjets->setModel(ProjetModel);
+    treeViewProjets->expandAll();
+    treeViewTaches->setModel(TacheModel);
+    treeViewTaches->expandAll();
 
 
 
@@ -195,7 +206,8 @@ int main(int argc, char *argv[]){
     QScrollArea scrollareaLDT, scrollareaTE;
 
     layout1.addWidget(&hello);
-    layout1.addWidget(treeView);
+    layout1.addWidget(treeViewProjets);
+    layout1.addWidget(treeViewTaches);
     layout1.addWidget(tableView);
     layout2.addWidget(&buttonChargerTache);
     layout2.addWidget(&scrollareaLDT);
