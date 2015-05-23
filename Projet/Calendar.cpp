@@ -115,11 +115,21 @@ void TacheComposite::rmSousTache(const Tache* t){
 //Etablir comment trouver les précédences d'une tache + vérifier que précédence pas déjà existante.
 
 
-void PrecedenceManager::ajouterPrecedence(Tache &Tpred, Tache &Tsucc){
+void PrecedenceManager::ajouterPrecedence(const Tache &Tpred, const Tache &Tsucc){
     Precedence* P = new Precedence(Tpred, Tsucc);
+    for (int i = 0; i < precedences.size(); ++i)
+        if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
+            throw CalendarException("erreur, PrecedenceManager, précédence déjà existante");
     precedences.append(P);
 }
 
+ListTachesConst PrecedenceManager::trouverPrecedences(const Tache& Tsucc) const{
+    ListTachesConst LT;
+    for (int i = 0; i < precedences.size(); ++i)
+        if (&precedences[i]->getSuccesseur() == &Tsucc)
+            LT.append(&precedences[i]->getPredecesseur());
+    return LT;
+}
 
 //******************************************************************************************
 // ProgTacheManager

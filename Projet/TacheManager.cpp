@@ -2,6 +2,8 @@
 #include "CalendarException.h"
 
 Tache* TacheManager::trouverTache(const QString& titre) const{
+    //qDebug() << "début trouverTache\n";
+    //qDebug() << "taches.size :" << QString::number(taches.size()) << "\n";
     for (int i = 0; i < taches.size(); ++i){
         if (titre == (taches.at(i))->getTitre()) return taches[i];
     }
@@ -9,11 +11,14 @@ Tache* TacheManager::trouverTache(const QString& titre) const{
 }
 
 void TacheManager::ajouterTache(Tache& T){
+    //qDebug() << "début ajouterTache\n";
+    //qDebug() << T.getTitre() << "\n";
     if (trouverTache(T.getTitre())) {throw CalendarException("erreur, TacheManager, tâche déjà existante");}
     taches.append(&T);
 }
 
 TacheUnitaire& TacheManager::ajouterTacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
+    //qDebug() << "début ajouterTacheUnitaire\n";
     TacheUnitaire* TU = new TacheUnitaire(t, desc, dur, dispo, deadline, preempt);
     ajouterTache(*TU);
     return *TU;
@@ -59,7 +64,7 @@ TacheManager::~TacheManager(){
 }
 
 void TacheManager::load(const QString& f){
-    //qDebug()<<"debut load\n";
+    qDebug()<<"debut load\n";
     this->~TacheManager();
     file=f;
     QFile fin(file);
@@ -110,7 +115,7 @@ void TacheManager::load(const QString& f){
                         // We've found identificateur
                         if(xml.name() == "titre"){
                             xml.readNext(); titre=xml.text().toString();
-                            //qDebug()<<"id="<<titre<<"\n";
+                            qDebug()<<"id="<<titre<<"\n";
                         }
 
                         // We've found description
@@ -170,7 +175,7 @@ void TacheManager::load(const QString& f){
     // Traitement des taches composites (ajout de leurs sous-taches)
     for (QHash<QString, QString>::const_iterator i = tabParent.constBegin(); i != tabParent.constEnd(); ++i)
         dynamic_cast<TacheComposite&>(getTache(i.value())).addSousTache(&getTache(i.key()));
-    //qDebug()<<"fin load\n";
+    qDebug()<<"fin load\n";
 }
 
 void  TacheManager::save(const QString& f){

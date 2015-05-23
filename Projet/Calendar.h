@@ -111,22 +111,25 @@ public:
 
 class Precedence;
 
+typedef QList<const Tache*> ListTachesConst;
+
 class PrecedenceManager: public Singleton<PrecedenceManager> {
 private:
     QList<Precedence*> precedences;
 public:
-    void ajouterPrecedence(Tache& Tpred, Tache& Tsucc);
+    void ajouterPrecedence(const Tache& Tpred,const Tache& Tsucc);
+    ListTachesConst trouverPrecedences(const Tache& Tsucc) const;
 };
 
 class Precedence {
 private:
-    Tache* pred;
-    Tache* succ;
-    Precedence(Tache& i, Tache& j): pred(&i), succ(&j){}
+    const Tache* pred;
+    const Tache* succ;
+    Precedence(const Tache& i, const Tache& j): pred(&i), succ(&j){}
 public:
-    Tache& getPredecesseur() const { return *pred;}
-    Tache& getSuccesseur() const { return *succ;}
-    friend void PrecedenceManager::ajouterPrecedence(Tache& Tpred, Tache& Tsucc);
+    const Tache& getPredecesseur() const { return *pred;}
+    const Tache& getSuccesseur() const { return *succ;}
+    friend void PrecedenceManager::ajouterPrecedence(const Tache& Tpred, const Tache& Tsucc);
 };
 
 
@@ -134,7 +137,7 @@ public:
 
 
 
-/* ----- [BEGIN] Précédences ----- */
+/* ----- [END] Précédences ----- */
 
 
 

@@ -60,15 +60,15 @@ int main(int argc, char *argv[]){
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
 
-    TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",Duree(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
-    TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",Duree(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
+    //TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",Duree(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
+    //TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",Duree(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
 
     //QString chemin = QFileDialog::getOpenFileName();
-    //QString chemin = "C:/Users/Fabien/Documents/GitHub/LO21-projet/Projet/taches.xml";
-    /* Utiliser la ligne ci-dessus pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
+    QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
+    /* Utiliser la ligne ci-dessous pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
 
-    //TM.load(chemin);
+    TM.load(chemin);
 
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
@@ -96,9 +96,9 @@ int main(int argc, char *argv[]){
                  "lorsque des événements couvrent plusieures heures. Je pense aussi que c'est plus simple qu'on\n"
                  "restreigne les durées aux demi-heures (ou quarts d'heure).");
 
-    TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
+    //TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
     ListTaches LT1; LT1 << &T1 << &T2;
-    TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
+    //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
 
 
 
@@ -138,7 +138,7 @@ int main(int argc, char *argv[]){
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
         (*i).accept(&informateur);
 
-
+    //qDebug() << "checkpoint1\n";
 
     //treeViewProjets
     QTreeView* treeViewProjets = new QTreeView;
@@ -174,7 +174,7 @@ int main(int argc, char *argv[]){
     treeViewTaches->expandAll();
 
 
-
+    //qDebug() << "checkpoint2\n";
 
     QTableView* tableView = new QTableView;
     QStringList ListJours, ListHeures;
@@ -197,7 +197,7 @@ int main(int argc, char *argv[]){
 
     tableView->setSpan(0, 0, 2, 1); //sets the 1st row 1st column cell to span over 2 rows and 1 column
 
-
+    //qDebug() << "checkpoint3\n";
     tableView->setModel(WeekModel);
 
 
