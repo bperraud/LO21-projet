@@ -107,11 +107,34 @@ public:
 
 
 
+/* ----- [BEGIN] Précédences ----- */
+
+class Precedence;
+
+class PrecedenceManager: public Singleton<PrecedenceManager> {
+private:
+    QList<Precedence*> precedences;
+public:
+    void ajouterPrecedence(Tache& Tpred, Tache& Tsucc);
+};
+
+class Precedence {
+private:
+    Tache* pred;
+    Tache* succ;
+    Precedence(Tache& i, Tache& j): pred(&i), succ(&j){}
+public:
+    Tache& getPredecesseur() const { return *pred;}
+    Tache& getSuccesseur() const { return *succ;}
+    friend void PrecedenceManager::ajouterPrecedence(Tache& Tpred, Tache& Tsucc);
+};
 
 
 
 
 
+
+/* ----- [BEGIN] Précédences ----- */
 
 
 

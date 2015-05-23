@@ -57,19 +57,18 @@ int main(int argc, char *argv[]){
     QMenu menu1("menu 1");
     menubar.addMenu(&menu1);*/
 
-
-
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
 
-    QString chemin = QFileDialog::getOpenFileName();
+    TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",Duree(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
+    TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",Duree(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
+
+    //QString chemin = QFileDialog::getOpenFileName();
     //QString chemin = "C:/Users/Fabien/Documents/GitHub/LO21-projet/Projet/taches.xml";
     /* Utiliser la ligne ci-dessus pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
 
-    TM.load(chemin);
-
-    //qDebug() << "checkpoint 1\n";
+    //TM.load(chemin);
 
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
@@ -97,9 +96,9 @@ int main(int argc, char *argv[]){
                  "lorsque des événements couvrent plusieures heures. Je pense aussi que c'est plus simple qu'on\n"
                  "restreigne les durées aux demi-heures (ou quarts d'heure).");
 
-    //TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
-    //ListTaches LT; LT << &T1 << &T2;
-    //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT);
+    TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
+    ListTaches LT1; LT1 << &T1 << &T2;
+    TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
 
 
 

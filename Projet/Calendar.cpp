@@ -109,6 +109,16 @@ void TacheComposite::rmSousTache(const Tache* t){
     throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");
 }
 
+//******************************************************************************************
+// PrecedenceManager
+
+//Etablir comment trouver les précédences d'une tache + vérifier que précédence pas déjà existante.
+
+
+void PrecedenceManager::ajouterPrecedence(Tache &Tpred, Tache &Tsucc){
+    Precedence* P = new Precedence(Tpred, Tsucc);
+    precedences.append(P);
+}
 
 
 //******************************************************************************************
