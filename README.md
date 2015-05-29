@@ -7,12 +7,17 @@ Projet de LO21 P15
 
 ## Done
 
-* Architecture principale
+* Architecture
+	* TacheManager
+	* Héritage des tâches
+* Interface
+	* TreeView
 
 
 ## En cours
 
-* TreeView (Baptiste)
+* Interface (Baptiste)
+	* WeekView
 * TacheEditeur (Fabien)
 
 
