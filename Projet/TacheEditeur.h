@@ -13,6 +13,7 @@
 #include <QCheckBox>
 
 #include "Calendar.h"
+#include "TacheManager.h"
 
 class TacheEditeur : public QWidget{
 Q_OBJECT

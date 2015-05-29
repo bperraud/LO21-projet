@@ -31,21 +31,22 @@ void Tache::setTitre(const QString& str){
   titre=str;
 }
 
-void Tache::ajouterInfos(QString& liste){
-    liste.append(this->getTitre()).append("\n")
-            .append(this->getDescription()).append("\n")
-            .append(this->getDateDisponibilite().toString()).append("\n")
-            .append(this->getDateEcheance().toString()).append("\n");
+void Tache::ajouterInfos(QString& infos) const{
+    infos.append("Titre : ").append(this->getTitre()).append("\n")
+            .append("Description : ").append(this->getDescription()).append("\n")
+            .append("Disponibilité : ").append(this->getDateDisponibilite().toString()).append("\n")
+            .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n");
 }
 
-void TacheUnitaire::ajouterInfos(QString& liste){
-    Tache::ajouterInfos(liste);
-    liste.append(QString::number(this->getDuree().getDureeEnMinutes())).append("min\n")
-            .append(QString(this->isPreemptive() ? "preemptive" : "non preemptive")).append("\n")
-            .append("\n\n");
+
+
+void TacheUnitaire::ajouterInfos(QString& infos) const{
+    Tache::ajouterInfos(infos);
+    infos.append("Durée : ").append(QString::number(this->getDuree().getHeure())).append("h").append(QString::number(this->getDuree().getMinute())).append("\n")
+            .append(QString(this->isPreemptive() ? "Préemptive" : "Non preemptive")).append("\n");
 }
 
-void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
+void TacheUnitaire::saveTache(QXmlStreamWriter& stream) const{
     stream.writeStartElement("tache");
     stream.writeAttribute("preemptive", (this->isPreemptive())?"true":"false");
     stream.writeTextElement("titre", this->getTitre());
@@ -58,15 +59,13 @@ void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
     stream.writeEndElement();
 }
 
-void TacheComposite::ajouterInfos(QString& liste){
-    Tache::ajouterInfos(liste);
-    liste.append("composite").append("\n");
+void TacheComposite::ajouterInfos(QString& infos) const{
+    Tache::ajouterInfos(infos);
     for (int i = 0; i < sousTaches.size(); ++i)
-        liste.append("sous-tache : ").append(sousTaches[i]->getTitre()).append("\n");
-    liste.append("\n\n");
+        infos.append("Sous-tâche : ").append(sousTaches[i]->getTitre()).append("\n");
 }
 
-void TacheComposite::saveTache(QXmlStreamWriter& stream){
+void TacheComposite::saveTache(QXmlStreamWriter& stream) const{
     stream.writeStartElement("tache");
     stream.writeTextElement("titre", this->getTitre());
     stream.writeTextElement("description", this->getDescription());
@@ -217,6 +216,15 @@ void Projet::rmTache(const Tache* t){
         }
     }
     throw CalendarException("erreur, Projet, tâche à supprimer non trouvée");
+}
+
+void Projet::ajouterInfos(QString& infos) const{
+    infos.append("Titre : ").append(this->getTitre()).append("\n")
+            .append("Description : ").append(this->getDescription()).append("\n")
+            .append("Disponibilité : ").append(this->getDateDisponibilite().toString()).append("\n")
+            .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n");
+    for (int i = 0; i < taches.size(); ++i)
+        infos.append("Tâche : ").append(taches[i]->getTitre()).append("\n");
 }
 
 /* --- [END]Projet --- */

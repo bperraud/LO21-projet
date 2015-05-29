@@ -12,32 +12,16 @@
 
 #include <QStandardItemModel>
 #include <QStandardItem>
-#include <QVariant>
-#include <QTreeView>
 #include <QTableView>
 
 #include "Calendar.h"
 #include "TacheManager.h"
 #include "TacheEditeur.h"
+#include "TreeView.h"
 
-void ajouterTacheTree(QStandardItem* pere, Tache& tache){// Fonction récursive pour la tree-view
-    QStandardItem* newItem =  new QStandardItem(tache.getTitre());
-    pere->appendRow(newItem);
-    newItem->setEditable(false);
-    if(!tache.isTacheUnitaire()){
-        TacheComposite& TC = dynamic_cast<TacheComposite&>(tache);
-        if (!TC.getSousTaches().isEmpty()){
-            for (int i = 0; i < TC.getSousTaches().size(); ++i)
-                ajouterTacheTree(newItem, *TC.getSousTaches()[i]);
-        }
-    }
-}
 
-void ajouterProjetTree(QStandardItem* root, Projet& projet){
-    QStandardItem* newItem =  new QStandardItem(projet.getTitre());
-    root->appendRow(newItem);
-    newItem->setEditable(false);
-}
+
+
 
 
 
@@ -88,7 +72,7 @@ int main(int argc, char *argv[]){
 
 
 
-    QWidget onglet1, onglet2;
+    QWidget onglet1, onglet2, ongletTreeView;
     QLabel hello("Hello world. Bon j'imagine que le premier onglet pourrait être cette fameuse vue hebdomadaire synthétique.\n"
                  "Par rapport aux recherches que j'ai faites, la meilleure piste qui s'offre à nous c'est d'utiliser un tableau\n"
                  "avec soit QTableView ou QTableWidget (à voir la différence entre les deux).\n"
@@ -101,7 +85,7 @@ int main(int argc, char *argv[]){
     //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
 
 
-
+    //qDebug() << "checkpoint1\n";
 
 
     Tache& T4 = TM.getTache("T4");
@@ -127,51 +111,14 @@ int main(int argc, char *argv[]){
     ProgTacheManager* PTM = ProgTacheManager::getInstance();
     PTM->ajouterProgrammation(QDate(2016, 2, 15), QTime(2, 0), T2U);
 
-    QLabel labelLDT;
-    QString listeDeTaches = "Liste des tâches :\n\n";
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
-        (*i).ajouterInfos(listeDeTaches);
-    labelLDT.setText(listeDeTaches);
 
     // Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*
     TacheInformateur informateur;
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
         (*i).accept(&informateur);
 
-    //qDebug() << "checkpoint1\n";
 
-    //treeViewProjets
-    QTreeView* treeViewProjets = new QTreeView;
-    QStandardItemModel* ProjetModel = new QStandardItemModel;
-    QList<QString> treePLabels; treePLabels << "Projets et tâches associées";
-    ProjetModel->setHorizontalHeaderLabels (QStringList(treePLabels));
-    //treeViewProjets->setHeaderHidden(true);
-    QStandardItem* rootNodeP = ProjetModel->invisibleRootItem();
 
-    //treeViewTaches
-    QTreeView* treeViewTaches = new QTreeView;
-    QStandardItemModel* TacheModel = new QStandardItemModel;
-    QList<QString> treeTLabels; treeTLabels << "Tâches hors projet";
-    TacheModel->setHorizontalHeaderLabels (QStringList(treeTLabels));
-    //treeViewTaches->setHeaderHidden(true);
-    QStandardItem* rootNodeT = TacheModel->invisibleRootItem();
-
-    //building up the hierarchy
-
-    for (ProjetManager::iterator i = PM.begin(); i != PM.end(); ++i)
-        ajouterProjetTree(rootNodeP, *i);
-
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
-        if (!TM.getTacheMere(*i)){
-            Projet* P = PM.getProjet(*i);
-            if (P) ajouterTacheTree(ProjetModel->findItems(P->getTitre()).first(), *i);
-            else ajouterTacheTree(rootNodeT, *i);
-        }
-    }
-    treeViewProjets->setModel(ProjetModel);
-    treeViewProjets->expandAll();
-    treeViewTaches->setModel(TacheModel);
-    treeViewTaches->expandAll();
 
 
     //qDebug() << "checkpoint2\n";
@@ -201,23 +148,30 @@ int main(int argc, char *argv[]){
     tableView->setModel(WeekModel);
 
 
-    QVBoxLayout layout1, layout2;
-    QScrollArea scrollareaLDT, scrollareaTE;
+
+    TreeView TV;
+
+
+
+    QVBoxLayout layout1, layout2, layoutTreeView;
+    QScrollArea scrollareaTE;
 
     layout1.addWidget(&hello);
-    layout1.addWidget(treeViewProjets);
-    layout1.addWidget(treeViewTaches);
     layout1.addWidget(tableView);
+
+    layoutTreeView.addWidget(&TV);
+
     layout2.addWidget(&buttonChargerTache);
-    layout2.addWidget(&scrollareaLDT);
     layout2.addWidget(&scrollareaTE);
 
-    scrollareaLDT.setWidget(&labelLDT);
     scrollareaTE.setWidget(&TE);
 
     onglet1.setLayout(&layout1);
+    ongletTreeView.setLayout(&layoutTreeView);
     onglet2.setLayout(&layout2);
+
     OngletsManager.addTab(&onglet1, "Onglet no 1");
+    OngletsManager.addTab(&ongletTreeView, "Vue synthétique des tâches & projets");
     OngletsManager.addTab(&onglet2, "Onglet Tache Editeur");
 
     //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}

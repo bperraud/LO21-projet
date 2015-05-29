@@ -3,7 +3,6 @@
 #include <QFileDialog>
 
 #include "Calendar.h"
-#include "TacheManager.h"
 #include "TacheEditeur.h"
 
 TacheEditeur::TacheEditeur(TacheUnitaire& tacheToEdit, QWidget* parent) : QWidget(parent), tache(tacheToEdit){

@@ -48,8 +48,8 @@ public:
         disponibilite=disp; echeance=e;
     }
 
-    virtual void ajouterInfos(QString& liste);
-    virtual void saveTache(QXmlStreamWriter& stream) =0;
+    virtual void ajouterInfos(QString& infos) const;
+    virtual void saveTache(QXmlStreamWriter& stream) const=0;
     virtual bool isTacheUnitaire() const =0;
 
     virtual void accept(TacheVisitor* v) =0;
@@ -74,9 +74,9 @@ public:
     bool isPreemptive() const { return preemptive; }
     void setPreemptive(bool b = true) { preemptive=b; }
 
-    void ajouterInfos(QString& liste);
+    void ajouterInfos(QString& infos) const;
 
-    void saveTache(QXmlStreamWriter& stream);
+    void saveTache(QXmlStreamWriter& stream) const;
     bool isTacheUnitaire() const { return true; }
     void accept(TacheVisitor* v);
 };
@@ -94,9 +94,9 @@ public:
     void addSousTache(const Tache* t);
     void rmSousTache(const Tache* t);
 
-    void ajouterInfos(QString& liste);
+    void ajouterInfos(QString& infos) const;
 
-    void saveTache(QXmlStreamWriter& stream);
+    void saveTache(QXmlStreamWriter& stream) const;
     bool isTacheUnitaire() const { return false; }
     void accept(TacheVisitor* v);
 };
@@ -260,6 +260,8 @@ public:
     void setTaches(const ListTaches& T);
     void addTache(const Tache* t);
     void rmTache(const Tache* t);
+
+    void ajouterInfos(QString& infos) const;
 };
 
 typedef QList<Projet*> ListProjet;
