@@ -9,7 +9,8 @@ HEADERS += \
     CalendarException.h \
     Singleton.h \
     TacheManager.h \
-    TreeView.h
+    TreeView.h \
+    WeekView.h \
 
 SOURCES += \
     Calendar.cpp \
@@ -17,4 +18,5 @@ SOURCES += \
     TacheEditeur.cpp \
     Duree.cpp \
     TacheManager.cpp \
-    TreeView.cpp
+    TreeView.cpp \
+    WeekView.cpp \
