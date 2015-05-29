@@ -17,17 +17,6 @@
 #include "TreeView.h"
 
 
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc, char *argv[]){
 
     QApplication app(argc, argv);
@@ -107,7 +96,7 @@ int main(int argc, char *argv[]){
     //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";
 
     ProgTacheManager* PTM = ProgTacheManager::getInstance();
-    PTM->ajouterProgrammation(QDate(2016, 2, 15), QTime(2, 0), T2U);
+    PTM->ajouterProgrammation(QDate(2015, 5, 26), QTime(2, 0), QTime(1, 30), T2U);
 
     //qDebug() << "checkpoint2\n";
     // Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*
@@ -134,7 +123,7 @@ int main(int argc, char *argv[]){
     //qDebug() << "checkpoint3\n";
 
 
-    WeekView WV;
+    WeekView WV(QDate(2015, 5, 25));
     TreeView TV;
 
 

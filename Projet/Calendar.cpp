@@ -143,10 +143,10 @@ ProgrammationTache* ProgTacheManager::trouverProgrammation(const TacheUnitaire& 
     return 0;
 }
 
-void ProgTacheManager::ajouterProgrammation(const QDate& d, const QTime& h, const TacheUnitaire& TU){
+void ProgTacheManager::ajouterProgrammation(const QDate& d, const QTime& h, const QTime &fin, const TacheUnitaire& TU){
 if (trouverProgrammation(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgTacheManager, tâche non préemptive déjà existante");}
 // Rajouter les contraintes de précédence, de préemption, de disponibilité et d'échéance
-ProgrammationTache* PT = new ProgrammationTache(d, h, TU);
+ProgrammationTache* PT = new ProgrammationTache(d, h, fin, TU);
 programmations.append(PT);
 }
 
@@ -158,9 +158,9 @@ ProgrammationActivite* ProgActiviteManager::trouverProgrammation(const Programma
     return 0;
 }
 
-void ProgActiviteManager::ajouterProgrammation(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l){
-if (trouverProgrammation(ProgrammationActivite(d, h, t, desc, l))) {throw CalendarException("erreur, ProgActiviteManager, activité déjà existante");}
-ProgrammationActivite* PA = new ProgrammationActivite(d, h, t, desc, l);
+void ProgActiviteManager::ajouterProgrammation(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l){
+if (trouverProgrammation(ProgrammationActivite(d, h, fin, t, desc, l))) {throw CalendarException("erreur, ProgActiviteManager, activité déjà existante");}
+ProgrammationActivite* PA = new ProgrammationActivite(d, h, fin, t, desc, l);
 programmations.append(PA);
 }
 

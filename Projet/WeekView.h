@@ -3,9 +3,12 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QScrollArea>
 #include <QStandardItem>
 #include <QTableView>
+#include <QLabel>
+#include <QCalendarWidget>
 
 #include "Calendar.h"
 #include "TacheManager.h"
@@ -17,18 +20,25 @@ private:
     QStandardItemModel* modelW;
     QTableView* weekView;
     QStringList ListJours, ListHeures;
-
+    QLabel* choixSemaine;
+    QCalendarWidget* calendar;
+    QHBoxLayout* layoutSemaine;
     QVBoxLayout* layout;
 
+    QDate date;
 
+public slots:
+    void updateWeekView();
 
 public:
-    explicit WeekView(QWidget *parent = 0);
+    explicit WeekView(const QDate& d = QDate::currentDate(), QWidget *parent = 0);
     ~WeekView();
 
 signals:
 
 public slots:
 };
+
+inline int calculeJour(const QDate& d, int rang){ return d.addDays(-d.dayOfWeek()+rang).day(); }
 
 #endif // WEEKVIEW_H
