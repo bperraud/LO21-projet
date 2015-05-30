@@ -1,24 +1,19 @@
 #include <QHeaderView>
+#include <QFont>
+#include <QBrush>
 #include "WeekView.h"
 
 WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
 
     scrollarea = new QScrollArea;
 
-    //choixSemaine = new QLabel("Semaine du : ", this);
     calendar = new QCalendarWidget(this);
     calendar->setHorizontalHeaderFormat(QCalendarWidget::LongDayNames);
     calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
     calendar->setGridVisible(true);
 
     weekView = new QTableView(this);
-    ListJours << QString("Lundi %0").arg(calculeJour(date, 1))
-              << QString("Mardi %0").arg(calculeJour(date, 2))
-              << QString("Mercredi %0").arg(calculeJour(date, 3))
-              << QString("Jeudi %0").arg(calculeJour(date, 4))
-              << QString("Vendredi %0").arg(calculeJour(date, 5))
-              << QString("Samedi %0").arg(calculeJour(date, 6))
-              << QString("Dimanche %0").arg(calculeJour(date, 7));
+
     for (unsigned int i = 0; i < 48 ; ++i){
         int heure = i/4;
         if (!(i % 4)) ListHeures << QString("%0h00").arg(heure+8);
@@ -29,12 +24,12 @@ WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
     modelW->setHorizontalHeaderLabels(ListJours);
     modelW->setVerticalHeaderLabels(ListHeures);
     for (int jour = 0; jour < 7; ++jour){
-
-        for (int heure = 0; heure < 24; ++heure){
-
-            QStandardItem *item = new QStandardItem("blabla");
-            modelW->setItem(heure, jour, item);
-            modelW->item(heure, jour)->setEditable(false);
+        for (int quartHeure = 0; quartHeure < 48; ++quartHeure){
+            QStandardItem *item = new QStandardItem();
+            modelW->setItem(quartHeure, jour, item);
+            modelW->item(quartHeure, jour)->setEditable(false);
+            item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
+            item->setFont(QFont("Helvetica", 10, QFont::Bold));
         }
     }
 
@@ -42,9 +37,11 @@ WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
     vHeader->setSectionResizeMode(QHeaderView::Fixed);
     vHeader->setDefaultSectionSize(20);
 
-    weekView->setSpan(0, 0, 2, 1); //sets the 1st row 1st column cell to span over 2 rows and 1 column
-
     weekView->setModel(modelW);
+
+    // Initialisation
+
+    updateWeekView();
 
     // Layout
 
@@ -55,7 +52,6 @@ WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
     scrollarea->setWidgetResizable(true);
     scrollarea->setFixedHeight(600);
 
-    //layoutSemaine->addWidget(choixSemaine);
     layoutSemaine->addWidget(calendar);
 
     layout->addLayout(layoutSemaine);
@@ -76,24 +72,54 @@ void WeekView::updateWeekView(){
     // Traitement des headers
     date = calendar->selectedDate();
     ListJours.clear();
-    ListJours << QString("Lundi %0").arg(calculeJour(date, 1))
-              << QString("Mardi %0").arg(calculeJour(date, 2))
-              << QString("Mercredi %0").arg(calculeJour(date, 3))
-              << QString("Jeudi %0").arg(calculeJour(date, 4))
-              << QString("Vendredi %0").arg(calculeJour(date, 5))
-              << QString("Samedi %0").arg(calculeJour(date, 6))
-              << QString("Dimanche %0").arg(calculeJour(date, 7));
+    ListJours << QString("Lundi %0/%1").arg(calculeJour(date, 1)).arg(calculeMois(date, 1))
+              << QString("Mardi %0/%1").arg(calculeJour(date, 2)).arg(calculeMois(date, 2))
+              << QString("Mercredi %0/%1").arg(calculeJour(date, 3)).arg(calculeMois(date, 3))
+              << QString("Jeudi %0/%1").arg(calculeJour(date, 4)).arg(calculeMois(date, 4))
+              << QString("Vendredi %0/%1").arg(calculeJour(date, 5)).arg(calculeMois(date, 5))
+              << QString("Samedi %0/%1").arg(calculeJour(date, 6)).arg(calculeMois(date, 6))
+              << QString("Dimanche %0/%1").arg(calculeJour(date, 7)).arg(calculeMois(date, 7));
     modelW->setHorizontalHeaderLabels(ListJours);
 
-    // Traitement des programmations
-
-    ProgTacheManager& PTM = *ProgTacheManager::getInstance();
-    for (ProgTacheManager::iterator i = PTM.begin(); i != PTM.end(); ++i)
-        if ((*i).getDate() >= date.addDays(-date.dayOfWeek()+1) && (*i).getDate() <= date.addDays(-date.dayOfWeek()+7)){
-            qDebug() << "coco\n";
-
+    // Clean de la view
+    for (int jour = 0; jour < 7; ++jour){
+        for (int quartHeure = 0; quartHeure < 48; ++quartHeure){
+            modelW->item(quartHeure, jour)->setText("");
+            modelW->item(quartHeure, jour)->setBackground(QBrush(QColor(Qt::white)));
         }
+    }
+    weekView->clearSpans();
 
+    // Traitement des programmations
+    ProgTacheManager& PTM = *ProgTacheManager::getInstance();
+    for (ProgTacheManager::iterator i = PTM.begin(); i != PTM.end(); ++i){
+        if ((*i).getDate() >= date.addDays(-date.dayOfWeek()+1) && (*i).getDate() <= date.addDays(-date.dayOfWeek()+7)){
+            QStandardItem* item;
+            int nbQuartsH = ((*i).getHoraireFin().minute() + (*i).getHoraireFin().hour()*60
+                    - (*i).getHoraire().minute() - (*i).getHoraire().hour()*60)/15;
+            if (!(*i).getHoraire().minute())
+                item = modelW->item(((*i).getHoraire().hour()-8)*4, (*i).getDate().dayOfWeek());
+            else{
+                switch ((*i).getHoraire().minute()){
+                case 15:
+                    item = modelW->item(((*i).getHoraire().hour()-8)*4+1, (*i).getDate().dayOfWeek());
+                    break;
+                case 30:
+                    item = modelW->item(((*i).getHoraire().hour()-8)*4+2, (*i).getDate().dayOfWeek());
+                    break;
+                case 45:
+                    item = modelW->item(((*i).getHoraire().hour()-8)*4+3, (*i).getDate().dayOfWeek());
+                    break;
+                default:
+                    throw CalendarException("Erreur, WeekView, minute non en quart d'heure...\n");
+                }
+            }
+            item->setText((*i).getTache().getTitre());
+            if (item->row() + nbQuartsH >= 48) throw CalendarException("Erreur, WeekView, durée de la prog dépasse 20h...\n");
+            weekView->setSpan(item->row(), item->column(), nbQuartsH, 1);
+            item->setBackground(QBrush(QColor(190, 200, 255)));
+        }
+    }
 }
 
 

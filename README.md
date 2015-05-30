@@ -12,12 +12,13 @@ Projet de LO21 P15
 	* Héritage des tâches
 * Interface
 	* TreeView
+	* WeekView
 
 
 ## En cours
 
 * Interface (Baptiste)
-	* WeekView
+	* AjouterProgActivité
 * TacheEditeur (Fabien)
 
 

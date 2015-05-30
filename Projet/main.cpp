@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
     QWidget fenetre;
     //fenetre.setFixedSize(1024, 768);
     fenetre.setMinimumWidth(800);
-    fenetre.setMinimumHeight(768);
+    fenetre.setMinimumHeight(800);
 
     //try{
 
@@ -49,6 +49,7 @@ int main(int argc, char *argv[]){
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
     TacheUnitaire& T2U = dynamic_cast<TacheUnitaire&>(T2);
+
     TacheEditeur TE(T2U);
 
 
@@ -95,8 +96,11 @@ int main(int argc, char *argv[]){
 
     //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";
 
+    TacheUnitaire& T6U = dynamic_cast<TacheUnitaire&>(TM.getTache("T6"));
+
     ProgTacheManager* PTM = ProgTacheManager::getInstance();
-    PTM->ajouterProgrammation(QDate(2015, 5, 26), QTime(2, 0), QTime(1, 30), T2U);
+    PTM->ajouterProgrammation(QDate(2015, 5, 26), QTime(12, 0), QTime(13, 30), T2U);
+    PTM->ajouterProgrammation(QDate(2015, 5, 28), QTime(14, 30), QTime(16, 30), T6U);
 
     //qDebug() << "checkpoint2\n";
     // Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*
