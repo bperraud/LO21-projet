@@ -98,9 +98,11 @@ int main(int argc, char *argv[]){
 
     TacheUnitaire& T6U = dynamic_cast<TacheUnitaire&>(TM.getTache("T6"));
 
-    ProgTacheManager* PTM = ProgTacheManager::getInstance();
-    PTM->ajouterProgrammation(QDate(2015, 5, 26), QTime(12, 0), QTime(13, 30), T2U);
-    PTM->ajouterProgrammation(QDate(2015, 5, 28), QTime(14, 30), QTime(16, 30), T6U);
+    ProgManager* ProgM = ProgManager::getInstance();
+    ProgM->ajouterProgrammationT(QDate(2015, 5, 26), QTime(12, 0), QTime(13, 30), T2U);
+    ProgM->ajouterProgrammationT(QDate(2015, 5, 28), QTime(14, 30), QTime(16, 30), T6U);
+
+
 
     //qDebug() << "checkpoint2\n";
     // Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*

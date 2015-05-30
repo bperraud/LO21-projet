@@ -91,8 +91,8 @@ void WeekView::updateWeekView(){
     weekView->clearSpans();
 
     // Traitement des programmations
-    ProgTacheManager& PTM = *ProgTacheManager::getInstance();
-    for (ProgTacheManager::iterator i = PTM.begin(); i != PTM.end(); ++i){
+    ProgManager& ProgM = *ProgManager::getInstance();
+    for (ProgManager::iterator i = ProgM.begin(); i != ProgM.end(); ++i){
         if ((*i).getDate() >= date.addDays(-date.dayOfWeek()+1) && (*i).getDate() <= date.addDays(-date.dayOfWeek()+7)){
             QStandardItem* item;
             int nbQuartsH = ((*i).getHoraireFin().minute() + (*i).getHoraireFin().hour()*60
@@ -114,7 +114,7 @@ void WeekView::updateWeekView(){
                     throw CalendarException("Erreur, WeekView, minute non en quart d'heure...\n");
                 }
             }
-            item->setText((*i).getTache().getTitre());
+            item->setText((*i).getTitre());
             if (item->row() + nbQuartsH >= 48) throw CalendarException("Erreur, WeekView, durée de la prog dépasse 20h...\n");
             weekView->setSpan(item->row(), item->column(), nbQuartsH, 1);
             item->setBackground(QBrush(QColor(190, 200, 255)));

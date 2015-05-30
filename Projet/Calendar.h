@@ -164,21 +164,24 @@ public:
 
 
 
-class Evenement{
+class Evenement{ // Abstraite
 private:
     QDate date;
     QTime horaire;
     QTime horaireFin;
 
-    Evenement(const QDate& d, const QTime& h, const QTime& fin): date(d), horaire(h), horaireFin(fin){}
-    friend class ProgrammationActivite;
-    friend class ProgrammationTache;
 public:
+    Evenement(const QDate& d, const QTime& h, const QTime& fin): date(d), horaire(h), horaireFin(fin){}
+    virtual ~Evenement(){}
 
     QDate getDate() const { return date; }
     QTime getHoraire() const { return horaire; }
     QTime getHoraireFin() const { return horaireFin; }
+
+    virtual bool isProgTache() const =0;
+    virtual QString getTitre() const =0;
 };
+
 
 class ProgrammationActivite : public Evenement{
 private:
@@ -188,44 +191,49 @@ private:
 
     ProgrammationActivite(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l)
         :Evenement(d, h, fin), titre(t), description(desc), lieu(l){}
-    friend class ProgActiviteManager;
+    friend class ProgManager;
 public:
-
-    QString getTitre() const { return titre; }
 
     QString getDescription() const { return description; }
     QString getLieu() const { return lieu; }
+
+    bool isProgTache() const { return false; }
+    QString getTitre() const { return titre; }
 };
-
-
 
 class ProgrammationTache : public Evenement{
 private:
     const TacheUnitaire* tache;
     ProgrammationTache(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& t): Evenement(d, h, fin), tache(&t){}
-    friend class ProgTacheManager;
+    friend class ProgManager;
 public:
     const TacheUnitaire& getTache() const { return *tache; }
+
+    virtual bool isProgTache() const { return true; }
+    QString getTitre() const { return tache->getTitre(); }
 };
 
 
-typedef QList<ProgrammationTache*> ListProgTaches;
-
-
-class ProgTacheManager : public Singleton<ProgTacheManager>{
+typedef QList<Evenement*> ListEvent;
+class ProgManager : public Singleton<ProgManager>{
 private:
-    ListProgTaches programmations;
-    ProgrammationTache* trouverProgrammation(const TacheUnitaire& TU) const;
+    ListEvent programmations;
+    ProgrammationTache* trouverProgrammationT(const TacheUnitaire& TU) const;
+    ProgrammationActivite* trouverProgrammationA(const ProgrammationActivite& PA) const;
+    bool programmationExists(const QDate& d, const QTime& h, const QTime& fin);
+    void ajouterProgrammation(Evenement& E);
 public:
-    void ajouterProgrammation(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU);
+    void ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU);
+    void ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l);
+
 
     class iterator{
-        ListProgTaches::iterator current;
-        iterator(ListProgTaches::iterator u):current(u){}
-        friend class ProgTacheManager;
+        ListEvent::iterator current;
+        iterator(ListEvent::iterator u):current(u){}
+        friend class ProgManager;
     public:
         iterator(){}
-        ProgrammationTache& operator*() const { return **current; }
+        Evenement& operator*() const { return **current; }
         bool operator!=(iterator it) const { return current != it.current; }
         iterator& operator++(){ ++current ; return *this; }
     };
@@ -234,12 +242,12 @@ public:
     iterator end(){ return iterator(programmations.end()); }
 
     class const_iterator{
-        ListProgTaches::const_iterator current;
-        const_iterator(ListProgTaches::const_iterator u):current(u){}
-        friend class ProgTacheManager;
+        ListEvent::const_iterator current;
+        const_iterator(ListEvent::const_iterator u):current(u){}
+        friend class ProgManager;
     public:
         const_iterator(){}
-        const ProgrammationTache& operator*() const { return **current; }
+        const Evenement& operator*() const { return **current; }
         bool operator!=(const_iterator it) const { return current != it.current; }
         const_iterator& operator++(){ ++current; return *this; }
 
@@ -249,15 +257,6 @@ public:
     const_iterator end() const { return const_iterator(programmations.end()); }
 
 };
-
-class ProgActiviteManager : public Singleton<ProgActiviteManager>{
-private:
-    QList<ProgrammationActivite*> programmations;
-    ProgrammationActivite* trouverProgrammation(const ProgrammationActivite& PA) const;
-public:
-    void ajouterProgrammation(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l);
-};
-
 
 
 
