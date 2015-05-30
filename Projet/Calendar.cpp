@@ -31,22 +31,21 @@ void Tache::setTitre(const QString& str){
   titre=str;
 }
 
-void Tache::ajouterInfos(QString& infos) const{
-    infos.append("Titre : ").append(this->getTitre()).append("\n")
-            .append("Description : ").append(this->getDescription()).append("\n")
-            .append("Disponibilité : ").append(this->getDateDisponibilite().toString()).append("\n")
-            .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n");
+void Tache::ajouterInfos(QString& liste){
+    liste.append(this->getTitre()).append("\n")
+            .append(this->getDescription()).append("\n")
+            .append(this->getDateDisponibilite().toString()).append("\n")
+            .append(this->getDateEcheance().toString()).append("\n");
 }
 
-
-
-void TacheUnitaire::ajouterInfos(QString& infos) const{
-    Tache::ajouterInfos(infos);
-    infos.append("Durée : ").append(QString::number(this->getDuree().getHeure())).append("h").append(QString::number(this->getDuree().getMinute())).append("\n")
-            .append(QString(this->isPreemptive() ? "Préemptive" : "Non preemptive")).append("\n");
+void TacheUnitaire::ajouterInfos(QString& liste){
+    Tache::ajouterInfos(liste);
+    liste.append(QString::number(this->getDuree().getDureeEnMinutes())).append("min\n")
+            .append(QString(this->isPreemptive() ? "preemptive" : "non preemptive")).append("\n")
+            .append("\n\n");
 }
 
-void TacheUnitaire::saveTache(QXmlStreamWriter& stream) const{
+void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
     stream.writeStartElement("tache");
     stream.writeAttribute("preemptive", (this->isPreemptive())?"true":"false");
     stream.writeTextElement("titre", this->getTitre());
@@ -59,13 +58,15 @@ void TacheUnitaire::saveTache(QXmlStreamWriter& stream) const{
     stream.writeEndElement();
 }
 
-void TacheComposite::ajouterInfos(QString& infos) const{
-    Tache::ajouterInfos(infos);
+void TacheComposite::ajouterInfos(QString& liste){
+    Tache::ajouterInfos(liste);
+    liste.append("composite").append("\n");
     for (int i = 0; i < sousTaches.size(); ++i)
-        infos.append("Sous-tâche : ").append(sousTaches[i]->getTitre()).append("\n");
+        liste.append("sous-tache : ").append(sousTaches[i]->getTitre()).append("\n");
+    liste.append("\n\n");
 }
 
-void TacheComposite::saveTache(QXmlStreamWriter& stream) const{
+void TacheComposite::saveTache(QXmlStreamWriter& stream){
     stream.writeStartElement("tache");
     stream.writeTextElement("titre", this->getTitre());
     stream.writeTextElement("description", this->getDescription());
@@ -115,11 +116,26 @@ void TacheComposite::rmSousTache(const Tache* t){
 
 
 void PrecedenceManager::ajouterPrecedence(const Tache &Tpred, const Tache &Tsucc){
-    Precedence* P = new Precedence(Tpred, Tsucc);
-    for (int i = 0; i < precedences.size(); ++i)
+    if (Tpred.getDateDisponibilite() > Tsucc.getDateEcheance())
+        throw CalendarException("erreur, PrecedenceManager, tentative de programmer une précédence avec une tache disponible après échéance de sa successeur.");
+    for (int i = 0; i < precedences.size(); ++i) {
         if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
             throw CalendarException("erreur, PrecedenceManager, précédence déjà existante");
+        if (&precedences[i]->getPredecesseur() == &Tsucc && &precedences[i]->getSuccesseur() == &Tpred)
+            throw CalendarException("erreur, PrecedenceManager, tentative d'implémenter un circuit de précédences");
+    };
+    Precedence* P = new Precedence(Tpred, Tsucc);
     precedences.append(P);
+}
+
+void PrecedenceManager::supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc){
+    if (PrecedenceManager::isPrecedence(Tpred, Tsucc))
+        for (int i = 0; i < precedences.size(); ++i)
+            if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
+                precedences.removeAt(i);
+    else
+        throw CalendarException("erreur, PrecedenceManager, tentative d'effacer une precedence qui n'existe pas.");
+
 }
 
 ListTachesConst PrecedenceManager::trouverPrecedences(const Tache& Tsucc) const{
@@ -130,52 +146,48 @@ ListTachesConst PrecedenceManager::trouverPrecedences(const Tache& Tsucc) const{
     return LT;
 }
 
-/* --- [BEGIN]ProgManager --- */
-
-ProgrammationTache* ProgManager::trouverProgrammationT(const TacheUnitaire& TU) const{
-    for (int i = 0; i < programmations.size(); ++i)
-        if (programmations[i]->isProgTache())
-            if (&TU == &(dynamic_cast<ProgrammationTache*>(programmations[i])->getTache())) return dynamic_cast<ProgrammationTache*>(programmations[i]);
-    return 0;
-}
-
-ProgrammationActivite* ProgManager::trouverProgrammationA(const ProgrammationActivite& PA) const{
-    for (int i = 0; i < programmations.size(); ++i)
-        if (&PA == programmations[i]) dynamic_cast<ProgrammationActivite*>(programmations[i]);
-    return 0;
-}
-
-void ProgManager::ajouterProgrammation(Evenement& E){
-    if (programmationExists(E.getDate(), E.getHoraire(), E.getHoraireFin())) throw CalendarException("erreur, ProgManager, horaire déjà pris");
-    programmations.append(&E);
-}
-
-void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU){
-    if (trouverProgrammationT(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgManager, tâche non préemptive déjà programmée");}
-    // Rajouter les contraintes de précédence, de préemption, de disponibilité et d'échéance
-    ProgrammationTache* PT = new ProgrammationTache(d, h, fin, TU);
-    ajouterProgrammation(*PT);
-}
-
-void ProgManager::ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l){
-    if (trouverProgrammationA(ProgrammationActivite(d, h, fin, t, desc, l))) {throw CalendarException("erreur, ProgActiviteManager, activité déjà existante");}
-    ProgrammationActivite* PA = new ProgrammationActivite(d, h, fin, t, desc, l);
-    ajouterProgrammation(*PA);
-}
-
-bool ProgManager::programmationExists(const QDate& d, const QTime& h, const QTime& fin){
-    for (int i = 0; i < programmations.size(); ++i)
-        if (programmations[i]->getDate() == d &&
-                ((h <= programmations[i]->getHoraire() && fin > programmations[i]->getHoraire())
-                ||
-                 (h < programmations[i]->getHoraireFin() && fin >= programmations[i]->getHoraireFin())
-                )
-           )
+bool PrecedenceManager::isPrecedence(const Tache& Tpred, const Tache& Tsucc) const {
+    for (int i = 0; i < precedences.size(); ++i)
+        if ((&precedences[i]->getPredecesseur() == &Tpred) && (&precedences[i]->getSuccesseur() == &Tsucc))
             return true;
     return false;
+
 }
 
-/* --- [END]ProgManager --- */
+//******************************************************************************************
+// ProgTacheManager
+
+
+
+
+
+ProgrammationTache* ProgTacheManager::trouverProgrammation(const TacheUnitaire& TU) const{
+    for (int i = 0; i < programmations.size(); ++i)
+        if (&TU == &programmations[i]->getTache()) return programmations[i];
+    return 0;
+}
+
+void ProgTacheManager::ajouterProgrammation(const QDate& d, const QTime& h, const TacheUnitaire& TU){
+if (trouverProgrammation(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgTacheManager, tâche non préemptive déjà existante");}
+// Rajouter les contraintes de précédence, de préemption, de disponibilité et d'échéance
+ProgrammationTache* PT = new ProgrammationTache(d, h, TU);
+programmations.append(PT);
+}
+
+
+
+ProgrammationActivite* ProgActiviteManager::trouverProgrammation(const ProgrammationActivite& PA) const{
+    for (int i = 0; i < programmations.size(); ++i)
+        if (&PA == programmations[i]) return programmations[i];
+    return 0;
+}
+
+void ProgActiviteManager::ajouterProgrammation(const QDate& d, const QTime& h, const QString& t, const QString& desc, const QString& l){
+if (trouverProgrammation(ProgrammationActivite(d, h, t, desc, l))) {throw CalendarException("erreur, ProgActiviteManager, activité déjà existante");}
+ProgrammationActivite* PA = new ProgrammationActivite(d, h, t, desc, l);
+programmations.append(PA);
+}
+
 
 
 
@@ -228,15 +240,6 @@ void Projet::rmTache(const Tache* t){
         }
     }
     throw CalendarException("erreur, Projet, tâche à supprimer non trouvée");
-}
-
-void Projet::ajouterInfos(QString& infos) const{
-    infos.append("Titre : ").append(this->getTitre()).append("\n")
-            .append("Description : ").append(this->getDescription()).append("\n")
-            .append("Disponibilité : ").append(this->getDateDisponibilite().toString()).append("\n")
-            .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n");
-    for (int i = 0; i < taches.size(); ++i)
-        infos.append("Tâche : ").append(taches[i]->getTitre()).append("\n");
 }
 
 /* --- [END]Projet --- */
