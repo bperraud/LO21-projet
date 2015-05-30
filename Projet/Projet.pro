@@ -8,11 +8,15 @@ HEADERS += \
     Duree.h \
     CalendarException.h \
     Singleton.h \
-    TacheManager.h
+    TacheManager.h \
+    TreeView.h \
+    WeekView.h \
 
 SOURCES += \
     Calendar.cpp \
     main.cpp \
     TacheEditeur.cpp \
     Duree.cpp \
-    TacheManager.cpp
+    TacheManager.cpp \
+    TreeView.cpp \
+    WeekView.cpp \
