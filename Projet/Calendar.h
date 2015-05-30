@@ -49,7 +49,7 @@ public:
     }
 
     virtual void ajouterInfos(QString& infos) const;
-    virtual void saveTache(QXmlStreamWriter& stream) const=0;
+    virtual void saveTache(QXmlStreamWriter& stream) =0;
     virtual bool isTacheUnitaire() const =0;
 
     virtual void accept(TacheVisitor* v) =0;
@@ -76,7 +76,7 @@ public:
 
     void ajouterInfos(QString& infos) const;
 
-    void saveTache(QXmlStreamWriter& stream) const;
+    void saveTache(QXmlStreamWriter& stream);
     bool isTacheUnitaire() const { return true; }
     void accept(TacheVisitor* v);
 };
@@ -96,7 +96,7 @@ public:
 
     void ajouterInfos(QString& infos) const;
 
-    void saveTache(QXmlStreamWriter& stream) const;
+    void saveTache(QXmlStreamWriter& stream);
     bool isTacheUnitaire() const { return false; }
     void accept(TacheVisitor* v);
 };
@@ -118,7 +118,9 @@ private:
     QList<Precedence*> precedences;
 public:
     void ajouterPrecedence(const Tache& Tpred,const Tache& Tsucc);
+    void supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc);
     ListTachesConst trouverPrecedences(const Tache& Tsucc) const;
+    bool isPrecedence(const Tache& Tpred, const Tache& Tsucc) const;
 };
 
 class Precedence {
@@ -130,9 +132,8 @@ public:
     const Tache& getPredecesseur() const { return *pred;}
     const Tache& getSuccesseur() const { return *succ;}
     friend void PrecedenceManager::ajouterPrecedence(const Tache& Tpred, const Tache& Tsucc);
+    friend void PrecedenceManager::supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc);
 };
-
-
 
 
 
@@ -257,6 +258,7 @@ public:
     const_iterator end() const { return const_iterator(programmations.end()); }
 
 };
+
 
 
 

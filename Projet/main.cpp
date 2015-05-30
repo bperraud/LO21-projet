@@ -36,22 +36,19 @@ int main(int argc, char *argv[]){
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
 
-    //TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",Duree(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
-    //TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",Duree(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
+    TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",Duree(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
+    TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",Duree(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
 
     //QString chemin = QFileDialog::getOpenFileName();
-    QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
+    //QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
     /* Utiliser la ligne ci-dessous pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
 
-    TM.load(chemin);
+    //TM.load(chemin);
 
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
     TacheUnitaire& T2U = dynamic_cast<TacheUnitaire&>(T2);
-
-    TacheEditeur TE(T2U);
-
 
 
     QPushButton buttonChargerTache("Charger tâche");
@@ -68,9 +65,9 @@ int main(int argc, char *argv[]){
     QWidget ongletWeekView, onglet2, ongletTreeView;
 
 
-    //TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
+    TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
     ListTaches LT1; LT1 << &T1 << &T2;
-    //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
+    TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
 
 
     //qDebug() << "checkpoint1\n";
@@ -127,6 +124,12 @@ int main(int argc, char *argv[]){
 
 
     //qDebug() << "checkpoint3\n";
+
+    Tache& T3U = T2;
+    PrecedenceManager& PrM = *PrecedenceManager::getInstance();
+    PrM.ajouterPrecedence(T1, T2U);
+    PrM.supprimerPrecedence(T1, T2U);
+    TacheEditeur TE;
 
 
     WeekView WV(QDate(2015, 5, 25));

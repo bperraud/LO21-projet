@@ -46,7 +46,7 @@ void TacheUnitaire::ajouterInfos(QString& infos) const{
             .append(QString(this->isPreemptive() ? "Préemptive" : "Non preemptive")).append("\n");
 }
 
-void TacheUnitaire::saveTache(QXmlStreamWriter& stream) const{
+void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
     stream.writeStartElement("tache");
     stream.writeAttribute("preemptive", (this->isPreemptive())?"true":"false");
     stream.writeTextElement("titre", this->getTitre());
@@ -65,7 +65,7 @@ void TacheComposite::ajouterInfos(QString& infos) const{
         infos.append("Sous-tâche : ").append(sousTaches[i]->getTitre()).append("\n");
 }
 
-void TacheComposite::saveTache(QXmlStreamWriter& stream) const{
+void TacheComposite::saveTache(QXmlStreamWriter& stream){
     stream.writeStartElement("tache");
     stream.writeTextElement("titre", this->getTitre());
     stream.writeTextElement("description", this->getDescription());
@@ -115,11 +115,26 @@ void TacheComposite::rmSousTache(const Tache* t){
 
 
 void PrecedenceManager::ajouterPrecedence(const Tache &Tpred, const Tache &Tsucc){
-    Precedence* P = new Precedence(Tpred, Tsucc);
-    for (int i = 0; i < precedences.size(); ++i)
+    if (Tpred.getDateDisponibilite() > Tsucc.getDateEcheance())
+        throw CalendarException("erreur, PrecedenceManager, tentative de programmer une précédence avec une tache disponible après échéance de sa successeur.");
+    for (int i = 0; i < precedences.size(); ++i) {
         if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
             throw CalendarException("erreur, PrecedenceManager, précédence déjà existante");
+        if (&precedences[i]->getPredecesseur() == &Tsucc && &precedences[i]->getSuccesseur() == &Tpred)
+            throw CalendarException("erreur, PrecedenceManager, tentative d'implémenter un circuit de précédences");
+    };
+    Precedence* P = new Precedence(Tpred, Tsucc);
     precedences.append(P);
+}
+
+void PrecedenceManager::supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc){
+    if (PrecedenceManager::isPrecedence(Tpred, Tsucc))
+        for (int i = 0; i < precedences.size(); ++i)
+            if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
+                precedences.removeAt(i);
+    else
+        throw CalendarException("erreur, PrecedenceManager, tentative d'effacer une precedence qui n'existe pas.");
+
 }
 
 ListTachesConst PrecedenceManager::trouverPrecedences(const Tache& Tsucc) const{
@@ -128,6 +143,14 @@ ListTachesConst PrecedenceManager::trouverPrecedences(const Tache& Tsucc) const{
         if (&precedences[i]->getSuccesseur() == &Tsucc)
             LT.append(&precedences[i]->getPredecesseur());
     return LT;
+}
+
+bool PrecedenceManager::isPrecedence(const Tache& Tpred, const Tache& Tsucc) const {
+    for (int i = 0; i < precedences.size(); ++i)
+        if ((&precedences[i]->getPredecesseur() == &Tpred) && (&precedences[i]->getSuccesseur() == &Tsucc))
+            return true;
+    return false;
+
 }
 
 /* --- [BEGIN]ProgManager --- */
@@ -176,7 +199,6 @@ bool ProgManager::programmationExists(const QDate& d, const QTime& h, const QTim
 }
 
 /* --- [END]ProgManager --- */
-
 
 
 /* --- Design Pattern Visitor --- */

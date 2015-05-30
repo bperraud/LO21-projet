@@ -26,7 +26,7 @@
         <description>autre test</description>
         <disponibilite>2015-07-10</disponibilite>
         <echeance>2015-08-12</echeance>
-        <sous-tache>T2</sous-tache>
         <sous-tache>T1</sous-tache>
+        <sous-tache>T2</sous-tache>
     </tache>
 </taches>
