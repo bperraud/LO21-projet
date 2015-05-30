@@ -29,7 +29,7 @@ WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
             modelW->setItem(quartHeure, jour, item);
             modelW->item(quartHeure, jour)->setEditable(false);
             item->setData(Qt::AlignCenter, Qt::TextAlignmentRole);
-            item->setFont(QFont("Helvetica", 10, QFont::Bold));
+            item->setFont(QFont("Helvetica", 9, QFont::Bold));
         }
     }
 
@@ -117,7 +117,8 @@ void WeekView::updateWeekView(){
             item->setText((*i).getTitre());
             if (item->row() + nbQuartsH >= 48) throw CalendarException("Erreur, WeekView, durée de la prog dépasse 20h...\n");
             weekView->setSpan(item->row(), item->column(), nbQuartsH, 1);
-            item->setBackground(QBrush(QColor(190, 200, 255)));
+            if ((*i).isProgTache()) item->setBackground(QBrush(QColor(190, 200, 255)));
+            else item->setBackground(QBrush(QColor(255, 200, 190)));
         }
     }
 }

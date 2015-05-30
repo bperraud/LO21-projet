@@ -101,7 +101,7 @@ int main(int argc, char *argv[]){
     ProgManager* ProgM = ProgManager::getInstance();
     ProgM->ajouterProgrammationT(QDate(2015, 5, 26), QTime(12, 0), QTime(13, 30), T2U);
     ProgM->ajouterProgrammationT(QDate(2015, 5, 28), QTime(14, 30), QTime(16, 30), T6U);
-
+    ProgM->ajouterProgrammationA(QDate(2015, 6, 2), QTime(11, 15), QTime(12, 45), "Activité comme ça", "On peut faire plein de choses...", "À l'UTC pardi");
 
 
     //qDebug() << "checkpoint2\n";
@@ -152,7 +152,7 @@ int main(int argc, char *argv[]){
     onglet2.setLayout(&layout2);
 
     OngletsManager.addTab(&ongletWeekView, "Vue hebdomadaire");
-    OngletsManager.addTab(&ongletTreeView, "Vue synthétique des tâches & projets");
+    OngletsManager.addTab(&ongletTreeView, "Vue synthétique des tâches && projets");
     OngletsManager.addTab(&onglet2, "Onglet Tache Editeur");
 
     //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}
