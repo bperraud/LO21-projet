@@ -99,23 +99,26 @@ void WeekView::updateWeekView(){
             QStandardItem* item;
             int nbQuartsH = ((*i).getHoraireFin().minute() + (*i).getHoraireFin().hour()*60
                     - (*i).getHoraire().minute() - (*i).getHoraire().hour()*60)/15;
-            if (!(*i).getHoraire().minute())
+            int trancheQH = (*i).getHoraire().minute()/15;
+            item = modelW->item(((*i).getHoraire().hour()-8)*4+trancheQH, (*i).getDate().dayOfWeek());
+
+            /*switch ((*i).getHoraire().minute()){
+            case 00:
                 item = modelW->item(((*i).getHoraire().hour()-8)*4, (*i).getDate().dayOfWeek());
-            else{
-                switch ((*i).getHoraire().minute()){
-                case 15:
-                    item = modelW->item(((*i).getHoraire().hour()-8)*4+1, (*i).getDate().dayOfWeek());
-                    break;
-                case 30:
-                    item = modelW->item(((*i).getHoraire().hour()-8)*4+2, (*i).getDate().dayOfWeek());
-                    break;
-                case 45:
-                    item = modelW->item(((*i).getHoraire().hour()-8)*4+3, (*i).getDate().dayOfWeek());
-                    break;
-                default:
-                    throw CalendarException("Erreur, WeekView, minute non en quart d'heure...\n");
-                }
-            }
+                break;
+            case 15:
+                item = modelW->item(((*i).getHoraire().hour()-8)*4+1, (*i).getDate().dayOfWeek());
+                break;
+            case 30:
+                item = modelW->item(((*i).getHoraire().hour()-8)*4+2, (*i).getDate().dayOfWeek());
+                break;
+            case 45:
+                item = modelW->item(((*i).getHoraire().hour()-8)*4+3, (*i).getDate().dayOfWeek());
+                break;
+            default:
+                throw CalendarException("Erreur, WeekView, minute non en quart d'heure...\n");
+            }*/
+
             item->setText((*i).getTitre());
             if (item->row() + nbQuartsH >= 48) throw CalendarException("Erreur, WeekView, durée de la prog dépasse 20h...\n");
             weekView->setSpan(item->row(), item->column(), nbQuartsH, 1);
