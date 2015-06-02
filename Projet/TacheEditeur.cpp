@@ -7,6 +7,287 @@
 #include "TacheEditeur.h"
 
 
+/* --- [BEGIN] TacheCreator --- */
+
+
+TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
+
+    typeLabelu = new QLabel("Type: unitaire ");
+    unitaire = new QRadioButton(this);
+        unitaire->setChecked(false);
+
+    typeLabelc = new QLabel(" composite");
+    composite = new QRadioButton(this);
+        composite->setChecked(false);
+
+    titreLabel = new QLabel("titre", this);
+    titre = new QLineEdit(this);
+        titre->setEnabled(false);
+
+    preemptive = new QCheckBox(this);
+    preemptive->setEnabled(false);
+    preemptiveLabel = new QLabel("preemptive", this);
+
+    descriptionLabel = new QLabel("description", this);
+    description = new QTextEdit(this);
+        description->setEnabled(false);
+
+    dispoLabel = new QLabel("disponibilité", this);
+    dispo = new QDateEdit(this);
+        dispo->setEnabled(false);
+
+    echeanceLabel = new QLabel("échéance", this);
+    echeance = new QDateEdit(this);
+        echeance->setEnabled(false);
+
+    dureeLabel = new QLabel("durée", this);
+        dureeH = new QSpinBox(this);
+            dureeH->setMinimum(0);
+            dureeH->setSuffix(" heure(s)");
+            dureeH->setEnabled(false);
+        dureeM = new QSpinBox(this);
+            dureeM->setRange(0, 59);
+            dureeM->setSuffix(" minute(s)");
+            dureeM->setEnabled(false);
+
+    predecesseursLabel = new QLabel("taches précédentes", this);
+    predecesseurs = new QListWidget(this);
+    TacheManager& TM = *TacheManager::getInstance();
+    PrecedenceManager& PrM = *PrecedenceManager::getInstance();
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        QString UneTache = (*i).getTitre();
+        QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+        item->setCheckState(Qt::Unchecked);// AND initialize check state
+    };
+        predecesseurs->setEnabled(false);
+
+
+    composantesLabel = new QLabel("Tache composite de:", this);
+    composantes = new QListWidget(this);
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        QString UneTache = (*i).getTitre();
+        QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+        item->setCheckState(Qt::Unchecked);// AND initialize check state
+    };
+        composantes->setEnabled(false);
+
+    creer = new QPushButton("Créer", this);
+        creer->setEnabled(false);
+
+    HC1 = new QHBoxLayout;
+        HC1->addWidget(typeLabelu);
+        HC1->addWidget(unitaire);
+        HC1->addWidget(composite);
+        HC1->addWidget(typeLabelc);
+    HC2 = new QHBoxLayout;
+        HC2->addWidget(titreLabel);
+        HC2->addWidget(titre);
+        HC2->addWidget(preemptive);
+        HC2->addWidget(preemptiveLabel);
+    HC3 = new QHBoxLayout;
+        HC3->addWidget(descriptionLabel);
+        HC3->addWidget(description);
+    HC4 = new QHBoxLayout;
+        HC4->addWidget(dispoLabel);
+        HC4->addWidget(dispo);
+        HC4->addWidget(echeanceLabel);
+        HC4->addWidget(echeance);
+        HC4->addWidget(dureeLabel);
+        HC4->addWidget(dureeH);
+        HC4->addWidget(dureeM);
+    HC5 = new QHBoxLayout;
+        HC5->addWidget(predecesseursLabel);
+        HC5->addWidget(predecesseurs);
+    HC6 = new QHBoxLayout;
+        HC6->addWidget(composantesLabel);
+        HC6->addWidget(composantes);
+    HC7 = new QHBoxLayout;
+        HC7->addWidget(creer);
+
+
+    VC = new QVBoxLayout;
+        VC->addLayout(HC1);
+        VC->addLayout(HC2);
+        VC->addLayout(HC3);
+        VC->addLayout(HC4);
+        VC->addLayout(HC5);
+        VC->addLayout(HC6);
+        VC->addLayout(HC7);
+
+
+    QObject::connect(unitaire, SIGNAL(toggled()), this, SLOT(veriftype()));
+    QObject::connect(composite, SIGNAL(toggled()), this, SLOT(veriftype()));
+    QObject::connect(creer, SIGNAL(clicked()), this, SLOT(creerTache()));
+
+    this->setLayout(VC);
+
+}
+
+void TacheCreator::veriftype(){
+
+    if (unitaire->isChecked())
+        TacheUni();
+    else if (composite->isChecked())
+        TacheCompo();
+
+}
+
+void TacheCreator::TacheUni(){
+
+    if (!titre->isEnabled())
+        titre->setEnabled(true);
+
+    if (!preemptive->isEnabled())
+        preemptive->setEnabled(true);
+
+    if (!description->isEnabled())
+        description->setEnabled(true);
+
+    if (!dispo->isEnabled())
+        dispo->setEnabled(true);
+
+    if (!echeance->isEnabled())
+        echeance->setEnabled(true);
+
+    if (!dureeH->isEnabled())
+        dureeH->setEnabled(true);
+
+    if (!dureeM->isEnabled())
+        dureeM->setEnabled(true);
+
+    if (!predecesseurs->isEnabled())
+        predecesseurs->setEnabled(true);
+
+    if (!creer->isEnabled())
+        creer->setEnabled(true);
+
+    if (composantes->isEnabled())
+        composantes->setEnabled(false);
+}
+
+void TacheCreator::TacheCompo(){
+
+    if (!titre->isEnabled())
+        titre->setEnabled(true);
+
+    if (preemptive->isEnabled())
+        preemptive->setEnabled(false);
+
+    if (!description->isEnabled())
+        description->setEnabled(true);
+
+    if (!dispo->isEnabled())
+        dispo->setEnabled(true);
+
+    if (!echeance->isEnabled())
+        echeance->setEnabled(true);
+
+    if (dureeH->isEnabled())
+        dureeH->setEnabled(false);
+
+    if (dureeM->isEnabled())
+        dureeM->setEnabled(false);
+
+    if (!predecesseurs->isEnabled())
+        predecesseurs->setEnabled(true);
+
+    if (!creer->isEnabled())
+        creer->setEnabled(true);
+
+    if (!composantes->isEnabled())
+        composantes->setEnabled(true);
+}
+
+void TacheCreator::creerTache(){
+
+    if ((preemptive->isEnabled()) && (!composantes->isEnabled())) {
+
+        if (titre->text() == "")
+            QMessageBox::warning(this, "Création impossible", "Pas de titre renseigné, impossible de créer la tâche.");
+        if (description->toPlainText() == "")
+            QMessageBox::warning(this, "Création impossible", "Pas de description renseignée, impossible de créer la tâche.");
+
+        TacheManager& TM = *TacheManager::getInstance();
+        // Si le titre de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
+        if (TM.isTacheExistante(titre->text())){
+            QMessageBox::warning(this, "Sauvegarde impossible", "titre tâche déjà existant...");
+            return;
+        }
+        // Si les dates de dispo et d'échéance sont incohérentes
+        if (dispo->date() >= echeance->date()){
+                QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
+                return;
+        }
+        // Si la durée est nulle
+        if (!(dureeH->value() || dureeM->value())){
+                QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
+                return;
+        }
+        if (tacheU->getTitre() != titre->text()) tacheU->setTitre(titre->text());
+        preemptive->isChecked() ? tacheU->setPreemptive(true) : tacheU->setPreemptive(false);
+        tacheU->setDescription(description->toPlainText());
+        tacheU->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
+        tacheU->setDuree(Duree(dureeH->value(), dureeM->value()));
+        PrecedenceManager& PrM = *PrecedenceManager::getInstance();
+        for (int i = 0; i < predecesseurs->count(); ++i) {
+            QListWidgetItem *precedent = predecesseurs->item(i);
+            if (precedent->checkState() == Qt::Checked) {
+                if (!PrM.isPrecedence(TM.getTache(precedent->text()), *tacheU))
+                    PrM.ajouterPrecedence(TM.getTache(precedent->text()), *tacheU);
+            }
+            else if (precedent->checkState() == Qt::Unchecked) {
+                if (PrM.isPrecedence(TM.getTache(precedent->text()), *tacheU))
+                    PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheU);
+            }
+        }
+        QString cheminSauver = QFileDialog::getSaveFileName();
+        TM.save(cheminSauver);
+        QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
+    }
+
+    else {
+
+        TacheManager& TM = *TacheManager::getInstance();
+        // Si le titre de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
+        if (TM.isTacheExistante(titre->text())
+            && &(TM.getTache(titre->text())) != tacheC){
+            QMessageBox::warning(this, "Sauvegarde impossible", "titre tâche déjà existant...");
+            return;
+        }
+        // Si les dates de dispo et d'échéance sont incohérentes
+        if (dispo->date() >= echeance->date()){
+                QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
+                return;
+        }
+        if (tacheC->getTitre() != titre->text()) tacheC->setTitre(titre->text());
+        tacheC->setDescription(description->toPlainText());
+        tacheC->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
+        PrecedenceManager& PrM = *PrecedenceManager::getInstance();
+        for (int i = 0; i < predecesseurs->count(); ++i) {
+            QListWidgetItem *precedent = predecesseurs->item(i);
+            if (precedent->checkState() == Qt::Checked) {
+               if (!PrM.isPrecedence(TM.getTache(precedent->text()), *tacheC))
+                   PrM.ajouterPrecedence(TM.getTache(precedent->text()), *tacheC);
+            }
+            else if (precedent->checkState() == Qt::Unchecked) {
+                if (PrM.isPrecedence(TM.getTache(precedent->text()), *tacheC))
+                    PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheC);
+            }
+        }
+        QString cheminSauver = QFileDialog::getSaveFileName();
+        TM.save(cheminSauver);
+        QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
+
+    }
+}
+
+
+/* --- [END] TacheCreator --- */
+// ----------------------------------------------------------------------------------------------------
+/* --- [BEGIN] TacheEditeur --- */
+
 TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
 
     //this->setWindowTitle(QString("Edition de la tâche ")+tache.getId());
@@ -282,6 +563,8 @@ void TacheEditeur::sauverTache(){
     }
 
 }
+
+/* --- [END] TacheEditeur --- */
 
 
 
