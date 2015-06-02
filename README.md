@@ -20,6 +20,7 @@ Projet de LO21 P15
 * Interface (Baptiste)
 	* AjouterProgActivité
 * TacheEditeur (Fabien)
+* TacheCreator (Fabien)
 
 
 ## Todos non assignés
