@@ -24,7 +24,7 @@ Q_OBJECT
 private:
     QVBoxLayout *VC;
     QHBoxLayout *HC1, *HC2, *HC3, *HC4, *HC5, *HC6, *HC7;
-    QLabel *typeLabel, *titreLabel, *descriptionLabel, *preemptiveLabel, *dispoLabel, *echeanceLabel, *dureeLabel, *predecesseursLabel, *composantesLabel;
+    QLabel *typeLabelu, *typeLabelc, *titreLabel, *descriptionLabel, *preemptiveLabel, *dispoLabel, *echeanceLabel, *dureeLabel, *predecesseursLabel, *composantesLabel;
     QRadioButton *unitaire, *composite;
     QLineEdit *titre;
     QCheckBox *preemptive;
@@ -35,7 +35,10 @@ private:
     QPushButton *creer;
 
 public slots:
-   // void creerTache();
+    void creerTache();
+    void TacheUni();
+    void TacheCompo();
+    void veriftype();
 
 public:
     explicit TacheCreator(QWidget* parent = 0);
