@@ -11,6 +11,7 @@ HEADERS += \
     TacheManager.h \
     TreeView.h \
     WeekView.h \
+    ProgCreator.h
 
 SOURCES += \
     Calendar.cpp \
@@ -20,3 +21,4 @@ SOURCES += \
     TacheManager.cpp \
     TreeView.cpp \
     WeekView.cpp \
+    ProgCreator.cpp

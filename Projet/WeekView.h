@@ -11,7 +11,6 @@
 #include <QCalendarWidget>
 
 #include "Calendar.h"
-#include "TacheManager.h"
 
 class WeekView : public QWidget{
 Q_OBJECT

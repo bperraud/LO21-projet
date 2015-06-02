@@ -1,6 +1,5 @@
-#include <QObject>
-
 #include "TreeView.h"
+#include "TacheManager.h"
 
 TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
@@ -8,10 +7,6 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
-
-    scrollareaP = new QScrollArea;
-    scrollareaT = new QScrollArea;
-    layout = new QVBoxLayout;
 
     // treeViewProjets
     treeViewP = new QTreeView(this);
@@ -54,7 +49,10 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
     infoTache = new QLabel("Sélection vide", this);
 
-    // Layout
+    // Layout & Scroll
+
+    scrollareaP = new QScrollArea;
+    scrollareaT = new QScrollArea;
 
     scrollareaP->setWidget(treeViewP);
     scrollareaP->setWidgetResizable(true);
@@ -63,6 +61,8 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
     scrollareaT->setWidget(treeViewT);
     scrollareaT->setWidgetResizable(true);
     scrollareaT->setFixedHeight(200);
+
+    layout = new QVBoxLayout;
 
     layout->addWidget(scrollareaP);
     layout->addWidget(scrollareaT);

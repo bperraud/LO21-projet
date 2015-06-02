@@ -1,4 +1,3 @@
-#include <QObject>
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -225,7 +224,7 @@ void TacheCreator::creerTache(){
                 QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
                 return;
         }
-        if (tacheU->getTitre() != titre->text()) tacheU->setTitre(titre->text());
+        /*if (tacheU->getTitre() != titre->text()) tacheU->setTitre(titre->text());
         preemptive->isChecked() ? tacheU->setPreemptive(true) : tacheU->setPreemptive(false);
         tacheU->setDescription(description->toPlainText());
         tacheU->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
@@ -241,7 +240,7 @@ void TacheCreator::creerTache(){
                 if (PrM.isPrecedence(TM.getTache(precedent->text()), *tacheU))
                     PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheU);
             }
-        }
+        }*/
         QString cheminSauver = QFileDialog::getSaveFileName();
         TM.save(cheminSauver);
         QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
@@ -251,17 +250,17 @@ void TacheCreator::creerTache(){
 
         TacheManager& TM = *TacheManager::getInstance();
         // Si le titre de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
-        if (TM.isTacheExistante(titre->text())
+        /*if (TM.isTacheExistante(titre->text())
             && &(TM.getTache(titre->text())) != tacheC){
             QMessageBox::warning(this, "Sauvegarde impossible", "titre tâche déjà existant...");
             return;
-        }
+        }*/
         // Si les dates de dispo et d'échéance sont incohérentes
         if (dispo->date() >= echeance->date()){
                 QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
                 return;
         }
-        if (tacheC->getTitre() != titre->text()) tacheC->setTitre(titre->text());
+        /*if (tacheC->getTitre() != titre->text()) tacheC->setTitre(titre->text());
         tacheC->setDescription(description->toPlainText());
         tacheC->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
         PrecedenceManager& PrM = *PrecedenceManager::getInstance();
@@ -275,7 +274,7 @@ void TacheCreator::creerTache(){
                 if (PrM.isPrecedence(TM.getTache(precedent->text()), *tacheC))
                     PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheC);
             }
-        }
+        }*/
         QString cheminSauver = QFileDialog::getSaveFileName();
         TM.save(cheminSauver);
         QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");

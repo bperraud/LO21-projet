@@ -11,7 +11,6 @@
 #include <QTreeView>
 
 #include "Calendar.h"
-#include "TacheManager.h"
 
 class TreeView : public QWidget{
 Q_OBJECT

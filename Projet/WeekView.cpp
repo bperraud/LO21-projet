@@ -1,7 +1,9 @@
 #include <QHeaderView>
 #include <QFont>
 #include <QBrush>
+
 #include "WeekView.h"
+#include "TacheManager.h"
 
 WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
 
@@ -43,7 +45,7 @@ WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
 
     updateWeekView();
 
-    // Layout
+    // Layout & Scroll
 
     layout = new QVBoxLayout;
     layoutSemaine = new QHBoxLayout;
