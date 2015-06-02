@@ -29,11 +29,6 @@ int main(int argc, char *argv[]){
     //try{
 
 
-
-    /*QMenuBar menubar(&fenetre);
-    QMenu menu1("menu 1");
-    menubar.addMenu(&menu1);*/
-
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
 
@@ -71,29 +66,28 @@ int main(int argc, char *argv[]){
     //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
 
 
-    //qDebug() << "checkpoint1\n";
+    qDebug() << "checkpoint1\n";
 
 
     Tache& T4 = TM.getTache("T4");
     TacheComposite& T4C = dynamic_cast<TacheComposite&>(T4);
 
 
-    //T4C.addSousTache(&TM.getTache("T3"));
+    T4C.addSousTache(&TM.getTache("T3"));
 
 
-    //T4C.rmSousTache(&T2);
-    //ListTaches LT; LT << &T2 << &T4;
-    //TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
+    T4C.rmSousTache(&T2);
+    ListTaches LT; LT << &T2 << &T4;
+    TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
 
-    //TM.ajouterTacheUnitaire("T6", "tache sans projet", Duree(2, 0), QDate(2015, 4, 3), QDate(2015, 7, 23));
-    //qDebug() << "checkpoint2\n";
+    TM.ajouterTacheUnitaire("T6", "tache sans projet", QTime(2, 0), QDate(2015, 4, 3), QDate(2015, 7, 23));
+    qDebug() << "checkpoint2\n";
 
     PM.ajouterProjet("P1", "Projet no1", QDate(2011, 01, 01), QDate(2020, 1, 1));
     PM.getProjet("P1").addTache(&TM.getTache("T5"));
     PM.ajouterProjet("P2", "Projet no2", QDate(2012, 01, 01), QDate(2025, 1, 1));
     //dynamic_cast<TacheComposite&>(TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1), ListTaches())).setSousTaches(LT);
 
-    //qDebug() << QString((typeid(T1) == typeid(TacheUnitaire)) ? "tache unitaire" : "tache composite") << "\n";
 
     TacheUnitaire& T6U = dynamic_cast<TacheUnitaire&>(TM.getTache("T6"));
 
@@ -112,20 +106,7 @@ int main(int argc, char *argv[]){
 
 
 
-
-    /*ExampleModel em;
-    QTableView tv;
-    HierarchicalHeaderView* hv=new HierarchicalHeaderView(Qt::Vertical, &tv);
-    tv.setVerticalHeader(hv);
-    tv.setModel(&em);
-    tv.resizeColumnsToContents();
-    tv.resizeRowsToContents();*/
-
-
-
-
-
-    //qDebug() << "checkpoint3\n";
+    qDebug() << "checkpoint3\n";
 
     Tache& T3U = T2;
     PrecedenceManager& PrM = *PrecedenceManager::getInstance();

@@ -2,7 +2,6 @@
 #define CALENDAR_H
 
 #include "CalendarException.h"
-#include "Duree.h"
 #include "Singleton.h"
 
 #include <typeinfo>
@@ -61,16 +60,16 @@ typedef QList<Tache*> ListTaches;
 
 class TacheUnitaire : public Tache{
 private:
-    Duree duree;
+    QTime duree;
     bool preemptive;
-    TacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
+    TacheUnitaire(const QString& t, const QString& desc, const QTime& dur, const QDate& dispo, const QDate& deadline, bool preempt=false):
             Tache(t, desc, dispo, deadline), duree(dur), preemptive(preempt){
-        if (!preempt && dur.getDureeEnHeures()>12) throw CalendarException("erreur tâche unitaire non preemptive et durée > 12h");
+        if (!preempt && dur.hour()>12) throw CalendarException("erreur tâche unitaire non preemptive et durée > 12h");
     }
     friend class TacheManager;
 public:
-    Duree getDuree() const { return duree; }
-    void setDuree(const Duree& d) { duree=d; }
+    QTime getDuree() const { return duree; }
+    void setDuree(const QTime& d) { duree=d; }
     bool isPreemptive() const { return preemptive; }
     void setPreemptive(bool b = true) { preemptive=b; }
 

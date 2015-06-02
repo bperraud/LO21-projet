@@ -17,7 +17,7 @@ void TacheManager::ajouterTache(Tache& T){
     taches.append(&T);
 }
 
-TacheUnitaire& TacheManager::ajouterTacheUnitaire(const QString& t, const QString& desc, const Duree& dur, const QDate& dispo, const QDate& deadline, bool preempt){
+TacheUnitaire& TacheManager::ajouterTacheUnitaire(const QString& t, const QString& desc, const QTime& dur, const QDate& dispo, const QDate& deadline, bool preempt){
     //qDebug() << "début ajouterTacheUnitaire\n";
     TacheUnitaire* TU = new TacheUnitaire(t, desc, dur, dispo, deadline, preempt);
     ajouterTache(*TU);
@@ -92,7 +92,7 @@ void TacheManager::load(const QString& f){
                 QString description;
                 QDate disponibilite;
                 QDate echeance;
-                Duree duree;
+                QTime duree;
                 bool preemptive;
 
                 bool unitaire = true;
@@ -138,8 +138,9 @@ void TacheManager::load(const QString& f){
                         // We've found duree
                         if(xml.name() == "duree"){
                             xml.readNext();
-                            duree.setDuree(xml.text().toString().toUInt());
+                            duree.setHMS((xml.text().toInt())/60,(xml.text().toInt())%60,0);
                             //qDebug()<<"duree="<<duree.getDureeEnMinutes()<<"\n";
+                            qDebug() << "durée : " << duree.toString("hh'h'mm") << "\n";
                         }
                         // We've found sous-tache
                         if(xml.name() == "sous-tache"){

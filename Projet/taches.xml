@@ -14,7 +14,7 @@
         <echeance>2015-04-25</echeance>
         <duree>90</duree>
     </tache>
-    <tache preemptive="false">
+    <tache preemptive="true">
         <titre>T3</titre>
         <description>Petit test !</description>
         <disponibilite>2015-02-06</disponibilite>
@@ -27,21 +27,6 @@
         <disponibilite>2015-07-10</disponibilite>
         <echeance>2015-08-12</echeance>
         <sous-tache>T1</sous-tache>
-        <sous-tache>T3</sous-tache>
-    </tache>
-    <tache>
-        <titre>T5</titre>
-        <description>autre tacheC</description>
-        <disponibilite>2016-02-15</disponibilite>
-        <echeance>2016-08-01</echeance>
         <sous-tache>T2</sous-tache>
-        <sous-tache>T4</sous-tache>
-    </tache>
-    <tache preemptive="false">
-        <titre>T6</titre>
-        <description>tache sans projet</description>
-        <disponibilite>2015-04-03</disponibilite>
-        <echeance>2015-07-23</echeance>
-        <duree>120</duree>
     </tache>
 </taches>

@@ -446,9 +446,9 @@ void TacheEditeur::initialiserEditeur(QString nomtache) {
         preemptive->setChecked(tacheU->isPreemptive());
 
         dureeH->setEnabled(true);
-            dureeH->setValue(tacheU->getDuree().getHeure());
+            dureeH->setValue(tacheU->getDuree().hour());
         dureeM->setEnabled(true);
-            dureeM->setValue(tacheU->getDuree().getMinute());
+            dureeM->setValue(tacheU->getDuree().minute());
     }
     else {
 
@@ -508,7 +508,7 @@ void TacheEditeur::sauverTache(){
         preemptive->isChecked() ? tacheU->setPreemptive(true) : tacheU->setPreemptive(false);
         tacheU->setDescription(description->toPlainText());
         tacheU->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
-        tacheU->setDuree(Duree(dureeH->value(), dureeM->value()));
+        tacheU->setDuree(QTime(dureeH->value(), dureeM->value()));
         PrecedenceManager& PrM = *PrecedenceManager::getInstance();
         for (int i = 0; i < predecesseurs->count(); ++i) {
             QListWidgetItem *precedent = predecesseurs->item(i);

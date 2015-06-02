@@ -42,7 +42,7 @@ void Tache::ajouterInfos(QString& infos) const{
 
 void TacheUnitaire::ajouterInfos(QString& infos) const{
     Tache::ajouterInfos(infos);
-    infos.append("Durée : ").append(QString::number(this->getDuree().getHeure())).append("h").append(QString::number(this->getDuree().getMinute())).append("\n")
+    infos.append("Durée : ").append(this->getDuree().toString("hh'h'mm")).append("\n")
             .append(QString(this->isPreemptive() ? "Préemptive" : "Non preemptive")).append("\n");
 }
 
@@ -54,7 +54,7 @@ void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
     stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
     stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
     QString str;
-    str.setNum(this->getDuree().getDureeEnMinutes());
+    str.setNum(this->getDuree().minute()+(this->getDuree().hour())*60);
     stream.writeTextElement("duree",str);
     stream.writeEndElement();
 }
@@ -211,7 +211,7 @@ void TacheComposite::accept(TacheVisitor* v){
 }
 
 void TacheInformateur::visitTacheUnitaire(TacheUnitaire* TU){
-    qDebug() << "durée en min : " << QString(QString::number(static_cast<int>(TU->getDuree().getDureeEnMinutes()))) << "\n";
+    qDebug() << "durée : " << TU->getDuree().toString("hh'h'mm") << "\n";
 }
 void TacheInformateur::visitTacheComposite(TacheComposite* TC){
     qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
