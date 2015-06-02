@@ -40,14 +40,8 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
         echeance->setEnabled(false);
 
     dureeLabel = new QLabel("durée", this);
-        dureeH = new QSpinBox(this);
-            dureeH->setMinimum(0);
-            dureeH->setSuffix(" heure(s)");
-            dureeH->setEnabled(false);
-        dureeM = new QSpinBox(this);
-            dureeM->setRange(0, 59);
-            dureeM->setSuffix(" minute(s)");
-            dureeM->setEnabled(false);
+    duree = new QTimeEdit(this);
+        duree->setEnabled(false);
 
     predecesseursLabel = new QLabel("taches précédentes", this);
     predecesseurs = new QListWidget(this);
@@ -94,8 +88,7 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
         HC4->addWidget(echeanceLabel);
         HC4->addWidget(echeance);
         HC4->addWidget(dureeLabel);
-        HC4->addWidget(dureeH);
-        HC4->addWidget(dureeM);
+        HC4->addWidget(duree);
     HC5 = new QHBoxLayout;
         HC5->addWidget(predecesseursLabel);
         HC5->addWidget(predecesseurs);
@@ -150,11 +143,8 @@ void TacheCreator::TacheUni(){
     if (!echeance->isEnabled())
         echeance->setEnabled(true);
 
-    if (!dureeH->isEnabled())
-        dureeH->setEnabled(true);
-
-    if (!dureeM->isEnabled())
-        dureeM->setEnabled(true);
+    if (!duree->isEnabled())
+        duree->setEnabled(true);
 
     if (!predecesseurs->isEnabled())
         predecesseurs->setEnabled(true);
@@ -183,11 +173,8 @@ void TacheCreator::TacheCompo(){
     if (!echeance->isEnabled())
         echeance->setEnabled(true);
 
-    if (dureeH->isEnabled())
-        dureeH->setEnabled(false);
-
-    if (dureeM->isEnabled())
-        dureeM->setEnabled(false);
+    if (duree->isEnabled())
+        duree->setEnabled(false);
 
     if (!predecesseurs->isEnabled())
         predecesseurs->setEnabled(true);
@@ -220,7 +207,7 @@ void TacheCreator::creerTache(){
                 return;
         }
         // Si la durée est nulle
-        if (!(dureeH->value() || dureeM->value())){
+        if (duree->time().isNull()){
                 QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
                 return;
         }
@@ -322,14 +309,9 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
         echeance->setEnabled(false);
 
     dureeLabel = new QLabel("durée", this);
-        dureeH = new QSpinBox(this);
-            dureeH->setMinimum(0);
-            dureeH->setSuffix(" heure(s)");
-            dureeH->setEnabled(false);
-        dureeM = new QSpinBox(this);
-            dureeM->setRange(0, 59);
-            dureeM->setSuffix(" minute(s)");
-            dureeM->setEnabled(false);
+    duree = new QTimeEdit(this);
+        duree->setEnabled(false);
+
 
     predecesseursLabel = new QLabel("taches précédentes", this);
     predecesseurs = new QListWidget(this);
@@ -361,8 +343,7 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
         HC3->addWidget(echeanceLabel);
         HC3->addWidget(echeance);
         HC3->addWidget(dureeLabel);
-        HC3->addWidget(dureeH);
-        HC3->addWidget(dureeM);
+        HC3->addWidget(duree);
     HC4 = new QHBoxLayout;
         HC4->addWidget(predecesseursLabel);
         HC4->addWidget(predecesseurs);
@@ -388,8 +369,7 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
         QObject::connect(echeance, SIGNAL(dateChanged(const QDate&)), this, SLOT(activerSauver()));
         QObject::connect(predecesseurs, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(activerSauver()));
         QObject::connect(preemptive, SIGNAL(stateChanged(int)), this, SLOT(activerSauver()));
-        QObject::connect(dureeH, SIGNAL(valueChanged(int)), this, SLOT(activerSauver()));
-        QObject::connect(dureeM, SIGNAL(valueChanged(int)), this, SLOT(activerSauver()));
+        QObject::connect(duree, SIGNAL(timeChanged(QTime)), this, SLOT(activerSauver()));
         QObject::connect(composantes, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(activerSauver()));
 
     QObject::connect(ChoixTache, SIGNAL(currentTextChanged(QString)), this, SLOT(initialiserEditeur(QString)));
@@ -445,10 +425,8 @@ void TacheEditeur::initialiserEditeur(QString nomtache) {
         preemptive->setEnabled(true);
         preemptive->setChecked(tacheU->isPreemptive());
 
-        dureeH->setEnabled(true);
-            dureeH->setValue(tacheU->getDuree().hour());
-        dureeM->setEnabled(true);
-            dureeM->setValue(tacheU->getDuree().minute());
+        duree->setEnabled(true);
+        duree->setTime(QTime(tacheU->getDuree().hour(), tacheU->getDuree().minute()));
     }
     else {
 
@@ -456,10 +434,8 @@ void TacheEditeur::initialiserEditeur(QString nomtache) {
 
         if (preemptive->isEnabled())
             preemptive->setEnabled(false);
-        if (dureeH->isEnabled())
-            dureeH->setEnabled(false);
-        if (dureeM->isEnabled())
-            dureeM->setEnabled(false);
+        if (duree->isEnabled())
+            duree->setEnabled(false);
 
         composantes->setEnabled(true);
         composantes->clear();
@@ -500,7 +476,7 @@ void TacheEditeur::sauverTache(){
                 return;
         }
         // Si la durée est nulle
-        if (!(dureeH->value() || dureeM->value())){
+        if (duree->time().isNull()){
                 QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
                 return;
         }
@@ -508,7 +484,7 @@ void TacheEditeur::sauverTache(){
         preemptive->isChecked() ? tacheU->setPreemptive(true) : tacheU->setPreemptive(false);
         tacheU->setDescription(description->toPlainText());
         tacheU->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
-        tacheU->setDuree(QTime(dureeH->value(), dureeM->value()));
+        tacheU->setDuree(duree->time());
         PrecedenceManager& PrM = *PrecedenceManager::getInstance();
         for (int i = 0; i < predecesseurs->count(); ++i) {
             QListWidgetItem *precedent = predecesseurs->item(i);

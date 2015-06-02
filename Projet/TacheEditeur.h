@@ -10,6 +10,7 @@
 #include <QHBoxLayout>
 #include <QSpinBox>
 #include <QDateEdit>
+#include <QTimeEdit>
 #include <QLabel>
 #include <QCheckBox>
 #include <QComboBox>
@@ -29,8 +30,8 @@ private:
     QLineEdit *titre;
     QCheckBox *preemptive;
     QTextEdit *description;
-    QSpinBox *dureeH, *dureeM;
     QDateEdit *dispo, *echeance;
+    QTimeEdit *duree;
     QListWidget *predecesseurs, *composantes;
     QPushButton *creer;
 
@@ -56,7 +57,7 @@ private:
     QLineEdit *titre;
     QCheckBox *preemptive;
     QTextEdit *description;
-    QSpinBox *dureeH, *dureeM;
+    QTimeEdit *duree;
     QDateEdit *dispo, *echeance;
     QListWidget *predecesseurs, *composantes;
     QPushButton *annuler, *sauver;
