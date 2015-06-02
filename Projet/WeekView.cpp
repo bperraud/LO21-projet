@@ -97,9 +97,12 @@ void WeekView::updateWeekView(){
     for (ProgManager::iterator i = ProgM.begin(); i != ProgM.end(); ++i){
         if ((*i).getDate() >= date.addDays(-date.dayOfWeek()+1) && (*i).getDate() <= date.addDays(-date.dayOfWeek()+7)){
             QStandardItem* item;
-            int nbQuartsH = ((*i).getHoraireFin().minute() + (*i).getHoraireFin().hour()*60
-                    - (*i).getHoraire().minute() - (*i).getHoraire().hour()*60)/15;
-            int trancheQH = (*i).getHoraire().minute()/15;
+            int dureeEnMin = ((*i).getHoraireFin().minute() + (*i).getHoraireFin().hour()*60
+                              - (*i).getHoraire().minute() - (*i).getHoraire().hour()*60);
+            int nbQuartsH = dureeEnMin/15;
+            if (!dureeEnMin%15) nbQuartsH++;
+            int trancheQH = (*i).getHoraire ().minute()/15;
+            if ((*i).getHoraire ().minute()%15) nbQuartsH++;
             item = modelW->item(((*i).getHoraire().hour()-8)*4+trancheQH, (*i).getDate().dayOfWeek());
             item->setText((*i).getTitre());
             if (item->row() + nbQuartsH >= 48) throw CalendarException("Erreur, WeekView, durée de la prog dépasse 20h...\n");
