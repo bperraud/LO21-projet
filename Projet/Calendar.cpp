@@ -310,8 +310,11 @@ const Projet* ProjetManager::getProjet(const Tache& t)const{
 
 
 bool ProjetManager::isTacheInProjet(const Tache& t){
+    TacheManager& TM = *TacheManager::getInstance();
     if (ProjetManager::getInstance()->tabParent.contains(t.getTitre()))
         return true;
+    if (TM.tabParent.contains(t.getTitre()))
+        return isTacheInProjet(TM.getTache(TM.tabParent[t.getTitre()]));
     return false;
 }
 

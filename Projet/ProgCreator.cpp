@@ -9,6 +9,7 @@ ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
     setMaximumWidth(600);
 
     TacheManager& TM = *TacheManager::getInstance();
+    ProjetManager& PM = *ProjetManager::getInstance();
 
     progLabel = new QLabel("Programmation de :", this);
 
@@ -35,7 +36,7 @@ ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
     tacheLabel = new QLabel("Tâche à programmer :");
     tachesU = new QComboBox(this);
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
-        if ((*i).isTacheUnitaire()){
+        if ((*i).isTacheUnitaire() && PM.isTacheInProjet(*i)){
             QString UneTache = (*i).getTitre();
             tachesU->addItem(UneTache);
         }

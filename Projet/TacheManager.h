@@ -13,6 +13,7 @@ private:
     friend void TacheComposite::setSousTaches(const ListTaches& sT);
     friend void TacheComposite::addSousTache(const Tache* t);
     friend void TacheComposite::rmSousTache(const Tache* t);
+    friend bool ProjetManager::isTacheInProjet(const Tache& t);
 
     Tache* trouverTache(const QString& titre) const;
     void ajouterTache(Tache& T);
