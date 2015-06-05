@@ -22,7 +22,6 @@ Projet de LO21 P15
 
 * Interface
 	* Fonctions load/save (exports, DP Strategy...) (Baptiste)
-	* Rajouter les infos de précédence sur les view (Baptiste)
 	* MAJ (à la fin) les check de contraintes de précédence...
 	* TacheCreator (Fabien)
 	* ProjetCreator (Fabien)
