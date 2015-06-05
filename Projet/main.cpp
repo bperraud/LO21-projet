@@ -12,6 +12,8 @@
 
 #include "Calendar.h"
 #include "TacheManager.h"
+#include "ProgManager.h"
+
 #include "TacheEditeur.h"
 #include "ProgCreator.h"
 #include "WeekView.h"

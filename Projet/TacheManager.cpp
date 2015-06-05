@@ -1,5 +1,4 @@
 #include "TacheManager.h"
-#include "CalendarException.h"
 
 Tache* TacheManager::trouverTache(const QString& titre) const{
     //qDebug() << "début trouverTache\n";

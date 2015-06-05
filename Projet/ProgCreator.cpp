@@ -2,6 +2,7 @@
 
 #include "ProgCreator.h"
 #include "TacheManager.h"
+#include "ProgManager.h"
 
 ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
 

@@ -4,6 +4,7 @@
 
 #include "WeekView.h"
 #include "TacheManager.h"
+#include "ProgManager.h"
 
 WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
 
