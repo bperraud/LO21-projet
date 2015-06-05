@@ -61,6 +61,7 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
     f.setBold(true);
     infoTacheLabel->setFont(f);
     infoTacheLabel->setIndent(24);
+    infoTacheLabel->setStyleSheet("margin-top:6px;margin-bottom:6px;");
 
     infoTache = new QLabel("Sélection vide", this);
 
@@ -69,6 +70,7 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
     scrollareaP = new QScrollArea;
     scrollareaT = new QScrollArea;
     scrollareaA = new QScrollArea;
+    scrollareaS = new QScrollArea;
 
     scrollareaP->setWidget(treeViewP);
     scrollareaP->setWidgetResizable(true);
@@ -82,14 +84,22 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
     scrollareaA->setWidgetResizable(true);
     scrollareaA->setFixedHeight(160);
 
+    scrollareaS->setWidget(infoTache);
+    scrollareaS->setWidgetResizable(true);
+    scrollareaS->setFixedHeight(160);
+    scrollareaS->setStyleSheet("padding:6px;");
+
     layout = new QVBoxLayout;
+
 
     layout->addWidget(scrollareaP);
     layout->addWidget(scrollareaT);
     layout->addWidget(scrollareaA);
     layout->addWidget(infoTacheLabel);
-    layout->addWidget(infoTache);
+    layout->addWidget(scrollareaS);
     layout->addStretch();
+
+
 
     this->setLayout(layout);
 
@@ -187,13 +197,13 @@ void TreeView::afficherInfos(const QModelIndex& index){
         QString titre = index.data().toString();
         infos.append("Tâche ");
         const Tache& tache = TacheManager::getInstance()->getTache(titre);
-        if (tache.isTacheUnitaire()) infos.append("unitaire :\n");
-        else infos.append("composite :\n");
+        if (tache.isTacheUnitaire()) infos.append("unitaire :\n\n");
+        else infos.append("composite :\n\n");
         tache.ajouterInfos(infos);
     }
     else if (index.model() == modelP){
         QString titre = index.data().toString();
-        infos.append("Projet :\n");
+        infos.append("Projet :\n\n");
         const Projet& projet = ProjetManager::getInstance()->getProjet(titre);
         projet.ajouterInfos(infos);
     }

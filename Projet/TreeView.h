@@ -16,14 +16,14 @@ class TreeView : public QWidget{
 Q_OBJECT
 
 private:
-    QScrollArea *scrollareaP, *scrollareaT, *scrollareaA;
+    QScrollArea *scrollareaP, *scrollareaT, *scrollareaA, *scrollareaS;
     QTreeView *treeViewP, *treeViewT, *treeViewA;
     QStandardItemModel *modelP, *modelT, *modelA;
     QList<QString> treePLabels, treeTLabels, treeALabels;
     QStandardItem *rootNodeP, *rootNodeT, *rootNodeA;
     QLabel *infoTacheLabel, *infoTache;
 
-    QVBoxLayout* layout;
+    QVBoxLayout *layout;
 
 public:
     explicit TreeView(QWidget *parent = 0);
