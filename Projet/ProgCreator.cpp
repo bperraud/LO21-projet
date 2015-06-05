@@ -8,9 +8,6 @@ ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
     setMinimumHeight(600);
     setMaximumWidth(600);
 
-    TacheManager& TM = *TacheManager::getInstance();
-    ProjetManager& PM = *ProjetManager::getInstance();
-
     progLabel = new QLabel("Programmation de :", this);
 
     radioBGroup = new QButtonGroup(this);
@@ -35,12 +32,6 @@ ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
 
     tacheLabel = new QLabel("Tâche à programmer :");
     tachesU = new QComboBox(this);
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
-        if ((*i).isTacheUnitaire() && PM.isTacheInProjet(*i)){
-            QString UneTache = (*i).getTitre();
-            tachesU->addItem(UneTache);
-        }
-    }
 
     titreLabel = new QLabel("Titre :", this);
     titre = new QLineEdit(this);
@@ -92,24 +83,32 @@ ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
 
     // Initialisation
 
+    updateTachesU();
     switchProg(radioBActivite);
 
     // Signaux
 
     QObject::connect(radioBGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(switchProg(QAbstractButton*)));
     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(sauverProg()));
+    QObject::connect(tachesU, SIGNAL(activated(QString)), this, SLOT(setTache(QString)));
+    QObject::connect(horaireFin, SIGNAL(userTimeChanged(QTime)), this, SLOT(updateHoraire(QTime)));
+    QObject::connect(horaire, SIGNAL(userTimeChanged(QTime)), this, SLOT(updateHoraireFin(QTime)));
 }
 
 ProgCreator::~ProgCreator(){}
 
 void ProgCreator::switchProg(QAbstractButton* radioB){
     if (radioB == radioBActivite){
+        tache = 0;
         titre->setEnabled(true);
         lieu->setEnabled(true);
         description->setEnabled(true);
         tachesU->setDisabled(true);
+        horaireFin->setDisabled(false);
+        horaireFin->setMaximumTime(QTime(20, 0));
     }
     else{
+        setTache(tachesU->currentText());
         titre->setEnabled(false);
         lieu->setEnabled(false);
         description->setEnabled(false);
@@ -117,10 +116,87 @@ void ProgCreator::switchProg(QAbstractButton* radioB){
     }
 }
 
+void ProgCreator::updateHoraireFin(QTime h){
+    if (radioBTache->isChecked()){
+        if (!tache->isPreemptive()){
+            horaireFin->setMaximumTime(QTime(20, 0));
+            int dureeSec = QTime(0, 0).secsTo(tache->getDuree());
+            QTime newHF = h.addSecs(dureeSec);
+            if (newHF < QTime(20, 0)) horaireFin->setTime(newHF);
+            else{
+                horaireFin->setTime(QTime(20, 0));
+                QTime newH = horaireFin->time().addSecs(-dureeSec);
+                horaire->setTime(newH);
+            }
+        }
+        else{
+            int dureeRestSec = QTime(0, 0).secsTo(tache->getDureeRestante());
+            QTime newHFmax = (h.addSecs(dureeRestSec) > QTime(20, 0)) ? QTime(20, 0) : h.addSecs(dureeRestSec);
+            horaireFin->setMaximumTime(newHFmax);
+        }
+    }
+    if (horaireFin->time() < horaire->time())
+        horaireFin->setTime(horaire->time());
+}
+
+void ProgCreator::setTache(QString titre){
+    TacheManager& TM = *TacheManager::getInstance();
+    if (!titre.isEmpty())
+        tache = &dynamic_cast<TacheUnitaire&>((TM.getTache(titre)));
+    horaireFin->setDisabled(tache->isPreemptive() ? false : true);
+    updateHoraireFin(horaire->time());
+}
+
+void ProgCreator::updateTachesU(){
+    TacheManager& TM = *TacheManager::getInstance();
+    ProjetManager& PM = *ProjetManager::getInstance();
+    ProgManager& ProgM = *ProgManager::getInstance();
+    tachesU->clear();
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        if ((*i).isTacheUnitaire() && PM.isTacheInProjet(*i)){
+            TacheUnitaire& TU = dynamic_cast<TacheUnitaire&>(*i);
+            QString titre = TU.getTitre();
+            if (TU.isPreemptive() && TU.getDureeRestante() > QTime(0, 0)){
+                tachesU->addItem(titre);
+            }
+            else if (!TU.isPreemptive() && !ProgM.trouverProgrammationT(TU))
+                tachesU->addItem(titre);
+        }
+    }
+    if (!tachesU->count()){
+        radioBActivite->setChecked(true);
+        radioBTache->setEnabled(false);
+        switchProg(radioBActivite);
+    }
+    else{
+        radioBTache->setEnabled(true);
+        switchProg(radioBTache);
+    }
+}
+
 void ProgCreator::sauverProg(){
     ProgManager& PM = *ProgManager::getInstance();
+    if (PM.programmationExists(date->date(), horaire->time(), horaireFin->time())){
+        QMessageBox::information(this, "Sauvegarde", "Échec de la sauvegarde : l'horaire est déjà pris !");
+        return;
+    }
+    if (horaire->time() >= horaireFin->time()){
+        QMessageBox::information(this, "Sauvegarde", "Échec de la sauvegarde : horaire incohérent !");
+        return;
+    }
     if (radioBActivite->isChecked()){
         PM.ajouterProgrammationA(date->date(), horaire->time(), horaireFin->time(), titre->text(), description->toPlainText(), lieu->text());
-        QMessageBox::information(this, "Sauvegarde", "Programmation sauvegardée.");
+        QMessageBox::information(this, "Sauvegarde", "Activité programmée.");
+    }
+    else{
+        PM.ajouterProgrammationT(date->date(), horaire->time(),horaireFin->time(), *tache);
+        if (tache->isPreemptive()){
+            QTime d = horaireFin->time();
+            int dureeSec = QTime(0, 0).secsTo(horaire->time());
+            d = d.addSecs(-dureeSec);
+            PM.updateDuree(*tache, d);
+        }
+        updateTachesU();
+        QMessageBox::information(this, "Sauvegarde", "Tâche programmée.");
     }
 }

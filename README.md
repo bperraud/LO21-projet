@@ -15,12 +15,13 @@ Projet de LO21 P15
 	* TreeView
 	* WeekView
 	* TacheEditeur (check le save)
+	* ProgCreator
 
 
 ## En cours
 
 * Interface
-	* AjouterProgActivité (Baptiste)
+	* Fonctions load/save (exports, DP Strategy...) (Baptiste)
 	* Rajouter les infos de précédence sur les view (Baptiste)
 	* MAJ (à la fin) les check de contraintes de précédence...
 	* TacheCreator (Fabien)
@@ -29,7 +30,7 @@ Projet de LO21 P15
 
 
 ## Todos non assignés
-* Fonctions load/save (exports, DP Strategy...)
+
 
 * Interface
 	* Création Projet

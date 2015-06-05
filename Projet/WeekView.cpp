@@ -103,7 +103,7 @@ void WeekView::updateWeekView(){
             if (!dureeEnMin%15) nbQuartsH++;
             int trancheQH = (*i).getHoraire ().minute()/15;
             if ((*i).getHoraire ().minute()%15) nbQuartsH++;
-            item = modelW->item(((*i).getHoraire().hour()-8)*4+trancheQH, (*i).getDate().dayOfWeek());
+            item = modelW->item(((*i).getHoraire().hour()-8)*4+trancheQH, (*i).getDate().dayOfWeek()-1);
             item->setText((*i).getTitre());
             if (item->row() + nbQuartsH >= 48) throw CalendarException("Erreur, WeekView, durée de la prog dépasse 20h...\n");
             weekView->setSpan(item->row(), item->column(), nbQuartsH, 1);

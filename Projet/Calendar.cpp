@@ -59,6 +59,18 @@ void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
     stream.writeEndElement();
 }
 
+QTime TacheUnitaire::getDureeRestante() const{
+    ProgManager& PM = *ProgManager::getInstance();
+    QTime d = duree;
+    if (PM.tabDuree.contains(titre)){
+        QTime dureeDone = PM.tabDuree.value(titre);
+        int dureeSec = QTime(0, 0).secsTo(dureeDone);
+        d = d.addSecs(-dureeSec);
+    }
+    return d;
+}
+
+
 void TacheComposite::ajouterInfos(QString& infos) const{
     Tache::ajouterInfos(infos);
     for (int i = 0; i < sousTaches.size(); ++i)
@@ -181,9 +193,18 @@ void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QT
 }
 
 void ProgManager::ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l){
-    if (trouverProgrammationA(ProgrammationActivite(d, h, fin, t, desc, l))) {throw CalendarException("erreur, ProgActiviteManager, activité déjà existante");}
+    if (trouverProgrammationA(ProgrammationActivite(d, h, fin, t, desc, l))) {throw CalendarException("erreur, ProgManager, activité déjà existante");}
     ProgrammationActivite* PA = new ProgrammationActivite(d, h, fin, t, desc, l);
     ajouterProgrammation(*PA);
+}
+
+void ProgManager::updateDuree(const TacheUnitaire& TU, QTime d){
+    if (tabDuree.contains(TU.getTitre())){
+        int dureeSec = QTime(0, 0).secsTo(d);
+        tabDuree[TU.getTitre()] = tabDuree[TU.getTitre()].addSecs(dureeSec);
+        if (tabDuree[TU.getTitre()] > TU.getDuree()) throw CalendarException("erreur, ProgManager, durée écoulée > durée");
+    }
+    else tabDuree[TU.getTitre()] = d;
 }
 
 bool ProgManager::programmationExists(const QDate& d, const QTime& h, const QTime& fin){

@@ -44,6 +44,10 @@ public:
 public slots:
     void switchProg(QAbstractButton* radioB);
     void sauverProg();
+    void setTache(QString titre);
+    void updateHoraire(QTime h){ if (h < horaire->time()) horaire->setTime(h); }
+    void updateHoraireFin(QTime h);
+    void updateTachesU();
 };
 
 

@@ -8,12 +8,12 @@
 
 #include <QString>
 #include <QDate>
+#include <QHash>
 
 
 #include <QDebug>
 #include <QTextCodec>
 #include <QtXml>
-
 
 class TacheVisitor;
 
@@ -69,6 +69,7 @@ private:
     friend class TacheManager;
 public:
     QTime getDuree() const { return duree; }
+    QTime getDureeRestante() const;
     void setDuree(const QTime& d) { duree=d; }
     bool isPreemptive() const { return preemptive; }
     void setPreemptive(bool b = true) { preemptive=b; }
@@ -218,13 +219,21 @@ typedef QList<Evenement*> ListEvent;
 class ProgManager : public Singleton<ProgManager>{
 private:
     ListEvent programmations;
-    ProgrammationTache* trouverProgrammationT(const TacheUnitaire& TU) const;
-    ProgrammationActivite* trouverProgrammationA(const ProgrammationActivite& PA) const;
-    bool programmationExists(const QDate& d, const QTime& h, const QTime& fin);
+    QHash<QString, QTime> tabDuree;
+
+    friend class TacheUnitaire;
+
     void ajouterProgrammation(Evenement& E);
 public:
     void ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU);
     void ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l);
+
+    bool programmationExists(const QDate& d, const QTime& h, const QTime& fin);
+
+    ProgrammationTache* trouverProgrammationT(const TacheUnitaire& TU) const;
+    ProgrammationActivite* trouverProgrammationA(const ProgrammationActivite& PA) const;
+
+    void updateDuree(const TacheUnitaire& TU, QTime d);
 
 
     class iterator{
