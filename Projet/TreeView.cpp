@@ -8,7 +8,7 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
     ProjetManager& PM = *ProjetManager::getInstance();
     ProgManager& ProgM = *ProgManager::getInstance();
 
-    setMinimumHeight(600);
+    setMinimumHeight(800);
 
     // treeViewProjets
     treeViewP = new QTreeView(this);

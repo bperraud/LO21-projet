@@ -276,9 +276,7 @@ void TacheCreator::creerTache(){
 
 TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
 
-    //this->setWindowTitle(QString("Edition de la tâche ")+tache.getId());
-    //this->setFixedSize(600, 300);
-    //this->setEnabled(false);
+    setMaximumSize(QSize(800, 800));
 
     ChoixTacheLabel = new QLabel("Tache à éditer:");
     ChoixTache = new QComboBox;
@@ -362,6 +360,7 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
         VC->addLayout(HC4);
         VC->addLayout(HC5);
         VC->addLayout(HC6);
+        VC->addStretch();
 
         QObject::connect(titre, SIGNAL(textEdited(const QString&)), this, SLOT(activerSauver()));
         QObject::connect(description, SIGNAL(textChanged()), this, SLOT(activerSauver()));

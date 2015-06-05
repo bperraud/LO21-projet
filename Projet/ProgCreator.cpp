@@ -6,8 +6,8 @@
 
 ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
 
-    setMinimumHeight(600);
-    setMaximumWidth(600);
+    setMinimumHeight(800);
+    setMaximumWidth(800);
 
     progLabel = new QLabel("Programmation de :", this);
 

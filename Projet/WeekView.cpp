@@ -47,16 +47,15 @@ WeekView::WeekView(QWidget *parent) : QWidget(parent){
     // Layout & Scroll
 
     layout = new QVBoxLayout;
-    layoutSemaine = new QHBoxLayout;
+
+    calendar->setFixedHeight(200);
 
     scrollarea = new QScrollArea;
     scrollarea->setWidget(weekView);
     scrollarea->setWidgetResizable(true);
-    scrollarea->setFixedHeight(600);
+    scrollarea->setFixedHeight(500);
 
-    layoutSemaine->addWidget(calendar);
-
-    layout->addLayout(layoutSemaine);
+    layout->addWidget(calendar);
     layout->addWidget(scrollarea);
 
     this->setLayout(layout);

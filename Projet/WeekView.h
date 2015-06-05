@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QScrollArea>
 #include <QStandardItem>
 #include <QTableView>
@@ -20,7 +19,6 @@ private:
     QTableView* weekView;
     QStringList ListJours, ListHeures;
     QCalendarWidget* calendar;
-    QHBoxLayout* layoutSemaine;
     QVBoxLayout* layout;
 
     QDate date;
