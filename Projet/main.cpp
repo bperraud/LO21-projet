@@ -25,8 +25,8 @@
 int main(int argc, char *argv[]){
 
     QApplication app(argc, argv);
-    QWidget fenetre;
-    fenetre.setMinimumSize(QSize(800, 800));
+    QWidget* fenetre = new QWidget;
+    fenetre->setMinimumSize(QSize(800, 800));
 
     //try{
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]){
     //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
 
 
-    //qDebug() << "checkpoint1\n";
+    qDebug() << "checkpoint1\n";
 
 
     Tache& T4 = TM.getTache("T4");
@@ -62,19 +62,21 @@ int main(int argc, char *argv[]){
 
 
     T4C.addSousTache(&TM.getTache("T3"));
-
-
     T4C.rmSousTache(&T2);
+
     ListTaches LT; LT << &T2 << &T4;
     TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
-
     TM.ajouterTacheUnitaire("T6", "tache sans projet", QTime(2, 0), QDate(2015, 4, 3), QDate(2015, 7, 23), true);
-    //qDebug() << "checkpoint2\n";
+
+    qDebug() << "checkpoint2\n";
 
     PM.ajouterProjet("P1", "Projet no1", QDate(2011, 01, 01), QDate(2020, 1, 1));
+
+
     PM.getProjet("P1").addTache(&TM.getTache("T5"));
     PM.ajouterProjet("P2", "Projet no2", QDate(2012, 01, 01), QDate(2025, 1, 1));
 
+    qDebug() << "checkpoint3\n";
 
     TacheUnitaire& T6U = dynamic_cast<TacheUnitaire&>(TM.getTache("T6"));
 
@@ -93,46 +95,52 @@ int main(int argc, char *argv[]){
 
 
 
-    //qDebug() << "checkpoint3\n";
-
     Tache& T3U = T2;
     PrecedenceManager& PrM = *PrecedenceManager::getInstance();
     PrM.ajouterPrecedence(T1, T2U);
-    PrM.supprimerPrecedence(T1, T2U);
+    //PrM.supprimerPrecedence(T1, T2U);
 
 
 
-    TacheEditeur TE;
-    WeekView WV;
-    TreeView TV;
-    ProgCreator PC;
+    WeekView* WV = new WeekView;
+    TreeView* TV = new TreeView;
+    TacheEditeur* TE = new TacheEditeur;
+    ProgCreator* PC = new ProgCreator;
 
-    QVBoxLayout layoutWeekView, layoutTacheEditeur, layoutTreeView, layoutProgCreator;
-    //QScrollArea scrollareaTE;
+    QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator;
+    layoutWeekView = new QVBoxLayout;
+    layoutTacheEditeur = new QVBoxLayout;
+    layoutTreeView = new QVBoxLayout;
+    layoutProgCreator = new QVBoxLayout;
 
-    layoutWeekView.addWidget(&WV);
-    layoutTreeView.addWidget(&TV);
-    //layoutTacheEditeur.addWidget(&scrollareaTE);
-    layoutTacheEditeur.addWidget(&TE);
-    layoutProgCreator.addWidget(&PC);
+    //QScrollArea* scrollareaTE = new QScrollArea;
 
-    //scrollareaTE.setWidget(&TE);
+    layoutWeekView->addWidget(WV);
+    layoutTreeView->addWidget(TV);
+    //layoutTacheEditeur->addWidget(&scrollareaTE);
+    layoutTacheEditeur->addWidget(TE);
+    layoutProgCreator->addWidget(PC);
+
+    //scrollareaTE->setWidget(&TE);
+
+    TabManager* TabM = new TabManager(fenetre);
+    QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator;
+    ongletWeekView = new QWidget;
+    ongletTacheEditeur = new QWidget;
+    ongletTreeView = new QWidget;
+    ongletProgCreator = new QWidget;
+
+    ongletWeekView->setLayout(layoutWeekView);
+    ongletTreeView->setLayout(layoutTreeView);
+    ongletTacheEditeur->setLayout(layoutTacheEditeur);
+    ongletProgCreator->setLayout(layoutProgCreator);
 
 
-    TabManager TabM(&fenetre);
-    QWidget ongletWeekView, ongletTacheEditeur, ongletTreeView, ongletProgCreator;
 
-    ongletWeekView.setLayout(&layoutWeekView);
-    ongletTreeView.setLayout(&layoutTreeView);
-    ongletTacheEditeur.setLayout(&layoutTacheEditeur);
-    ongletProgCreator.setLayout(&layoutProgCreator);
-
-
-
-    TabM.getOnglets().addTab(&ongletWeekView, "Vue hebdomadaire");
-    TabM.getOnglets().addTab(&ongletTreeView, "Vue synthétique des tâches && projets");
-    TabM.getOnglets().addTab(&ongletTacheEditeur, "Onglet Tache Editeur");
-    TabM.getOnglets().addTab(&ongletProgCreator, "Programmer un événement");
+    TabM->getOnglets().addTab(ongletWeekView, "Vue hebdomadaire");
+    TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique des tâches && projets");
+    TabM->getOnglets().addTab(ongletTacheEditeur, "Onglet Tache Editeur");
+    TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
 
 
 
@@ -141,7 +149,7 @@ int main(int argc, char *argv[]){
 
 
 
-    fenetre.show();
+    fenetre->show();
 
     return app.exec();
 }

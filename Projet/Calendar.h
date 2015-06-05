@@ -53,8 +53,6 @@ public:
     virtual void accept(TacheVisitor* v) =0;
 };
 
-QTextStream& operator<<(QTextStream& f, const Tache& t);
-
 typedef QList<Tache*> ListTaches;
 
 class TacheUnitaire : public Tache{
@@ -112,7 +110,7 @@ class Precedence;
 
 typedef QList<const Tache*> ListTachesConst;
 
-class PrecedenceManager: public Singleton<PrecedenceManager> {
+class PrecedenceManager: public Singleton<PrecedenceManager>{
 private:
     QList<Precedence*> precedences;
 public:
@@ -122,7 +120,7 @@ public:
     bool isPrecedence(const Tache& Tpred, const Tache& Tsucc) const;
 };
 
-class Precedence {
+class Precedence{
 private:
     const Tache* pred;
     const Tache* succ;
@@ -133,9 +131,6 @@ public:
     friend void PrecedenceManager::ajouterPrecedence(const Tache& Tpred, const Tache& Tsucc);
     friend void PrecedenceManager::supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc);
 };
-
-
-
 
 /* ----- [END] Précédences ----- */
 

@@ -57,7 +57,7 @@ const Tache* TacheManager::getTacheMere(const Tache& t)const{
 }
 
 TacheManager::~TacheManager(){
-    if (file!="") save(file);
+    //if (file!="") save(file);
     for (int i = 0; i < taches.size(); ++i) delete taches[i];
     file="";
 }

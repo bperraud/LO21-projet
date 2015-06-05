@@ -11,22 +11,6 @@
 
 
 
-QTextStream& operator<<(QTextStream& fout, const Tache& t){
-    fout<<t.getTitre()<<"\n";
-    fout<<t.getDescription()<<"\n";
-    fout<<t.getDateDisponibilite().toString()<<"\n";
-    fout<<t.getDateEcheance().toString()<<"\n";
-	return fout;
-}
-
-QTextStream& operator<<(QTextStream& fout, const ProgrammationTache& p){
-    fout<<p.getDate().toString()<<"\n";
-    fout<<p.getHoraire().toString()<<"\n";
-    fout<<p.getTache().getTitre()<<"\n";
-    return fout;
-}
-
-
 void Tache::setTitre(const QString& str){
   if (TacheManager::getInstance()->isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
   titre=str;
@@ -36,7 +20,11 @@ void Tache::ajouterInfos(QString& infos) const{
     infos.append("Titre : ").append(this->getTitre()).append("\n")
             .append("Description : ").append(this->getDescription()).append("\n")
             .append("Disponibilité : ").append(this->getDateDisponibilite().toString()).append("\n")
-            .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n");
+            .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n")
+            .append("Contraintes de précédence :\n");
+    ListTachesConst precedences = PrecedenceManager::getInstance()->trouverPrecedences(*this);
+    for (int i = 0; i < precedences.size(); ++i)
+        infos.append("   - ").append(precedences[i]->getTitre()).append("\n");
 }
 
 
@@ -74,8 +62,9 @@ QTime TacheUnitaire::getDureeRestante() const{
 
 void TacheComposite::ajouterInfos(QString& infos) const{
     Tache::ajouterInfos(infos);
+    infos.append("Sous-tâches :\n");
     for (int i = 0; i < sousTaches.size(); ++i)
-        infos.append("Sous-tâche : ").append(sousTaches[i]->getTitre()).append("\n");
+        infos.append("   - ").append(sousTaches[i]->getTitre()).append("\n");
 }
 
 void TacheComposite::saveTache(QXmlStreamWriter& stream){
