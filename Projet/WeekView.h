@@ -29,7 +29,7 @@ public slots:
     void updateWeekView();
 
 public:
-    explicit WeekView(const QDate& d = QDate::currentDate(), QWidget *parent = 0);
+    explicit WeekView(QWidget *parent = 0);
     ~WeekView();
 };
 

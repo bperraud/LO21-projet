@@ -6,7 +6,7 @@
 #include "TacheManager.h"
 #include "ProgManager.h"
 
-WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
+WeekView::WeekView(QWidget *parent) : QWidget(parent){
 
     calendar = new QCalendarWidget(this);
     calendar->setHorizontalHeaderFormat(QCalendarWidget::LongDayNames);

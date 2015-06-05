@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
     TacheEditeur TE;
 
 
-    WeekView WV(QDate(2015, 5, 25));
+    WeekView WV;
     TreeView TV;
     ProgCreator PC;
 
