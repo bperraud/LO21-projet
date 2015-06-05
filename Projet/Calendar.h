@@ -180,6 +180,7 @@ public:
 
     virtual bool isProgTache() const =0;
     virtual QString getTitre() const =0;
+    virtual QString getDescription() const =0;
 };
 
 typedef QList<Evenement*> ListEvent;
@@ -195,11 +196,11 @@ private:
     friend class ProgManager;
 public:
 
-    QString getDescription() const { return description; }
     QString getLieu() const { return lieu; }
 
     bool isProgTache() const { return false; }
     QString getTitre() const { return titre; }
+    QString getDescription() const { return description; }
 };
 
 class ProgrammationTache : public Evenement{
@@ -212,6 +213,7 @@ public:
 
     virtual bool isProgTache() const { return true; }
     QString getTitre() const { return tache->getTitre(); }
+    QString getDescription() const { return tache->getDescription(); }
 };
 
 

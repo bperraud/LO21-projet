@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
     ListTaches LT; LT << &T2 << &T4;
     TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
 
-    TM.ajouterTacheUnitaire("T6", "tache sans projet", QTime(2, 0), QDate(2015, 4, 3), QDate(2015, 7, 23));
+    TM.ajouterTacheUnitaire("T6", "tache sans projet", QTime(2, 0), QDate(2015, 4, 3), QDate(2015, 7, 23), true);
     qDebug() << "checkpoint2\n";
 
     PM.ajouterProjet("P1", "Projet no1", QDate(2011, 01, 01), QDate(2020, 1, 1));

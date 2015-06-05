@@ -8,8 +8,6 @@
 
 WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
 
-    scrollarea = new QScrollArea;
-
     calendar = new QCalendarWidget(this);
     calendar->setHorizontalHeaderFormat(QCalendarWidget::LongDayNames);
     calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
@@ -51,6 +49,7 @@ WeekView::WeekView(const QDate& d, QWidget *parent) : QWidget(parent), date(d){
     layout = new QVBoxLayout;
     layoutSemaine = new QHBoxLayout;
 
+    scrollarea = new QScrollArea;
     scrollarea->setWidget(weekView);
     scrollarea->setWidgetResizable(true);
     scrollarea->setFixedHeight(600);
