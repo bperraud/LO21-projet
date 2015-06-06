@@ -142,8 +142,6 @@ int main(int argc, char *argv[]){
     TabM->getOnglets().addTab(ongletTacheEditeur, "Onglet Tache Editeur");
     TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
 
-
-
     //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}
 
 

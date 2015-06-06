@@ -16,6 +16,7 @@ Projet de LO21 P15
 	* WeekView
 	* TacheEditeur (check le save)
 	* ProgCreator
+	* TabManager
 
 
 ## En cours

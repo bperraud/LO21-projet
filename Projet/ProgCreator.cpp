@@ -31,7 +31,7 @@ ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
         horaireFin->setMinimumTime(QTime(8 ,15));
         horaireFin->setMaximumTime(QTime(20, 0));
 
-    tacheLabel = new QLabel("Tâche à programmer :");
+    tacheLabel = new QLabel("Tâche à programmer :", this);
     tachesU = new QComboBox(this);
 
     titreLabel = new QLabel("Titre :", this);

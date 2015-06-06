@@ -71,6 +71,7 @@ public slots:
     //void sauverTacheC();
     void sauverTache();
     void initialiserEditeur(QString);
+    void updateT();
 
 public:
     //explicit TacheEditeur(TacheUnitaire& tacheToEdit, QWidget* parent = 0);

@@ -278,8 +278,8 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
 
     setMaximumSize(QSize(800, 800));
 
-    ChoixTacheLabel = new QLabel("Tache à éditer:");
-    ChoixTache = new QComboBox;
+    ChoixTacheLabel = new QLabel("Tâche à éditer :", this);
+    ChoixTache = new QComboBox(this);
         TacheManager& TM = *TacheManager::getInstance();
         for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
             QString UneTache = (*i).getTitre();
@@ -382,76 +382,77 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
 
 }
 
-void TacheEditeur::initialiserEditeur(QString nomtache) {
+void TacheEditeur::initialiserEditeur(QString nomtache){
 
     TacheManager& TM = *TacheManager::getInstance();
-    Tache& tacheToEdit = TM.getTache(nomtache);
 
-    titre->setEnabled(true);
-    titre->setText(tacheToEdit.getTitre());
+    if (!nomtache.isEmpty()){
 
-    description->setEnabled(true);
-    description->setText(tacheToEdit.getDescription());
+        Tache& tacheToEdit = TM.getTache(nomtache);
 
-    dispo->setEnabled(true);
-    dispo->setDate(tacheToEdit.getDateDisponibilite());
+        titre->setEnabled(true);
+        titre->setText(tacheToEdit.getTitre());
 
-    echeance->setEnabled(true);
-    echeance->setDate(tacheToEdit.getDateEcheance());
+        description->setEnabled(true);
+        description->setText(tacheToEdit.getDescription());
 
+        dispo->setEnabled(true);
+        dispo->setDate(tacheToEdit.getDateDisponibilite());
 
-    predecesseurs->setEnabled(true);
-    predecesseurs->clear();
-    PrecedenceManager& PrM = *PrecedenceManager::getInstance();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
-        QString UneTache = (*i).getTitre();
-        if (UneTache != tacheToEdit.getTitre()) {
-            QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
-            item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-            if (PrM.isPrecedence(*i, tacheToEdit))
-                item->setCheckState(Qt::Checked);
-            else item->setCheckState(Qt::Unchecked);// AND initialize check state
-        };
-    };
+        echeance->setEnabled(true);
+        echeance->setDate(tacheToEdit.getDateEcheance());
 
-    if (tacheToEdit.isTacheUnitaire()){
-
-        tacheU = &dynamic_cast<TacheUnitaire&>(tacheToEdit);
-
-        if (composantes->isEnabled())
-            composantes->setEnabled(false);
-
-        preemptive->setEnabled(true);
-        preemptive->setChecked(tacheU->isPreemptive());
-
-        duree->setEnabled(true);
-        duree->setTime(QTime(tacheU->getDuree().hour(), tacheU->getDuree().minute()));
-    }
-    else {
-
-        tacheC = &dynamic_cast<TacheComposite&>(tacheToEdit);
-
-        if (preemptive->isEnabled())
-            preemptive->setEnabled(false);
-        if (duree->isEnabled())
-            duree->setEnabled(false);
-
-        composantes->setEnabled(true);
-        composantes->clear();
+        predecesseurs->setEnabled(true);
+        predecesseurs->clear();
+        PrecedenceManager& PrM = *PrecedenceManager::getInstance();
         for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
             QString UneTache = (*i).getTitre();
-            if (UneTache != tacheC->getTitre()){
-                QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+            if (UneTache != tacheToEdit.getTitre()) {
+                QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
                 item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-                if (TM.getTacheMere(*i))
-                    if (TM.getTacheMere(*i)->getTitre() == tacheC->getTitre())
-                        item->setCheckState(Qt::Checked);
-                    else item->setCheckState(Qt::Unchecked);// AND initialize check state
-                else item->setCheckState(Qt::Unchecked);
+                if (PrM.isPrecedence(*i, tacheToEdit))
+                    item->setCheckState(Qt::Checked);
+                else item->setCheckState(Qt::Unchecked);// AND initialize check state
             };
         };
 
+        if (tacheToEdit.isTacheUnitaire()){
 
+            tacheU = &dynamic_cast<TacheUnitaire&>(tacheToEdit);
+
+            if (composantes->isEnabled())
+                composantes->setEnabled(false);
+
+            preemptive->setEnabled(true);
+            preemptive->setChecked(tacheU->isPreemptive());
+
+            duree->setEnabled(true);
+            duree->setTime(QTime(tacheU->getDuree().hour(), tacheU->getDuree().minute()));
+        }
+        else {
+
+            tacheC = &dynamic_cast<TacheComposite&>(tacheToEdit);
+
+            if (preemptive->isEnabled())
+                preemptive->setEnabled(false);
+            if (duree->isEnabled())
+                duree->setEnabled(false);
+
+            composantes->setEnabled(true);
+            composantes->clear();
+            for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+                QString UneTache = (*i).getTitre();
+                if (UneTache != tacheC->getTitre()){
+                    QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+                    item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+                    if (TM.getTacheMere(*i))
+                        if (TM.getTacheMere(*i)->getTitre() == tacheC->getTitre())
+                            item->setCheckState(Qt::Checked);
+                        else item->setCheckState(Qt::Unchecked);// AND initialize check state
+                    else item->setCheckState(Qt::Unchecked);
+                };
+            };
+        }
     }
 
     sauver->setEnabled(false);
@@ -537,6 +538,16 @@ void TacheEditeur::sauverTache(){
     }
 
 }
+
+void TacheEditeur::updateT(){
+    TacheManager& TM = *TacheManager::getInstance();
+    ChoixTache->clear();
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        QString UneTache = (*i).getTitre();
+        ChoixTache->addItem(UneTache);
+    }
+}
+
 
 /* --- [END] TacheEditeur --- */
 

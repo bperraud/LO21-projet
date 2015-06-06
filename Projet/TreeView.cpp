@@ -4,53 +4,30 @@
 
 TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
-    TacheManager& TM = *TacheManager::getInstance();
-    ProjetManager& PM = *ProjetManager::getInstance();
-    ProgManager& ProgM = *ProgManager::getInstance();
-
     setMinimumHeight(800);
 
     // treeViewProjets
     treeViewP = new QTreeView(this);
     modelP = new QStandardItemModel(this);
     treePLabels << "Projets et tâches associées";
-    modelP->setHorizontalHeaderLabels (QStringList(treePLabels));
-    rootNodeP = modelP->invisibleRootItem();
 
     // treeViewTaches
     treeViewT = new QTreeView(this);
     modelT = new QStandardItemModel(this);
     treeTLabels << "Tâches hors projet";
-    modelT->setHorizontalHeaderLabels (QStringList(treeTLabels));
-    rootNodeT = modelT->invisibleRootItem();
 
     // treeViewActivitees
     treeViewA = new QTreeView(this);
     modelA = new QStandardItemModel(this);
     treeALabels << "Type" << "Titre" << "Description" << "Lieu" << "Date" << "Début" << "Fin" << "Préemptive";
-    modelA->setHorizontalHeaderLabels (QStringList(treeALabels));
-    rootNodeA = modelA->invisibleRootItem();
 
 
     // Initialisation
-        // Construction de treeViewP et treeViewT
-        for (ProjetManager::iterator i = PM.begin(); i != PM.end(); ++i)
-            ajouterProjetTree(rootNodeP, *i);
-        for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
-            if (!TM.getTacheMere(*i)){
-                Projet* P = PM.getProjet(*i);
-                if (P) ajouterTacheTree(modelP->findItems(P->getTitre()).first(), *i);
-                else ajouterTacheTree(rootNodeT, *i);
-            }
-        }
-        // Construction de treeViewA
-        for (ProgManager::iterator i = ProgM.begin(); i != ProgM.end(); ++i)
-            ajouterActiviteTree(rootNodeA, *i);
+
+    updateTrees();
 
     treeViewP->setModel(modelP);
-    treeViewP->expandAll();
     treeViewT->setModel(modelT);
-    treeViewT->expandAll();
     treeViewA->setModel(modelA);
 
     // Informations
@@ -223,9 +200,18 @@ void TreeView::updateTrees(){
     modelT->clear();
     modelA->clear();
 
+    // Re-init
+    modelP->setHorizontalHeaderLabels (QStringList(treePLabels));
+    rootNodeP = modelP->invisibleRootItem();
+    modelT->setHorizontalHeaderLabels (QStringList(treeTLabels));
+    rootNodeT = modelT->invisibleRootItem();
+    modelA->setHorizontalHeaderLabels (QStringList(treeALabels));
+    rootNodeA = modelA->invisibleRootItem();
+
     // Construction de treeViewP et treeViewT
-    for (ProjetManager::iterator i = PM.begin(); i != PM.end(); ++i)
+    for (ProjetManager::iterator i = PM.begin(); i != PM.end(); ++i){
         ajouterProjetTree(rootNodeP, *i);
+    }
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
         if (!TM.getTacheMere(*i)){
             Projet* P = PM.getProjet(*i);
@@ -237,4 +223,7 @@ void TreeView::updateTrees(){
     // Construction de treeViewA
     for (ProgManager::iterator i = ProgM.begin(); i != ProgM.end(); ++i)
         ajouterActiviteTree(rootNodeA, *i);
+
+    treeViewP->expandAll();
+    treeViewT->expandAll();
 }
