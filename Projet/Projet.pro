@@ -12,7 +12,8 @@ HEADERS += \
     WeekView.h \
     ProgCreator.h \
     ProgManager.h \
-    TabManager.h
+    TabManager.h \
+    ImExManager.h
 
 SOURCES += \
     Calendar.cpp \
@@ -23,4 +24,5 @@ SOURCES += \
     WeekView.cpp \
     ProgCreator.cpp \
     ProgManager.cpp \
-    TabManager.cpp
+    TabManager.cpp \
+    ImExManager.cpp

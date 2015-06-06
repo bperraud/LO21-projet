@@ -20,6 +20,7 @@
 #include "ProgCreator.h"
 #include "WeekView.h"
 #include "TreeView.h"
+#include "ImExManager.h"
 
 
 int main(int argc, char *argv[]){
@@ -106,12 +107,14 @@ int main(int argc, char *argv[]){
     TreeView* TV = new TreeView;
     TacheEditeur* TE = new TacheEditeur;
     ProgCreator* PC = new ProgCreator;
+    ImExManager* IEM = new ImExManager;
 
-    QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator;
+    QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator, *layoutImExManager;
     layoutWeekView = new QVBoxLayout;
     layoutTacheEditeur = new QVBoxLayout;
     layoutTreeView = new QVBoxLayout;
     layoutProgCreator = new QVBoxLayout;
+    layoutImExManager = new QVBoxLayout;
 
     //QScrollArea* scrollareaTE = new QScrollArea;
 
@@ -120,27 +123,42 @@ int main(int argc, char *argv[]){
     //layoutTacheEditeur->addWidget(&scrollareaTE);
     layoutTacheEditeur->addWidget(TE);
     layoutProgCreator->addWidget(PC);
+    layoutImExManager->addWidget(IEM);
 
     //scrollareaTE->setWidget(&TE);
 
     TabManager* TabM = new TabManager(fenetre);
-    QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator;
+    QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator, *ongletImExManager;
     ongletWeekView = new QWidget;
     ongletTacheEditeur = new QWidget;
     ongletTreeView = new QWidget;
     ongletProgCreator = new QWidget;
+    ongletImExManager = new QWidget;
 
     ongletWeekView->setLayout(layoutWeekView);
     ongletTreeView->setLayout(layoutTreeView);
     ongletTacheEditeur->setLayout(layoutTacheEditeur);
     ongletProgCreator->setLayout(layoutProgCreator);
-
-
+    ongletImExManager->setLayout(layoutImExManager);
 
     TabM->getOnglets().addTab(ongletWeekView, "Vue hebdomadaire");
     TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique des tâches && projets");
     TabM->getOnglets().addTab(ongletTacheEditeur, "Onglet Tache Editeur");
     TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
+    TabM->getOnglets().addTab(ongletImExManager, "Imports && exports");
+
+
+
+    LoadXML loadXML;
+    LoadTXT loadTXT;
+
+    MaClassePossedantUneStrategie MaClasseBlabla1(&loadXML);
+    MaClassePossedantUneStrategie MaClasseBlabla2(&loadTXT);
+
+    MaClasseBlabla1.load();
+    MaClasseBlabla2.load();
+
+
 
     //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}
 
