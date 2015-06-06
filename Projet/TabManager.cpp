@@ -19,7 +19,6 @@ TabManager::TabManager(QWidget *parent) : QWidget(parent){
 TabManager::~TabManager(){}
 
 void TabManager::switchTab(int index){
-    qDebug() << "index : " << QString::number(index) << "\n";
     switch (index){
     case 0:
         qobject_cast<WeekView*>(Onglets->currentWidget()->layout()->itemAt(0)->widget())->updateWeekView();

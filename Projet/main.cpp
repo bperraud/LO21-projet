@@ -149,17 +149,6 @@ int main(int argc, char *argv[]){
 
 
 
-    LoadXML loadXML;
-    LoadTXT loadTXT;
-
-    MaClassePossedantUneStrategie MaClasseBlabla1(&loadXML);
-    MaClassePossedantUneStrategie MaClasseBlabla2(&loadTXT);
-
-    MaClasseBlabla1.load();
-    MaClasseBlabla2.load();
-
-
-
     //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}
 
 

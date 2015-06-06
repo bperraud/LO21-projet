@@ -8,6 +8,8 @@
 #include <QLineEdit>
 #include <QFileDialog>
 #include <QPushButton>
+#include <QButtonGroup>
+#include <QRadioButton>
 
 #include "Calendar.h"
 
@@ -17,25 +19,37 @@ private:
     //QFileDialog
 
     LoadStrategy* loadStrategy;
+    SaveStrategy* saveStrategy;
 
-    QLabel *loadLabel;
-    QLineEdit *loadEdit;
-    QString loadPath;
-    QPushButton *loadButton;
+    QButtonGroup *formatGroup, *actionGroup;
+    QRadioButton *xmlRadio, *txtRadio, *loadRadio, *saveRadio;
 
-    QHBoxLayout *HL;
+    QLabel *formatLabel, *actionLabel, *pathLabel;
+    QLineEdit *pathEdit;
+    QString path, format;
+    QPushButton *findButton, *valider;
+
+    QHBoxLayout *HL1, *HL2;
     QVBoxLayout *VL;
-public:
-    explicit ImExManager(QWidget *parent = 0);
-    ~ImExManager();
+
     void switchStrategy(LoadStrategy* s){
         if (loadStrategy) delete loadStrategy;
         loadStrategy = s;
     }
+    void switchStrategy(SaveStrategy* s){
+        if (saveStrategy) delete saveStrategy;
+        saveStrategy = s;
+    }
+public:
+    explicit ImExManager(QWidget *parent = 0);
+    ~ImExManager();
 
 public slots:
-    void loadXML();
-    void load(){ loadStrategy->load(); }
+    void updateFormat(QAbstractButton* radioB);
+    void findFile();
+    void chooseAction(){ actionGroup->checkedButton() == loadRadio ? load() : save(); }
+    void load();
+    void save();
 };
 
 #endif // IMEXMANAGER_H

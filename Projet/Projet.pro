@@ -13,7 +13,8 @@ HEADERS += \
     ProgCreator.h \
     ProgManager.h \
     TabManager.h \
-    ImExManager.h
+    ImExManager.h \
+    Strategies.h
 
 SOURCES += \
     Calendar.cpp \
@@ -25,4 +26,5 @@ SOURCES += \
     ProgCreator.cpp \
     ProgManager.cpp \
     TabManager.cpp \
-    ImExManager.cpp
+    ImExManager.cpp \
+    Strategies.cpp

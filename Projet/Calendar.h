@@ -3,8 +3,8 @@
 
 #include "CalendarException.h"
 #include "Singleton.h"
+#include "Strategies.h"
 
-#include <typeinfo>
 
 #include <QString>
 #include <QDate>
@@ -307,32 +307,7 @@ public:
 };
 
 
-// --- [BEGIN] DESIGN PATTERN STRATEGY ---
 
-class LoadStrategy{
-public:
-    virtual void load() = 0;
-    virtual ~LoadStrategy(){}
-};
-
-class LoadXML : public LoadStrategy{
-public:
-    void load(){ qDebug() << "Load XML"; }
-};
-class LoadTXT : public LoadStrategy{
-public:
-    void load(){ qDebug() << "Load TXT"; }
-};
-
-class MaClassePossedantUneStrategie{
-private:
-    LoadStrategy* loadStrategy;
-public:
-    MaClassePossedantUneStrategie(LoadStrategy* s) : loadStrategy(s){}
-    void load(){ loadStrategy->load(); }
-};
-
-// --- [END] DESIGN PATTERN STRATEGY ---
 
 
 
