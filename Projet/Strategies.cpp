@@ -1,16 +1,18 @@
 #include "Strategies.h"
-
-//#include "ProjetManager"
 #include "TacheManager.h"
 #include "ProgManager.h"
-//#include "PrecedenceManager"
+#include "ProjetManager.h"
+//#include "PrecedenceManager.h"
 
 // ----- [BEGIN] Load Strategies -----
 
-void LoadXML::load(const QString& f){qDebug() << "debut LoadXML::load";
+void LoadXML::load(const QString& f){
 
+    // Cleaning
     TacheManager::getInstance()->~TacheManager();
     ProgManager::getInstance()->~ProgManager();
+
+    // Load
 
     file = f;
     QFile fin(file);
@@ -40,7 +42,7 @@ void LoadXML::load(const QString& f){qDebug() << "debut LoadXML::load";
     TacheManager& TM = *TacheManager::getInstance();
     for (QHash<QString, QString>::const_iterator i = TM.tabParent.constBegin(); i != TM.tabParent.constEnd(); ++i)
         dynamic_cast<TacheComposite&>(TM.getTache(i.value())).addSousTache(&TM.getTache(i.key()));
-    qDebug() << "fin LoadXML::load";
+
 }
 
 

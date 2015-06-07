@@ -1,8 +1,9 @@
 #include <typeinfo>
 
 #include "Calendar.h"
-#include"TacheManager.h"
-#include"ProgManager.h"
+#include "TacheManager.h"
+#include "ProgManager.h"
+#include "PrecedenceManager.h"
 
 #include <QFile>
 #include <QTextCodec>
@@ -108,50 +109,10 @@ void TacheComposite::rmSousTache(const Tache* t){
     throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");
 }
 
-//******************************************************************************************
-// PrecedenceManager
-
-//Etablir comment trouver les précédences d'une tache + vérifier que précédence pas déjà existante.
 
 
-void PrecedenceManager::ajouterPrecedence(const Tache &Tpred, const Tache &Tsucc){
-    if (Tpred.getDateDisponibilite() > Tsucc.getDateEcheance())
-        throw CalendarException("erreur, PrecedenceManager, tentative de programmer une précédence avec une tache disponible après échéance de sa successeur.");
-    for (int i = 0; i < precedences.size(); ++i) {
-        if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
-            throw CalendarException("erreur, PrecedenceManager, précédence déjà existante");
-        if (&precedences[i]->getPredecesseur() == &Tsucc && &precedences[i]->getSuccesseur() == &Tpred)
-            throw CalendarException("erreur, PrecedenceManager, tentative d'implémenter un circuit de précédences");
-    };
-    Precedence* P = new Precedence(Tpred, Tsucc);
-    precedences.append(P);
-}
 
-void PrecedenceManager::supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc){
-    if (PrecedenceManager::isPrecedence(Tpred, Tsucc))
-        for (int i = 0; i < precedences.size(); ++i)
-            if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
-                precedences.removeAt(i);
-    else
-        throw CalendarException("erreur, PrecedenceManager, tentative d'effacer une precedence qui n'existe pas.");
 
-}
-
-ListTachesConst PrecedenceManager::trouverPrecedences(const Tache& Tsucc) const{
-    ListTachesConst LT;
-    for (int i = 0; i < precedences.size(); ++i)
-        if (&precedences[i]->getSuccesseur() == &Tsucc)
-            LT.append(&precedences[i]->getPredecesseur());
-    return LT;
-}
-
-bool PrecedenceManager::isPrecedence(const Tache& Tpred, const Tache& Tsucc) const {
-    for (int i = 0; i < precedences.size(); ++i)
-        if ((&precedences[i]->getPredecesseur() == &Tpred) && (&precedences[i]->getSuccesseur() == &Tsucc))
-            return true;
-    return false;
-
-}
 
 
 
@@ -218,62 +179,4 @@ void Projet::ajouterInfos(QString& infos) const{
 
 /* --- [END]Projet --- */
 
-/* --- [BEGIN]ProjetManager --- */
 
-Projet* ProjetManager::trouverProjet(const QString& titre) const{
-    for (int i = 0; i < projets.size(); ++i){
-        if (titre == (projets.at(i))->getTitre()) return projets[i];
-    }
-    return 0;
-}
-
-Projet& ProjetManager::ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches){
-    Projet* P = new Projet(t, desc, dispo, deadline, Taches);
-    if (trouverProjet(P->getTitre()))
-        throw CalendarException("erreur, ProjetManager, projet déjà existant");
-    for (TacheManager::iterator i = TacheManager::getInstance()->begin(); i != TacheManager::getInstance()->end(); ++i)
-        if ((*i).getTitre() == P->getTitre())
-            throw CalendarException("erreur, ProjetManager, tâche portant déjà ce nom");
-    for (int i = 0; i < Taches.size(); ++i){
-        if (isTacheInProjet(*Taches[i]))
-            throw CalendarException("Erreur ProjetManager, tâche appartenant déjà à un projet");
-        ProjetManager::getInstance()->tabParent.insert(Taches[i]->getTitre(), P->getTitre());
-    }
-    projets.append(P);
-    return *P;
-}
-
-Projet& ProjetManager::getProjet(const QString& titre){
-    Projet* p=trouverProjet(titre);
-    if (!p) throw CalendarException("erreur, ProjetManager, projet inexistant");
-    return *p;
-}
-
-const Projet& ProjetManager::getProjet(const QString& titre) const{
-    return const_cast<ProjetManager*>(this)->getProjet(titre);
-}
-
-Projet* ProjetManager::getProjet(const Tache& t){
-    if (tabParent.contains(t.getTitre()))
-        return &getProjet(tabParent.value(t.getTitre()));
-    return 0;
-}
-
-const Projet* ProjetManager::getProjet(const Tache& t)const{
-    return const_cast<ProjetManager*>(this)->getProjet(t);
-}
-
-
-bool ProjetManager::isTacheInProjet(const Tache& t){
-    TacheManager& TM = *TacheManager::getInstance();
-    if (ProjetManager::getInstance()->tabParent.contains(t.getTitre()))
-        return true;
-    if (TM.tabParent.contains(t.getTitre()))
-        return isTacheInProjet(TM.getTache(TM.tabParent[t.getTitre()]));
-    return false;
-}
-
-//void load(const QString& f);
-//void save(const QString& f);
-
-/* --- [END]ProjetManager --- */

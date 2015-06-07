@@ -6,13 +6,12 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QTabWidget>
-#include <QMenuBar>
-#include <QMenu>
 #include <QScrollArea>
 
 #include "Calendar.h"
 #include "TacheManager.h"
 #include "ProgManager.h"
+#include "PrecedenceManager.h"
 
 #include "TabManager.h"
 

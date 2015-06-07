@@ -5,7 +5,6 @@
 #include "Singleton.h"
 #include "Strategies.h"
 
-
 #include <QString>
 #include <QDate>
 
@@ -16,10 +15,7 @@
 
 class TacheVisitor;
 
-
-/* ----- [BEGIN] Design Pattern Composite ----- */
-
-class Tache{ // Abstraite
+class Tache{ // Abstraite, DP Composite
 protected:
     QString titre;
     QString description;
@@ -57,6 +53,7 @@ public:
 };
 
 typedef QList<Tache*> ListTaches;
+typedef QList<const Tache*> ListTachesConst;
 
 class TacheUnitaire : public Tache{
 private:
@@ -101,27 +98,12 @@ public:
     void accept(TacheVisitor* v);
 };
 
-/* ----- [END] Design Pattern Composite ----- */
 
 
 
 
 
-/* ----- [BEGIN] Précédences ----- */
-
-class Precedence;
-
-typedef QList<const Tache*> ListTachesConst;
-
-class PrecedenceManager: public Singleton<PrecedenceManager>{
-private:
-    QList<Precedence*> precedences;
-public:
-    void ajouterPrecedence(const Tache& Tpred,const Tache& Tsucc);
-    void supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc);
-    ListTachesConst trouverPrecedences(const Tache& Tsucc) const;
-    bool isPrecedence(const Tache& Tpred, const Tache& Tsucc) const;
-};
+/* ----- [BEGIN] Précédence ----- */
 
 class Precedence{
 private:
@@ -131,11 +113,10 @@ private:
 public:
     const Tache& getPredecesseur() const { return *pred;}
     const Tache& getSuccesseur() const { return *succ;}
-    friend void PrecedenceManager::ajouterPrecedence(const Tache& Tpred, const Tache& Tsucc);
-    friend void PrecedenceManager::supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc);
+    friend class PrecedenceManager;
 };
 
-/* ----- [END] Précédences ----- */
+/* ----- [END] Précédence ----- */
 
 
 
@@ -255,59 +236,7 @@ typedef QList<Projet*> ListProjet;
 
 /* ----- [END]Projet ----- */
 
-class ProjetManager : public Singleton<ProjetManager>{
-private:
-    ListProjet projets;
 
-    QHash<QString, QString> tabParent;
-    friend void Projet::setTaches(const ListTaches& T);
-    friend void Projet::addTache(const Tache* t);
-    friend void Projet::rmTache(const Tache* t);
-    Projet* trouverProjet(const QString& titre) const;
-public:
-    Projet& ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches=ListTaches());
-
-    bool isProjetExistant(const QString& titre) const { return trouverProjet(titre)!=0; }
-    bool isTacheInProjet(const Tache& t);
-
-    Projet& getProjet(const QString& titre);
-    const Projet& getProjet(const QString& titre) const;
-
-    Projet* getProjet(const Tache& t);
-    const Projet* getProjet(const Tache& t)const;
-
-    //void load(const QString& f);
-    //void save(const QString& f);
-
-    class iterator{
-        ListProjet::iterator current;
-        iterator(ListProjet::iterator u):current(u){}
-        friend class ProjetManager;
-    public:
-        iterator(){}
-        Projet& operator*() const { return **current; }
-        bool operator!=(iterator it) const { return current != it.current; }
-        iterator& operator++(){ ++current ; return *this; }
-    };
-
-    iterator begin(){ return iterator(projets.begin()); }
-    iterator end(){ return iterator(projets.end()); }
-
-
-    class const_iterator{
-        ListProjet::const_iterator current;
-        const_iterator(ListProjet::const_iterator u):current(u){}
-        friend class ProjetManager;
-    public:
-        const_iterator(){}
-        const Projet& operator*() const { return **current; }
-        bool operator!=(const_iterator it) const { return current != it.current; }
-        const_iterator& operator++(){ ++current; return *this; }
-
-    };
-    const_iterator begin() const { return const_iterator(projets.begin()); }
-    const_iterator end() const { return const_iterator(projets.end()); }
-};
 
 
 

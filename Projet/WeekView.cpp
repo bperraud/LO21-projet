@@ -3,7 +3,6 @@
 #include <QBrush>
 
 #include "WeekView.h"
-#include "TacheManager.h"
 #include "ProgManager.h"
 
 WeekView::WeekView(QWidget *parent) : QWidget(parent){

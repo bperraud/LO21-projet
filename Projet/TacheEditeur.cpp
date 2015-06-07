@@ -1,9 +1,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "Calendar.h"
-#include "TacheManager.h"
 #include "TacheEditeur.h"
+#include "TacheManager.h"
+#include "PrecedenceManager.h"
 
 
 /* --- [BEGIN] TacheCreator --- */
