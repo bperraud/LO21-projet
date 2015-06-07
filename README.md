@@ -1,4 +1,4 @@
-# LO21-projet
+﻿# LO21-projet
 Projet de LO21 P15
 
 ## Notes & co
@@ -17,6 +17,7 @@ Projet de LO21 P15
 	* TacheEditeur (check le save)
 	* ProgCreator
 	* TabManager
+	* TacheCreator
 
 
 ## En cours
@@ -24,7 +25,6 @@ Projet de LO21 P15
 * Interface
 	* Fonctions load/save (exports, DP Strategy...) (Baptiste)
 	* MAJ (à la fin) les check de contraintes de précédence...
-	* TacheCreator (Fabien)
 	* ProjetCreator (Fabien)
 	* ProjetEditor (Fabien)
 
