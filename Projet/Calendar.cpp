@@ -66,10 +66,12 @@ QTime TacheUnitaire::getDureeRestante() const{
 
 
 void TacheComposite::ajouterInfos(QString& infos) const{
+    TacheManager& TM = *TacheManager::getInstance();
     Tache::ajouterInfos(infos);
     infos.append("Sous-tâches :\n");
-    for (int i = 0; i < sousTaches.size(); ++i)
-        infos.append("   - ").append(sousTaches[i]->getTitre()).append("\n");
+    for (TacheManager::tabParentIterator it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
+        if ((*it).value() == this->getTitre())
+            infos.append("   - ").append((*it).key()).append("\n");
 }
 
 
@@ -88,28 +90,20 @@ void TacheComposite::setSousTaches(const ListTaches &sT){
             throw CalendarException("Erreur tâche composite (set), tâche déjà associée à une autre tâche");
         TacheManager::getInstance()->tabParent.insert(sT[i]->getTitre(), this->getTitre());
     }
-    sousTaches = sT;
 }
 
 void TacheComposite::addSousTache(const Tache* t){
-
-    for (int i = 0; i < sousTaches.size(); ++i)
-        if (sousTaches[i] == t) throw CalendarException("erreur, TacheComposite, tâche déjà existante");
-    if (TacheManager::getInstance()->tabParent.contains(t->getTitre()))
-        if(TacheManager::getInstance()->tabParent.value(t->getTitre()) != this->getTitre())
-            throw CalendarException("Erreur tâche composite (add), tâche déjà associée à une autre tâche");
-
-    sousTaches.append(const_cast<Tache*>(t));
-    TacheManager::getInstance()->tabParent.insert(t->getTitre(), this->getTitre());
+    TacheManager& TM = *TacheManager::getInstance();
+    if (TM.tabParent.contains(t->getTitre()))
+        throw CalendarException("Erreur tâche composite (add), tâche déjà associée à une tâche");
+    TM.tabParent.insert(t->getTitre(), this->getTitre());
 }
 
 void TacheComposite::rmSousTache(const Tache* t){
-    for (int i = 0; i < sousTaches.size(); ++i){
-        if (sousTaches[i] == t){
-            sousTaches.removeAt(i);
-            TacheManager::getInstance()->tabParent.remove(t->getTitre());
-            return;
-        }
+    TacheManager& TM = *TacheManager::getInstance();
+    if (TM.tabParent.contains(t->getTitre())){
+        TM.tabParent.remove(t->getTitre());
+        return;
     }
     throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");
 }

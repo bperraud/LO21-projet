@@ -19,7 +19,7 @@ TacheUnitaire& TacheManager::ajouterTacheUnitaire(const QString& t, const QStrin
 }
 
 TacheComposite& TacheManager::ajouterTacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT){
-    TacheComposite* TC = new TacheComposite(t, desc, dispo, deadline, sT);
+    TacheComposite* TC = new TacheComposite(t, desc, dispo, deadline);
     ajouterTache(*TC);
     for (int i = 0; i < sT.size(); ++i){
         if (tabParent.contains(sT[i]->getTitre()))
