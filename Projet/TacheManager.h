@@ -9,12 +9,13 @@
 class TacheManager : public Singleton<TacheManager>{
 private:
     ListTaches taches;
-    QHash<QString, QString> tabParent;
+    //QHash<QString, QString> tabParent;
+    QHash<const Tache*, const TacheComposite*> tabParent;
     QString file;
 
-    friend ListTaches TacheComposite::getSousTaches() const;
+    friend ListTachesConst TacheComposite::getSousTaches() const;
     friend void TacheComposite::setSousTaches(const ListTaches& sT);
-    friend void TacheComposite::addSousTache(const Tache* t);
+    friend void TacheComposite::addSousTache(const Tache* t) const;
     friend void TacheComposite::rmSousTache(const Tache* t);
     friend bool ProjetManager::isTacheInProjet(const Tache& t);
     friend void LoadXML::load(const QString& f);
@@ -70,13 +71,25 @@ public:
     const_iterator begin() const { return const_iterator(taches.begin()); }
     const_iterator end() const { return const_iterator(taches.end()); }
 
-    class tabParentIterator{
+    /*class tabParentIterator{
         QHash<QString, QString>::iterator current;
         tabParentIterator(QHash<QString, QString>::iterator u):current(u){}
         friend class TacheManager;
     public:
         tabParentIterator(){}
         QHash<QString, QString>::iterator operator*() const { return current; }
+        bool operator!=(tabParentIterator it) const { return current != it.current; }
+        tabParentIterator& operator++(){ ++current ; return *this; }
+    };
+    tabParentIterator tabParentBegin(){ return tabParentIterator(tabParent.begin()); }
+    tabParentIterator tabParentEnd(){ return tabParentIterator(tabParent.end()); }*/
+    class tabParentIterator{
+        QHash<const Tache*, const TacheComposite*>::iterator current;
+        tabParentIterator(QHash<const Tache*, const TacheComposite*>::iterator u):current(u){}
+        friend class TacheManager;
+    public:
+        tabParentIterator(){}
+        QHash<const Tache*, const TacheComposite*>::iterator operator*() const { return current; }
         bool operator!=(tabParentIterator it) const { return current != it.current; }
         tabParentIterator& operator++(){ ++current ; return *this; }
     };

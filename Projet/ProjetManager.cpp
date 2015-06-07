@@ -49,8 +49,8 @@ bool ProjetManager::isTacheInProjet(const Tache& t){
     TacheManager& TM = *TacheManager::getInstance();
     if (ProjetManager::getInstance()->tabParent.contains(t.getTitre()))
         return true;
-    if (TM.tabParent.contains(t.getTitre()))
-        return isTacheInProjet(TM.getTache(TM.tabParent[t.getTitre()]));
+    if (TM.tabParent.contains(&t))
+        return isTacheInProjet(*TM.tabParent[&t]);
     return false;
 }
 

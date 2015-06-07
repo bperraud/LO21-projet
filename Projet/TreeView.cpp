@@ -90,19 +90,19 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
 TreeView::~TreeView(){}
 
-void TreeView::ajouterProjetTree(QStandardItem* root, Projet& projet){
+void TreeView::ajouterProjetTree(QStandardItem* root, const Projet& projet){
     QStandardItem* newItem =  new QStandardItem(projet.getTitre());
     root->appendRow(newItem);
     newItem->setEditable(false);
     newItem->setData(QVariant::fromValue(projet.getTitre()));
 }
 
-void TreeView::ajouterTacheTree(QStandardItem* pere, Tache& tache){
+void TreeView::ajouterTacheTree(QStandardItem* pere, const Tache& tache){
     QStandardItem* newItem = new QStandardItem(tache.getTitre());
     pere->appendRow(newItem);
     newItem->setEditable(false);
     if(!tache.isTacheUnitaire()){
-        TacheComposite& TC = dynamic_cast<TacheComposite&>(tache);
+        const TacheComposite& TC = dynamic_cast<const TacheComposite&>(tache);
         if (!TC.getSousTaches().isEmpty()){
             for (int i = 0; i < TC.getSousTaches().size(); ++i)
                 ajouterTacheTree(newItem, *TC.getSousTaches()[i]);
@@ -110,11 +110,11 @@ void TreeView::ajouterTacheTree(QStandardItem* pere, Tache& tache){
     }
 }
 
-void TreeView::ajouterActiviteTree(QStandardItem* root, Evenement& evt){
+void TreeView::ajouterActiviteTree(QStandardItem* root, const Evenement& evt){
     QList<QStandardItem*> row;
     QStandardItem* item;
     if (!evt.isProgTache()){
-        ProgrammationActivite& progA = dynamic_cast<ProgrammationActivite&>(evt);
+        const ProgrammationActivite& progA = dynamic_cast<const ProgrammationActivite&>(evt);
             item = new QStandardItem("Activité");
             item->setEditable(false);
             row.append(item);
@@ -138,7 +138,7 @@ void TreeView::ajouterActiviteTree(QStandardItem* root, Evenement& evt){
             row.append(item);
     }
     else{
-        ProgrammationTache& progT = dynamic_cast<ProgrammationTache&>(evt);
+        const ProgrammationTache& progT = dynamic_cast<const ProgrammationTache&>(evt);
             item = new QStandardItem("Tâche");
             item->setEditable(false);
             row.append(item);

@@ -159,7 +159,7 @@ int main(int argc, char *argv[]){
     //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}
 
     for (TacheManager::tabParentIterator it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
-        qDebug() << (*it).key() << "," << (*it).value();
+        qDebug() << (*it).key()->getTitre() << "," << (*it).value()->getTitre();
 
     fenetre->show();
 

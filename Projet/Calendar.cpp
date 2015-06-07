@@ -70,39 +70,50 @@ void TacheComposite::ajouterInfos(QString& infos) const{
     Tache::ajouterInfos(infos);
     infos.append("Sous-tâches :\n");
     for (TacheManager::tabParentIterator it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
-        if ((*it).value() == this->getTitre())
-            infos.append("   - ").append((*it).key()).append("\n");
+        /*if ((*it).value() == this->getTitre())
+            infos.append("   - ").append((*it).key()).append("\n");*/
+        if ((*it).value() == this)
+            infos.append("   - ").append((*it).key()->getTitre()).append("\n");
 }
 
 
 
-ListTaches TacheComposite::getSousTaches() const{
-    ListTaches LT;
-    QList<QString> LS = TacheManager::getInstance()->tabParent.keys(this->getTitre());
-    for (int i = 0; i < LS.size(); ++i) LT.append(&TacheManager::getInstance()->getTache(LS[i]));
+ListTachesConst TacheComposite::getSousTaches() const{
+    TacheManager& TM = *TacheManager::getInstance();
+    //ListTaches LT;
+    //QList<QString> LS = TacheManager::getInstance()->tabParent.keys(this->getTitre());
+    ListTachesConst LT = TM.tabParent.keys(this);
+    //for (int i = 0; i < LS.size(); ++i) LT.append(&TacheManager::getInstance()->getTache(LS[i]));
     return LT;
 }
 
 
 void TacheComposite::setSousTaches(const ListTaches &sT){
+    TacheManager& TM = *TacheManager::getInstance();
     for (int i = 0; i < sT.size(); ++i){
-        if (TacheManager::getInstance()->tabParent.contains(sT[i]->getTitre()))
+        //if (TacheManager::getInstance()->tabParent.contains(sT[i]->getTitre()))
+        if (TM.tabParent.contains(sT[i]))
             throw CalendarException("Erreur tâche composite (set), tâche déjà associée à une autre tâche");
-        TacheManager::getInstance()->tabParent.insert(sT[i]->getTitre(), this->getTitre());
+        //TM.tabParent.insert(sT[i]->getTitre(), this->getTitre());
+        TM.tabParent.insert(sT[i], this);
     }
 }
 
-void TacheComposite::addSousTache(const Tache* t){
+void TacheComposite::addSousTache(const Tache* t) const{
     TacheManager& TM = *TacheManager::getInstance();
-    if (TM.tabParent.contains(t->getTitre()))
+    //if (TM.tabParent.contains(t->getTitre()))
+    if (TM.tabParent.contains(t))
         throw CalendarException("Erreur tâche composite (add), tâche déjà associée à une tâche");
-    TM.tabParent.insert(t->getTitre(), this->getTitre());
+    //TM.tabParent.insert(t->getTitre(), this->getTitre());
+    TM.tabParent.insert(t, this);
 }
 
 void TacheComposite::rmSousTache(const Tache* t){
     TacheManager& TM = *TacheManager::getInstance();
-    if (TM.tabParent.contains(t->getTitre())){
-        TM.tabParent.remove(t->getTitre());
+    //if (TM.tabParent.contains(t->getTitre())){
+    if (TM.tabParent.contains(t)){
+        //TM.tabParent.remove(t->getTitre());
+        TM.tabParent.remove(t);
         return;
     }
     throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");

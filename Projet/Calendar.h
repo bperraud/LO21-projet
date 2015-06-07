@@ -80,14 +80,13 @@ public:
 
 class TacheComposite : public Tache{
 private:
-    //ListTaches sousTaches;
     TacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
             Tache(t, desc, dispo, deadline){}
     friend class TacheManager;
 public:
-    ListTaches getSousTaches() const;
+    ListTachesConst getSousTaches() const;
     void setSousTaches(const ListTaches& sT);
-    void addSousTache(const Tache* t);
+    void addSousTache(const Tache* t) const;
     void rmSousTache(const Tache* t);
 
     void ajouterInfos(QString& infos) const;

@@ -22,10 +22,11 @@ TacheComposite& TacheManager::ajouterTacheComposite(const QString& t, const QStr
     TacheComposite* TC = new TacheComposite(t, desc, dispo, deadline);
     ajouterTache(*TC);
     for (int i = 0; i < sT.size(); ++i){
-        if (tabParent.contains(sT[i]->getTitre()))
-            if (tabParent.value(sT[i]->getTitre()) != TC->getTitre())
-                throw CalendarException("erreur, TacheManager::ajouterTacheComposite, sous-tâche déjà subordonnée à une autre tâche");
-        tabParent.insert(sT[i]->getTitre(), TC->getTitre());
+        //if (tabParent.contains(sT[i]->getTitre()))
+        if (tabParent.contains(sT[i]))
+            throw CalendarException("erreur, TacheManager::ajouterTacheComposite, sous-tâche déjà subordonnée à une tâche");
+        //tabParent.insert(sT[i]->getTitre(), TC->getTitre());
+        tabParent.insert(sT[i], TC);
     }
     return *TC;
 }
@@ -42,8 +43,8 @@ const Tache& TacheManager::getTache(const QString& titre)const{
 
 
 Tache* TacheManager::getTacheMere(const Tache& t){
-    if (tabParent.contains(t.getTitre()))
-        return &getTache(tabParent.value(t.getTitre()));
+    if (tabParent.contains(&t))
+        return const_cast<TacheComposite*>(tabParent.value(&t));
     return 0;
 }
 
@@ -132,7 +133,7 @@ void TacheManager::load2(QXmlStreamReader& xml){
         }
         xml.readNext();
     }
-    tabParent[fille] = mere;
+    tabParent[&getTache(fille)] = &dynamic_cast<TacheComposite&>(getTache(mere));
 }
 
 
@@ -146,10 +147,10 @@ void TacheManager::save1(QXmlStreamWriter& xml){
 
     // Sauvegarde de la hiérarchie
     xml.writeStartElement("hierarchieT");
-    for (QHash<QString, QString>::const_iterator i = tabParent.constBegin(); i != tabParent.constEnd(); ++i){
+    for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
         xml.writeStartElement("link");
-            xml.writeTextElement("parent", i.value());
-            xml.writeTextElement("son", i.key());
+            xml.writeTextElement("parent", (*it).value()->getTitre());
+            xml.writeTextElement("son", (*it).key()->getTitre());
         xml.writeEndElement();
     }
     xml.writeEndElement();
@@ -238,7 +239,7 @@ void TacheManager::load(const QString& f){
                         if(xml.name() == "sous-tache"){
                             xml.readNext();
                             //hierarchieTemp.append(new HierarchyTachesC(titre, xml.text().toString()));
-                            tabParent.insert(xml.text().toString(), titre);
+                            tabParent.insert(&getTache(xml.text().toString()), &dynamic_cast<TacheComposite&>(getTache(titre)));
                             unitaire = false;
                             //qDebug()<<"sous-tache\n";
                         }
@@ -266,8 +267,8 @@ void TacheManager::load(const QString& f){
     // Removes any device() or data from the reader * and resets its internal state to the initial state.
     xml.clear();
     // Traitement des taches composites (ajout de leurs sous-taches)
-    for (QHash<QString, QString>::const_iterator i = tabParent.constBegin(); i != tabParent.constEnd(); ++i)
-        dynamic_cast<TacheComposite&>(getTache(i.value())).addSousTache(&getTache(i.key()));
+    for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it)
+        (*it).value()->addSousTache((*it).key());
     qDebug()<<"fin load\n";
 }
 
