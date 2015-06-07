@@ -7,13 +7,40 @@
 
 // ----- [BEGIN] Load Strategies -----
 
-void LoadXML::load(const QString& f){
+void LoadXML::load(const QString& f){qDebug() << "debut LoadXML::load";
 
-    qDebug() << f;
+    TacheManager::getInstance()->~TacheManager();
+    ProgManager::getInstance()->~ProgManager();
 
+    file = f;
+    QFile fin(file);
 
+    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw CalendarException("Erreur ouverture fichier tâches");
 
+    QXmlStreamReader xml(&fin);
 
+    while(!xml.atEnd() && !xml.hasError()){
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) continue;
+        if(token == QXmlStreamReader::StartElement){
+            if(xml.name() == "taches") continue;
+            if(xml.name() == "tache"){
+
+                TacheManager::getInstance()->load1(xml);
+
+            }
+
+        }
+    }
+    if(xml.hasError())
+        throw CalendarException("Erreur lecteur fichier taches, parser xml");
+    xml.clear();
+    // Traitement des taches composites
+    TacheManager& TM = *TacheManager::getInstance();
+    for (QHash<QString, QString>::const_iterator i = TM.tabParent.constBegin(); i != TM.tabParent.constEnd(); ++i)
+        dynamic_cast<TacheComposite&>(TM.getTache(i.value())).addSousTache(&TM.getTache(i.key()));
+    qDebug() << "fin LoadXML::load";
 }
 
 

@@ -11,6 +11,7 @@
 // ----- [BEGIN] Load Strategies -----
 
 class LoadStrategy{
+protected:
     QString file;
 public:
     virtual void load(const QString& f) = 0;

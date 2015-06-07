@@ -54,7 +54,68 @@ const Tache* TacheManager::getTacheMere(const Tache& t)const{
 TacheManager::~TacheManager(){
     //if (file!="") save(file);
     for (int i = 0; i < taches.size(); ++i) delete taches[i];
+    taches.clear();
+    tabParent.clear();
     file="";
+}
+
+void TacheManager::load1(QXmlStreamReader& xml){
+
+    QString titre;
+    QString description;
+    QDate disponibilite;
+    QDate echeance;
+    QTime duree;
+    bool preemptive;
+
+    bool unitaire = true;
+
+    QXmlStreamAttributes attributes = xml.attributes();
+    if(attributes.hasAttribute("preemptive")){
+        QString val = attributes.value("preemptive").toString();
+        preemptive = (val == "true" ? true : false);
+    }
+
+    xml.readNext();
+
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "tache")){
+        if(xml.tokenType() == QXmlStreamReader::StartElement){
+            if(xml.name() == "titre"){
+                xml.readNext();
+                titre = xml.text().toString();
+            }
+            if(xml.name() == "description"){
+                xml.readNext();
+                description = xml.text().toString();
+            }
+            if(xml.name() == "disponibilite"){
+                xml.readNext();
+                disponibilite = QDate::fromString(xml.text().toString(),Qt::ISODate);
+            }
+            if(xml.name() == "echeance"){
+                xml.readNext();
+                echeance = QDate::fromString(xml.text().toString(),Qt::ISODate);
+            }
+            if(xml.name() == "duree"){
+                xml.readNext();
+                duree.setHMS((xml.text().toInt())/60,(xml.text().toInt())%60,0);
+            }
+            if(xml.name() == "sous-tache"){
+                xml.readNext();
+                tabParent.insert(xml.text().toString(), titre);
+                unitaire = false;
+            }
+        }
+        xml.readNext();
+    }
+    if (unitaire) ajouterTacheUnitaire(titre, description, duree, disponibilite, echeance, preemptive);
+    else{
+        ajouterTacheComposite(titre, description, disponibilite, echeance);
+        unitaire = true;
+    }
+
+
+
 }
 
 void TacheManager::load(const QString& f){
@@ -174,8 +235,8 @@ void TacheManager::load(const QString& f){
 }
 
 void  TacheManager::save(const QString& f){
-    file=f;
-    QFile newfile( file);
+    file = f;
+    QFile newfile(file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
         throw CalendarException(QString("erreur sauvegarde tâches : ouverture fichier xml"));
     QXmlStreamWriter stream(&newfile);

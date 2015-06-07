@@ -191,6 +191,7 @@ void TreeView::afficherInfos(const QModelIndex& index){
 }
 
 void TreeView::updateTrees(){
+
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
     ProgManager& ProgM = *ProgManager::getInstance();
@@ -199,6 +200,9 @@ void TreeView::updateTrees(){
     modelP->clear();
     modelT->clear();
     modelA->clear();
+    treeViewP->clearSelection();
+    treeViewT->clearSelection();
+    treeViewA->clearSelection();
 
     // Re-init
     modelP->setHorizontalHeaderLabels (QStringList(treePLabels));

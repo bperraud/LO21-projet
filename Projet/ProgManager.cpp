@@ -51,3 +51,11 @@ bool ProgManager::programmationExists(const QDate& d, const QTime& h, const QTim
             return true;
     return false;
 }
+
+ProgManager::~ProgManager(){
+    //if (file!="") save(file);
+    for (int i = 0; i < programmations.size(); ++i) delete programmations[i];
+    programmations.clear();
+    tabDuree.clear();
+    //file="";
+}

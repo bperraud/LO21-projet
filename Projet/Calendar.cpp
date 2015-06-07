@@ -48,7 +48,7 @@ void TacheUnitaire::ajouterInfos(QString& infos) const{
 
 void TacheUnitaire::saveTache(QXmlStreamWriter& stream) const{
     QString str;
-    str.setNum(QTime(0, 0).secsTo(this->getDuree()));
+    str.setNum(QTime(0, 0).secsTo(this->getDuree())/60);
     stream.writeTextElement("duree", str);
 }
 

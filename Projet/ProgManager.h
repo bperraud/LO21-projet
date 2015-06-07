@@ -14,6 +14,8 @@ private:
 
     void ajouterProgrammation(Evenement& E);
 public:
+    ~ProgManager();
+
     void ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU);
     void ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l);
 
