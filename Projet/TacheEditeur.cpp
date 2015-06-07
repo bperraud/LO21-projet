@@ -74,8 +74,9 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
     HC1 = new QHBoxLayout;
         HC1->addWidget(typeLabelu);
         HC1->addWidget(unitaire);
-        HC1->addWidget(composite);
         HC1->addWidget(typeLabelc);
+        HC1->addWidget(composite);
+        HC1->addStretch();
     HC2 = new QHBoxLayout;
         HC2->addWidget(titreLabel);
         HC2->addWidget(titre);

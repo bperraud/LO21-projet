@@ -66,45 +66,56 @@ QTime TacheUnitaire::getDureeRestante() const{
 
 
 void TacheComposite::ajouterInfos(QString& infos) const{
+    TacheManager& TM = *TacheManager::getInstance();
     Tache::ajouterInfos(infos);
     infos.append("Sous-tâches :\n");
-    for (int i = 0; i < sousTaches.size(); ++i)
-        infos.append("   - ").append(sousTaches[i]->getTitre()).append("\n");
+    for (TacheManager::tabParentIterator it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
+        /*if ((*it).value() == this->getTitre())
+            infos.append("   - ").append((*it).key()).append("\n");*/
+        if ((*it).value() == this)
+            infos.append("   - ").append((*it).key()->getTitre()).append("\n");
 }
 
-void TacheComposite::saveTache(QXmlStreamWriter& stream) const{
-    for (int i = 0; i < this->getSousTaches().size(); ++i)
-        stream.writeTextElement("sous-tache", this->getSousTaches()[i]->getTitre());
+
+
+ListTachesConst TacheComposite::getSousTaches() const{
+    TacheManager& TM = *TacheManager::getInstance();
+    //ListTaches LT;
+    //QList<QString> LS = TacheManager::getInstance()->tabParent.keys(this->getTitre());
+    ListTachesConst LT = TM.tabParent.keys(this);
+    //for (int i = 0; i < LS.size(); ++i) LT.append(&TacheManager::getInstance()->getTache(LS[i]));
+    return LT;
 }
+
 
 void TacheComposite::setSousTaches(const ListTaches &sT){
+    TacheManager& TM = *TacheManager::getInstance();
     for (int i = 0; i < sT.size(); ++i){
-        if (TacheManager::getInstance()->tabParent.contains(sT[i]->getTitre()))
+        //if (TacheManager::getInstance()->tabParent.contains(sT[i]->getTitre()))
+        if (TM.tabParent.contains(sT[i]))
             throw CalendarException("Erreur tâche composite (set), tâche déjà associée à une autre tâche");
-        TacheManager::getInstance()->tabParent.insert(sT[i]->getTitre(), this->getTitre());
+        //TM.tabParent.insert(sT[i]->getTitre(), this->getTitre());
+        TM.tabParent.insert(sT[i], this);
     }
-    sousTaches = sT;
 }
 
-void TacheComposite::addSousTache(const Tache* t){
-
-    for (int i = 0; i < sousTaches.size(); ++i)
-        if (sousTaches[i] == t) throw CalendarException("erreur, TacheComposite, tâche déjà existante");
-    if (TacheManager::getInstance()->tabParent.contains(t->getTitre()))
-        if(TacheManager::getInstance()->tabParent.value(t->getTitre()) != this->getTitre())
-            throw CalendarException("Erreur tâche composite (add), tâche déjà associée à une autre tâche");
-
-    sousTaches.append(const_cast<Tache*>(t));
-    TacheManager::getInstance()->tabParent.insert(t->getTitre(), this->getTitre());
+void TacheComposite::addSousTache(const Tache* t) const{
+    TacheManager& TM = *TacheManager::getInstance();
+    //if (TM.tabParent.contains(t->getTitre()))
+    if (TM.tabParent.contains(t))
+        throw CalendarException("Erreur tâche composite (add), tâche déjà associée à une tâche");
+    //TM.tabParent.insert(t->getTitre(), this->getTitre());
+    TM.tabParent.insert(t, this);
 }
 
 void TacheComposite::rmSousTache(const Tache* t){
-    for (int i = 0; i < sousTaches.size(); ++i){
-        if (sousTaches[i] == t){
-            sousTaches.removeAt(i);
-            TacheManager::getInstance()->tabParent.remove(t->getTitre());
-            return;
-        }
+    TacheManager& TM = *TacheManager::getInstance();
+    //if (TM.tabParent.contains(t->getTitre())){
+    if (TM.tabParent.contains(t)){
+        if (TM.tabParent[t] != this) throw CalendarException("erreur, TacheComposite, tâche à supprimer n'appartient pas à this");
+        //TM.tabParent.remove(t->getTitre());
+        TM.tabParent.remove(t);
+        return;
     }
     throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");
 }
@@ -137,44 +148,65 @@ void TacheInformateur::visitTacheComposite(TacheComposite* TC){
 
 /* --- [BEGIN]Projet --- */
 
+void Projet::setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
+    ProjetManager& PM = *ProjetManager::getInstance();
+    if (e < disp) throw CalendarException("erreur tâche : date échéance < date disponibilité");
+    for (ProjetManager::tabParentIterator it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
+        if ((*it).value() == this)
+            if(e < (*it).key()->getDateEcheance()) throw CalendarException("erreur projet : date échéance < échéance d'une tache");
+    disponibilite = disp;
+    echeance = e;
+}
+
+ListTachesConst Projet::getTaches() const{
+    ProjetManager& PM = *ProjetManager::getInstance();
+    ListTachesConst LT = PM.tabParent.keys(this);
+    return LT;
+}
+
 void Projet::setTaches(const ListTaches &T){
+    ProjetManager& PM = *ProjetManager::getInstance();
+    TacheManager& TM = *TacheManager::getInstance();
     for (int i = 0; i < T.size(); ++i){
-        if (!TacheManager::getInstance()->isTacheExistante(T[i]->getTitre()))
+        if (!TM.isTacheExistante(T[i]->getTitre()))
             throw CalendarException("Erreur projet, tâche non trouvée");
-        if (ProjetManager::getInstance()->isTacheInProjet(*T[i]))
+        if (PM.isTacheInProjet(*T[i]))
             throw CalendarException("Erreur projet, tâche appartenant déjà à un projet");
-        ProjetManager::getInstance()->tabParent.insert(T[i]->getTitre(), this->getTitre());
+        PM.tabParent.insert(T[i], this);
     }
-    taches = T;
 }
 
 void Projet::addTache(const Tache* t){
-    for (int i = 0; i < taches.size(); ++i)
-        if (taches[i] == t) throw CalendarException("erreur, Projet, tâche déjà existante");
-    if (ProjetManager::getInstance()->isTacheInProjet(*t))
+    ProjetManager& PM = *ProjetManager::getInstance();
+    for (ProjetManager::tabParentIterator it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
+        if ((*it).key() == t && (*it).value() == this)
+            throw CalendarException("erreur, Projet, tâche déjà existante");
+    if (PM.isTacheInProjet(*t))
         throw CalendarException("Erreur projet, tâche appartenant déjà à un projet");
-    taches.append(const_cast<Tache*>(t));
-    ProjetManager::getInstance()->tabParent.insert(t->getTitre(), this->getTitre());
+    PM.tabParent.insert(t, this);
 }
 
 void Projet::rmTache(const Tache* t){
-    for (int i = 0; i < taches.size(); ++i){
-        if (taches[i] == t){
-            taches.removeAt(i);
-            ProjetManager::getInstance()->tabParent.remove(t->getTitre());
-            return;
-        }
+    ProjetManager& PM = *ProjetManager::getInstance();
+    if (PM.tabParent.contains(t)){
+        if (PM.tabParent[t] != this) throw CalendarException("erreur, Projet, tâche à supprimer n'appartient pas à this");
+        PM.tabParent.remove(t);
+        return;
     }
     throw CalendarException("erreur, Projet, tâche à supprimer non trouvée");
 }
+
+
+
 
 void Projet::ajouterInfos(QString& infos) const{
     infos.append("Titre : ").append(this->getTitre()).append("\n")
             .append("Description : ").append(this->getDescription()).append("\n")
             .append("Disponibilité : ").append(this->getDateDisponibilite().toString()).append("\n")
             .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n");
-    for (int i = 0; i < taches.size(); ++i)
-        infos.append("Tâche : ").append(taches[i]->getTitre()).append("\n");
+    ListTachesConst LT = getTaches();
+    for (int i = 0; i < LT.size(); ++i)
+        infos.append("Tâche : ").append(LT[i]->getTitre()).append("\n");
 }
 
 /* --- [END]Projet --- */

@@ -21,16 +21,16 @@ private:
     QStandardItemModel *modelP, *modelT, *modelA;
     QList<QString> treePLabels, treeTLabels, treeALabels;
     QStandardItem *rootNodeP, *rootNodeT, *rootNodeA;
-    QLabel *infoTacheLabel, *infoTache;
+    QLabel *infoTacheLabel, *infoTache, *progLabel;
 
     QVBoxLayout *layout;
 
 public:
     explicit TreeView(QWidget *parent = 0);
     ~TreeView();
-    void ajouterProjetTree(QStandardItem* root, Projet& projet);
-    void ajouterTacheTree(QStandardItem* pere, Tache& tache);
-    void ajouterActiviteTree(QStandardItem* root, Evenement& evt);
+    void ajouterProjetTree(QStandardItem* root, const Projet& projet);
+    void ajouterTacheTree(QStandardItem* pere, const Tache &tache);
+    void ajouterActiviteTree(QStandardItem* root, const Evenement& evt);
 
 public slots:
     void afficherInfos(const QModelIndex& index);

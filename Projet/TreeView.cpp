@@ -6,6 +6,8 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
     setMinimumHeight(800);
 
+    QFont f; f.setBold(true);
+
     // treeViewProjets
     treeViewP = new QTreeView(this);
     modelP = new QStandardItemModel(this);
@@ -21,6 +23,8 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
     modelA = new QStandardItemModel(this);
     treeALabels << "Type" << "Titre" << "Description" << "Lieu" << "Date" << "Début" << "Fin" << "Préemptive";
 
+    progLabel = new QLabel("Liste des programmations :", this);
+    progLabel->setFont(f);
 
     // Initialisation
 
@@ -33,11 +37,7 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
     // Informations
 
     infoTacheLabel = new QLabel("Informations pour la sélection :", this);
-    QFont f;
-    f.setFamily("Times");
-    f.setBold(true);
     infoTacheLabel->setFont(f);
-    infoTacheLabel->setIndent(24);
     infoTacheLabel->setStyleSheet("margin-top:6px;margin-bottom:6px;");
 
     infoTache = new QLabel("Sélection vide", this);
@@ -71,6 +71,7 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
     layout->addWidget(scrollareaP);
     layout->addWidget(scrollareaT);
+    layout->addWidget(progLabel);
     layout->addWidget(scrollareaA);
     layout->addWidget(infoTacheLabel);
     layout->addWidget(scrollareaS);
@@ -89,19 +90,19 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
 TreeView::~TreeView(){}
 
-void TreeView::ajouterProjetTree(QStandardItem* root, Projet& projet){
+void TreeView::ajouterProjetTree(QStandardItem* root, const Projet& projet){
     QStandardItem* newItem =  new QStandardItem(projet.getTitre());
     root->appendRow(newItem);
     newItem->setEditable(false);
     newItem->setData(QVariant::fromValue(projet.getTitre()));
 }
 
-void TreeView::ajouterTacheTree(QStandardItem* pere, Tache& tache){
-    QStandardItem* newItem =  new QStandardItem(tache.getTitre());
+void TreeView::ajouterTacheTree(QStandardItem* pere, const Tache& tache){
+    QStandardItem* newItem = new QStandardItem(tache.getTitre());
     pere->appendRow(newItem);
     newItem->setEditable(false);
     if(!tache.isTacheUnitaire()){
-        TacheComposite& TC = dynamic_cast<TacheComposite&>(tache);
+        const TacheComposite& TC = dynamic_cast<const TacheComposite&>(tache);
         if (!TC.getSousTaches().isEmpty()){
             for (int i = 0; i < TC.getSousTaches().size(); ++i)
                 ajouterTacheTree(newItem, *TC.getSousTaches()[i]);
@@ -109,11 +110,11 @@ void TreeView::ajouterTacheTree(QStandardItem* pere, Tache& tache){
     }
 }
 
-void TreeView::ajouterActiviteTree(QStandardItem* root, Evenement& evt){
+void TreeView::ajouterActiviteTree(QStandardItem* root, const Evenement& evt){
     QList<QStandardItem*> row;
     QStandardItem* item;
     if (!evt.isProgTache()){
-        ProgrammationActivite& progA = dynamic_cast<ProgrammationActivite&>(evt);
+        const ProgrammationActivite& progA = dynamic_cast<const ProgrammationActivite&>(evt);
             item = new QStandardItem("Activité");
             item->setEditable(false);
             row.append(item);
@@ -137,7 +138,7 @@ void TreeView::ajouterActiviteTree(QStandardItem* root, Evenement& evt){
             row.append(item);
     }
     else{
-        ProgrammationTache& progT = dynamic_cast<ProgrammationTache&>(evt);
+        const ProgrammationTache& progT = dynamic_cast<const ProgrammationTache&>(evt);
             item = new QStandardItem("Tâche");
             item->setEditable(false);
             row.append(item);
