@@ -89,8 +89,6 @@ void ImExManager::findFile(){
 
 
 void ImExManager::load(){
-    qDebug() << "Load !";
-
     if (formatGroup->checkedButton() == xmlRadio) switchStrategy(new LoadXML);
     else if (formatGroup->checkedButton() == txtRadio) switchStrategy(new LoadTXT);
     if (!pathEdit->text().isEmpty()){
@@ -100,8 +98,6 @@ void ImExManager::load(){
     else QMessageBox::information(this, "Chargement", "Chargement impossible : aucun chemin spécifié !");
 }
 void ImExManager::save(){
-    qDebug() << "Save !";
-
     if (formatGroup->checkedButton() == xmlRadio) switchStrategy(new SaveXML);
     else if (formatGroup->checkedButton() == txtRadio) switchStrategy(new SaveTXT);
     if (!pathEdit->text().isEmpty()){

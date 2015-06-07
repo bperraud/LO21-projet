@@ -47,7 +47,10 @@ public:
     }
 
     virtual void ajouterInfos(QString& infos) const;
-    virtual void saveTache(QXmlStreamWriter& stream) =0;
+
+    void save(QXmlStreamWriter& stream) const;
+
+    virtual void saveTache(QXmlStreamWriter& stream) const =0;
     virtual bool isTacheUnitaire() const =0;
 
     virtual void accept(TacheVisitor* v) =0;
@@ -73,7 +76,7 @@ public:
 
     void ajouterInfos(QString& infos) const;
 
-    void saveTache(QXmlStreamWriter& stream);
+    void saveTache(QXmlStreamWriter& stream) const;
     bool isTacheUnitaire() const { return true; }
     void accept(TacheVisitor* v);
 };
@@ -93,7 +96,7 @@ public:
 
     void ajouterInfos(QString& infos) const;
 
-    void saveTache(QXmlStreamWriter& stream);
+    void saveTache(QXmlStreamWriter& stream) const;
     bool isTacheUnitaire() const { return false; }
     void accept(TacheVisitor* v);
 };

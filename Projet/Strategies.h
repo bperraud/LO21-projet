@@ -1,11 +1,17 @@
 #ifndef STRATEGIES_H
 #define STRATEGIES_H
 
+#include <QTextCodec>
+#include <QtXml>
+
+#include <QFile>
+
 #include "Calendar.h"
 
 // ----- [BEGIN] Load Strategies -----
 
 class LoadStrategy{
+    QString file;
 public:
     virtual void load(const QString& f) = 0;
     virtual ~LoadStrategy(){}
@@ -25,6 +31,8 @@ public:
 // ----- [BEGIN] Save Strategies -----
 
 class SaveStrategy{
+protected:
+    QString file;
 public:
     virtual void save(const QString& f) = 0;
     virtual ~SaveStrategy(){}

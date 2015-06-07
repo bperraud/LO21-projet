@@ -1,5 +1,3 @@
-#include <typeinfo>
-
 #include "TabManager.h"
 
 #include "TacheEditeur.h"

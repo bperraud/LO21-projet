@@ -12,8 +12,8 @@
 
 
 void Tache::setTitre(const QString& str){
-  if (TacheManager::getInstance()->isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
-  titre=str;
+    if (TacheManager::getInstance()->isTacheExistante((str))) throw CalendarException("erreur TacheManager : tache id déjà existante");
+    titre = str;
 }
 
 void Tache::ajouterInfos(QString& infos) const{
@@ -27,6 +27,17 @@ void Tache::ajouterInfos(QString& infos) const{
         infos.append("   - ").append(precedences[i]->getTitre()).append("\n");
 }
 
+void Tache::save(QXmlStreamWriter& stream) const{
+    stream.writeStartElement("tache");
+        if (isTacheUnitaire())
+            stream.writeAttribute("preemptive", (dynamic_cast<const TacheUnitaire*>(this)->isPreemptive()) ? "true" : "false");
+        stream.writeTextElement("titre", this->getTitre());
+        stream.writeTextElement("description", this->getDescription());
+        stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
+        stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+        saveTache(stream);
+    stream.writeEndElement();
+}
 
 
 void TacheUnitaire::ajouterInfos(QString& infos) const{
@@ -35,17 +46,10 @@ void TacheUnitaire::ajouterInfos(QString& infos) const{
             .append(QString(this->isPreemptive() ? "Préemptive" : "Non preemptive")).append("\n");
 }
 
-void TacheUnitaire::saveTache(QXmlStreamWriter& stream){
-    stream.writeStartElement("tache");
-    stream.writeAttribute("preemptive", (this->isPreemptive())?"true":"false");
-    stream.writeTextElement("titre", this->getTitre());
-    stream.writeTextElement("description", this->getDescription());
-    stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
-    stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+void TacheUnitaire::saveTache(QXmlStreamWriter& stream) const{
     QString str;
-    str.setNum(this->getDuree().minute()+(this->getDuree().hour())*60);
-    stream.writeTextElement("duree",str);
-    stream.writeEndElement();
+    str.setNum(QTime(0, 0).secsTo(this->getDuree()));
+    stream.writeTextElement("duree", str);
 }
 
 QTime TacheUnitaire::getDureeRestante() const{
@@ -67,15 +71,9 @@ void TacheComposite::ajouterInfos(QString& infos) const{
         infos.append("   - ").append(sousTaches[i]->getTitre()).append("\n");
 }
 
-void TacheComposite::saveTache(QXmlStreamWriter& stream){
-    stream.writeStartElement("tache");
-    stream.writeTextElement("titre", this->getTitre());
-    stream.writeTextElement("description", this->getDescription());
-    stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
-    stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+void TacheComposite::saveTache(QXmlStreamWriter& stream) const{
     for (int i = 0; i < this->getSousTaches().size(); ++i)
         stream.writeTextElement("sous-tache", this->getSousTaches()[i]->getTitre());
-    stream.writeEndElement();
 }
 
 void TacheComposite::setSousTaches(const ListTaches &sT){

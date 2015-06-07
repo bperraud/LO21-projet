@@ -34,7 +34,7 @@ ProgCreator::ProgCreator(QWidget *parent) : QWidget(parent){
     tacheLabel = new QLabel("Tâche à programmer :", this);
     tachesU = new QComboBox(this);
 
-    titreLabel = new QLabel("Titre :", this);
+    titreLabel = new QLabel("Titre * :", this);
     titre = new QLineEdit(this);
     lieuLabel = new QLabel("Lieu :", this);
     lieu = new QLineEdit(this);
@@ -142,10 +142,11 @@ void ProgCreator::updateHoraireFin(QTime h){
 
 void ProgCreator::setTache(QString titre){
     TacheManager& TM = *TacheManager::getInstance();
-    if (!titre.isEmpty())
+    if (!titre.isEmpty() && radioBGroup->checkedButton() == radioBTache){
         tache = &dynamic_cast<TacheUnitaire&>((TM.getTache(titre)));
-    horaireFin->setDisabled(tache->isPreemptive() ? false : true);
-    updateHoraireFin(horaire->time());
+        horaireFin->setDisabled(tache->isPreemptive() ? false : true);
+        updateHoraireFin(horaire->time());
+    }
 }
 
 void ProgCreator::updateTachesU(){
@@ -171,7 +172,7 @@ void ProgCreator::updateTachesU(){
     }
     else{
         radioBTache->setEnabled(true);
-        switchProg(radioBTache);
+        setTache(tachesU->currentText());
     }
 }
 
@@ -186,6 +187,10 @@ void ProgCreator::sauverProg(){
         return;
     }
     if (radioBActivite->isChecked()){
+        if (titre->text().isEmpty()){
+            QMessageBox::information(this, "Sauvegarde", "Échec de la sauvegarde : veuillez renseigner un titre !");
+            return;
+        }
         PM.ajouterProgrammationA(date->date(), horaire->time(), horaireFin->time(), titre->text(), description->toPlainText(), lieu->text());
         QMessageBox::information(this, "Sauvegarde", "Activité programmée.");
     }

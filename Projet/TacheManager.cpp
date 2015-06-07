@@ -1,8 +1,6 @@
 #include "TacheManager.h"
 
 Tache* TacheManager::trouverTache(const QString& titre) const{
-    //qDebug() << "début trouverTache\n";
-    //qDebug() << "taches.size :" << QString::number(taches.size()) << "\n";
     for (int i = 0; i < taches.size(); ++i){
         if (titre == (taches.at(i))->getTitre()) return taches[i];
     }
@@ -10,14 +8,11 @@ Tache* TacheManager::trouverTache(const QString& titre) const{
 }
 
 void TacheManager::ajouterTache(Tache& T){
-    //qDebug() << "début ajouterTache\n";
-    //qDebug() << T.getTitre() << "\n";
     if (trouverTache(T.getTitre())) {throw CalendarException("erreur, TacheManager, tâche déjà existante");}
     taches.append(&T);
 }
 
 TacheUnitaire& TacheManager::ajouterTacheUnitaire(const QString& t, const QString& desc, const QTime& dur, const QDate& dispo, const QDate& deadline, bool preempt){
-    //qDebug() << "début ajouterTacheUnitaire\n";
     TacheUnitaire* TU = new TacheUnitaire(t, desc, dur, dispo, deadline, preempt);
     ajouterTache(*TU);
     return *TU;
