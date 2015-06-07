@@ -21,7 +21,7 @@ private:
     QStandardItemModel *modelP, *modelT, *modelA;
     QList<QString> treePLabels, treeTLabels, treeALabels;
     QStandardItem *rootNodeP, *rootNodeT, *rootNodeA;
-    QLabel *infoTacheLabel, *infoTache;
+    QLabel *infoTacheLabel, *infoTache, *progLabel;
 
     QVBoxLayout *layout;
 

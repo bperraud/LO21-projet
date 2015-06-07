@@ -67,6 +67,8 @@ int main(int argc, char *argv[]){
     ListTaches LT; LT << &T2 << &T4;
     TM.ajouterTacheComposite("T5", "autre tacheC", QDate(2016, 2, 15), QDate(2016, 8, 1)).setSousTaches(LT);
     TM.ajouterTacheUnitaire("T6", "tache sans projet", QTime(2, 0), QDate(2015, 4, 3), QDate(2015, 7, 23), true);
+    TM.ajouterTacheComposite("T7", "tache C sans projet", QDate(2015, 5, 20), QDate(2015, 7, 28)).addSousTache(&TM.getTache("T6"));
+
 
     qDebug() << "checkpoint2\n";
 
@@ -141,7 +143,7 @@ int main(int argc, char *argv[]){
     ongletImExManager->setLayout(layoutImExManager);
 
     TabM->getOnglets().addTab(ongletWeekView, "Vue hebdomadaire");
-    TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique des tâches && projets");
+    TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique");
     TabM->getOnglets().addTab(ongletTacheEditeur, "Onglet Tache Editeur");
     TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
     TabM->getOnglets().addTab(ongletImExManager, "Imports && exports");
@@ -150,8 +152,8 @@ int main(int argc, char *argv[]){
 
     //}catch(CalendarException e){qDebug() << e.getInfo() << "\n";}
 
-
-
+    for (TacheManager::tabParentIterator it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
+        qDebug() << (*it).key() << "," << (*it).value();
 
     fenetre->show();
 

@@ -72,10 +72,15 @@ void TacheComposite::ajouterInfos(QString& infos) const{
         infos.append("   - ").append(sousTaches[i]->getTitre()).append("\n");
 }
 
-void TacheComposite::saveTache(QXmlStreamWriter& stream) const{
-    for (int i = 0; i < this->getSousTaches().size(); ++i)
-        stream.writeTextElement("sous-tache", this->getSousTaches()[i]->getTitre());
+
+
+ListTaches TacheComposite::getSousTaches() const{
+    ListTaches LT;
+    QList<QString> LS = TacheManager::getInstance()->tabParent.keys(this->getTitre());
+    for (int i = 0; i < LS.size(); ++i) LT.append(&TacheManager::getInstance()->getTache(LS[i]));
+    return LT;
 }
+
 
 void TacheComposite::setSousTaches(const ListTaches &sT){
     for (int i = 0; i < sT.size(); ++i){

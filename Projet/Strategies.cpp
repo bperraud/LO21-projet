@@ -13,7 +13,6 @@ void LoadXML::load(const QString& f){
     ProgManager::getInstance()->~ProgManager();
 
     // Load
-
     file = f;
     QFile fin(file);
 
@@ -23,25 +22,23 @@ void LoadXML::load(const QString& f){
     QXmlStreamReader xml(&fin);
 
     while(!xml.atEnd() && !xml.hasError()){
+
+
         QXmlStreamReader::TokenType token = xml.readNext();
+
         if(token == QXmlStreamReader::StartDocument) continue;
         if(token == QXmlStreamReader::StartElement){
+            if(xml.name() == "calendar") continue;
             if(xml.name() == "taches") continue;
-            if(xml.name() == "tache"){
-
-                TacheManager::getInstance()->load1(xml);
-
-            }
-
+            if(xml.name() == "tache") TacheManager::getInstance()->load1(xml);
+            if(xml.name() == "hierarchieT") continue;
+            if(xml.name() == "link") TacheManager::getInstance()->load2(xml);
         }
+
     }
-    if(xml.hasError())
-        throw CalendarException("Erreur lecteur fichier taches, parser xml");
+    if(xml.hasError()) throw CalendarException("Erreur lecteur fichier taches, parser xml");
     xml.clear();
-    // Traitement des taches composites
-    TacheManager& TM = *TacheManager::getInstance();
-    for (QHash<QString, QString>::const_iterator i = TM.tabParent.constBegin(); i != TM.tabParent.constEnd(); ++i)
-        dynamic_cast<TacheComposite&>(TM.getTache(i.value())).addSousTache(&TM.getTache(i.key()));
+
 
 }
 
@@ -61,26 +58,17 @@ void SaveXML::save(const QString& f){
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
         throw CalendarException(QString("Erreur sauvegarde XML : ouverture fichier xml"));
 
-    QXmlStreamWriter stream(&newfile);
-    stream.setAutoFormatting(true);
+    QXmlStreamWriter xml(&newfile);
+    xml.setAutoFormatting(true);
 
-    // Début document
-    stream.writeStartDocument();
+    xml.writeStartDocument();
+        xml.writeStartElement("calendar");
+            // Sauvegarde des tâches
+            TM.save1(xml);
 
-    // Sauvegarde des tâches
-
-    stream.writeStartElement("taches");
-    for (TacheManager::iterator it = TM.begin(); it != TM.end(); ++it)
-        (*it).save(stream);
-    stream.writeEndElement();
-
-    stream.writeEndDocument();
+        xml.writeEndElement();
+    xml.writeEndDocument();
     newfile.close();
-
-
-
-
-
 }
 
 

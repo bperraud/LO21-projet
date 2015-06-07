@@ -67,14 +67,15 @@ void TacheManager::load1(QXmlStreamReader& xml){
     QDate echeance;
     QTime duree;
     bool preemptive;
-
-    bool unitaire = true;
+    bool unitaire;
 
     QXmlStreamAttributes attributes = xml.attributes();
     if(attributes.hasAttribute("preemptive")){
         QString val = attributes.value("preemptive").toString();
         preemptive = (val == "true" ? true : false);
+        unitaire = true;
     }
+    else unitaire = false;
 
     xml.readNext();
 
@@ -100,22 +101,58 @@ void TacheManager::load1(QXmlStreamReader& xml){
                 xml.readNext();
                 duree.setHMS((xml.text().toInt())/60,(xml.text().toInt())%60,0);
             }
-            if(xml.name() == "sous-tache"){
+            /*if(xml.name() == "sous-tache"){
                 xml.readNext();
                 tabParent.insert(xml.text().toString(), titre);
-                unitaire = false;
-            }
+            }*/
         }
         xml.readNext();
     }
     if (unitaire) ajouterTacheUnitaire(titre, description, duree, disponibilite, echeance, preemptive);
-    else{
-        ajouterTacheComposite(titre, description, disponibilite, echeance);
-        unitaire = true;
+    else ajouterTacheComposite(titre, description, disponibilite, echeance);
+}
+
+void TacheManager::load2(QXmlStreamReader& xml){
+
+    QString mere;
+    QString fille;
+
+    xml.readNext();
+
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "link")){
+        if(xml.tokenType() == QXmlStreamReader::StartElement){
+            if(xml.name() == "parent"){
+                xml.readNext();
+                mere = xml.text().toString();
+            }
+            if(xml.name() == "son"){
+                xml.readNext();
+                fille = xml.text().toString();
+            }
+        }
+        xml.readNext();
     }
+    tabParent[fille] = mere;
+}
 
 
 
+void TacheManager::save1(QXmlStreamWriter& xml){
+    // Sauvegarde des tâches
+    xml.writeStartElement("taches");
+    for (int i = 0; i < taches.size(); ++i)
+        taches[i]->save(xml);
+    xml.writeEndElement();
+
+    // Sauvegarde de la hiérarchie
+    xml.writeStartElement("hierarchieT");
+    for (QHash<QString, QString>::const_iterator i = tabParent.constBegin(); i != tabParent.constEnd(); ++i){
+        xml.writeStartElement("link");
+            xml.writeTextElement("parent", i.value());
+            xml.writeTextElement("son", i.key());
+        xml.writeEndElement();
+    }
+    xml.writeEndElement();
 }
 
 void TacheManager::load(const QString& f){
@@ -234,7 +271,7 @@ void TacheManager::load(const QString& f){
     qDebug()<<"fin load\n";
 }
 
-void  TacheManager::save(const QString& f){
+void TacheManager::save(const QString& f){
     file = f;
     QFile newfile(file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -242,10 +279,10 @@ void  TacheManager::save(const QString& f){
     QXmlStreamWriter stream(&newfile);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
-    stream.writeStartElement("taches");
-    for (int i = 0; i < taches.size(); ++i)
-        taches[i]->saveTache(stream);
-    stream.writeEndElement();
+        stream.writeStartElement("taches");
+        for (int i = 0; i < taches.size(); ++i)
+            taches[i]->saveTache(stream);
+        stream.writeEndElement();
     stream.writeEndDocument();
     newfile.close();
 }

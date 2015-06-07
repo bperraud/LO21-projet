@@ -8,7 +8,6 @@
 #include <QString>
 #include <QDate>
 
-
 #include <QDebug>
 #include <QTextCodec>
 #include <QtXml>
@@ -86,14 +85,14 @@ private:
             Tache(t, desc, dispo, deadline), sousTaches(sT){}
     friend class TacheManager;
 public:
-    const ListTaches& getSousTaches() const { return sousTaches; }
+    ListTaches getSousTaches() const;
     void setSousTaches(const ListTaches& sT);
     void addSousTache(const Tache* t);
     void rmSousTache(const Tache* t);
 
     void ajouterInfos(QString& infos) const;
 
-    void saveTache(QXmlStreamWriter& stream) const;
+    void saveTache(QXmlStreamWriter&) const {}
     bool isTacheUnitaire() const { return false; }
     void accept(TacheVisitor* v);
 };

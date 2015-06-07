@@ -9,9 +9,10 @@
 class TacheManager : public Singleton<TacheManager>{
 private:
     ListTaches taches;
-    QString file;
     QHash<QString, QString> tabParent;
+    QString file;
 
+    friend ListTaches TacheComposite::getSousTaches() const;
     friend void TacheComposite::setSousTaches(const ListTaches& sT);
     friend void TacheComposite::addSousTache(const Tache* t);
     friend void TacheComposite::rmSousTache(const Tache* t);
@@ -38,6 +39,8 @@ public:
     void save(const QString& f);
 
     void load1(QXmlStreamReader& xml);
+    void load2(QXmlStreamReader& xml);
+    void save1(QXmlStreamWriter& xml);
 
     class iterator{
         ListTaches::iterator current;
@@ -49,7 +52,6 @@ public:
         bool operator!=(iterator it) const { return current != it.current; }
         iterator& operator++(){ ++current ; return *this; }
     };
-
     iterator begin(){ return iterator(taches.begin()); }
     iterator end(){ return iterator(taches.end()); }
 
@@ -67,6 +69,19 @@ public:
     };
     const_iterator begin() const { return const_iterator(taches.begin()); }
     const_iterator end() const { return const_iterator(taches.end()); }
+
+    class tabParentIterator{
+        QHash<QString, QString>::iterator current;
+        tabParentIterator(QHash<QString, QString>::iterator u):current(u){}
+        friend class TacheManager;
+    public:
+        tabParentIterator(){}
+        QHash<QString, QString>::iterator operator*() const { return current; }
+        bool operator!=(tabParentIterator it) const { return current != it.current; }
+        tabParentIterator& operator++(){ ++current ; return *this; }
+    };
+    tabParentIterator tabParentBegin(){ return tabParentIterator(tabParent.begin()); }
+    tabParentIterator tabParentEnd(){ return tabParentIterator(tabParent.end()); }
 };
 
 #endif // TACHEMANAGER_H
