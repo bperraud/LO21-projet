@@ -34,24 +34,24 @@ int main(int argc, char *argv[]){
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
 
-    //TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",Duree(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
-    //TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",Duree(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
+    TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",QTime(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
+    TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",QTime(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
 
     //QString chemin = QFileDialog::getOpenFileName();
-    QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
+    //QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
     /* Utiliser la ligne ci-dessous pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
 
-    TM.load(chemin);
+    //TM.load(chemin);
 
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
     TacheUnitaire& T2U = dynamic_cast<TacheUnitaire&>(T2);
 
 
-    //TM.ajouterTacheUnitaire("T3", "Petit test !", Duree(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
-    //ListTaches LT1; LT1 << &T1 << &T2;
-    //TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
+    TM.ajouterTacheUnitaire("T3", "Petit test !", QTime(2, 20), QDate(2015, 2, 6), QDate(2015, 6, 4), true);
+    ListTaches LT1; LT1 << &T1 << &T2;
+    TM.ajouterTacheComposite("T4", "autre test", QDate(2015, 7, 10), QDate(2015, 8, 12), LT1);
 
 
     qDebug() << "checkpoint1\n";
@@ -109,13 +109,15 @@ int main(int argc, char *argv[]){
     TacheEditeur* TE = new TacheEditeur;
     ProgCreator* PC = new ProgCreator;
     ImExManager* IEM = new ImExManager;
+    TacheCreator* TCR = new TacheCreator;
 
-    QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator, *layoutImExManager;
+    QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator, *layoutImExManager, *layoutTacheCreator;
     layoutWeekView = new QVBoxLayout;
     layoutTacheEditeur = new QVBoxLayout;
     layoutTreeView = new QVBoxLayout;
     layoutProgCreator = new QVBoxLayout;
     layoutImExManager = new QVBoxLayout;
+    layoutTacheCreator = new QVBoxLayout;
 
     //QScrollArea* scrollareaTE = new QScrollArea;
 
@@ -125,28 +127,32 @@ int main(int argc, char *argv[]){
     layoutTacheEditeur->addWidget(TE);
     layoutProgCreator->addWidget(PC);
     layoutImExManager->addWidget(IEM);
+    layoutTacheCreator->addWidget(TCR);
 
     //scrollareaTE->setWidget(&TE);
 
     TabManager* TabM = new TabManager(fenetre);
-    QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator, *ongletImExManager;
+    QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator, *ongletImExManager, *ongletTacheCreator;
     ongletWeekView = new QWidget;
     ongletTacheEditeur = new QWidget;
     ongletTreeView = new QWidget;
     ongletProgCreator = new QWidget;
     ongletImExManager = new QWidget;
+    ongletTacheCreator = new QWidget;
 
     ongletWeekView->setLayout(layoutWeekView);
     ongletTreeView->setLayout(layoutTreeView);
     ongletTacheEditeur->setLayout(layoutTacheEditeur);
     ongletProgCreator->setLayout(layoutProgCreator);
     ongletImExManager->setLayout(layoutImExManager);
+    ongletTacheCreator->setLayout(layoutTacheCreator);
 
     TabM->getOnglets().addTab(ongletWeekView, "Vue hebdomadaire");
     TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique");
     TabM->getOnglets().addTab(ongletTacheEditeur, "Onglet Tache Editeur");
     TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
     TabM->getOnglets().addTab(ongletImExManager, "Imports && exports");
+    TabM->getOnglets().addTab(ongletTacheCreator, "Création de tâches");
 
 
 

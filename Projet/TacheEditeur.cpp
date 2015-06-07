@@ -60,9 +60,11 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
     composantes = new QListWidget(this);
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
-        QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
-        item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-        item->setCheckState(Qt::Unchecked);// AND initialize check state
+        if (!TM.getTacheMere(*i)){
+            QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+            item->setCheckState(Qt::Unchecked);// AND initialize check state
+        }
     };
         composantes->setEnabled(false);
 
@@ -107,10 +109,11 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
         VC->addLayout(HC5);
         VC->addLayout(HC6);
         VC->addLayout(HC7);
+        VC->addStretch();
 
 
-    QObject::connect(unitaire, SIGNAL(toggled()), this, SLOT(veriftype()));
-    QObject::connect(composite, SIGNAL(toggled()), this, SLOT(veriftype()));
+    QObject::connect(unitaire, SIGNAL(toggled(bool)), this, SLOT(veriftype()));
+    QObject::connect(composite, SIGNAL(toggled(bool)), this, SLOT(veriftype()));
     QObject::connect(creer, SIGNAL(clicked()), this, SLOT(creerTache()));
 
     this->setLayout(VC);
@@ -120,9 +123,9 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
 void TacheCreator::veriftype(){
 
     if (unitaire->isChecked())
-        TacheUni();
+        this->TacheUni();
     else if (composite->isChecked())
-        TacheCompo();
+        this->TacheCompo();
 
 }
 
@@ -188,83 +191,64 @@ void TacheCreator::TacheCompo(){
 
 void TacheCreator::creerTache(){
 
+    if (titre->text() == "")
+        QMessageBox::warning(this, "Création impossible", "Pas de titre renseigné, impossible de créer la tâche.");
+    if (description->toPlainText() == "")
+        QMessageBox::warning(this, "Création impossible", "Pas de description renseignée, impossible de créer la tâche.");
+
+    TacheManager& TM = *TacheManager::getInstance();
+    // Si le titre de la tâche en cours de création existe déjà
+    if (TM.isTacheExistante(titre->text())){
+        QMessageBox::warning(this, "Création impossible", "titre tâche déjà existant...");
+        return;
+    }
+    // Si les dates de dispo et d'échéance sont incohérentes
+    if (dispo->date() >= echeance->date()){
+            QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
+            return;
+    }
+
+    //Cas de la Tache Unitaire
     if ((preemptive->isEnabled()) && (!composantes->isEnabled())) {
 
-        if (titre->text() == "")
-            QMessageBox::warning(this, "Création impossible", "Pas de titre renseigné, impossible de créer la tâche.");
-        if (description->toPlainText() == "")
-            QMessageBox::warning(this, "Création impossible", "Pas de description renseignée, impossible de créer la tâche.");
-
-        TacheManager& TM = *TacheManager::getInstance();
-        // Si le titre de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
-        if (TM.isTacheExistante(titre->text())){
-            QMessageBox::warning(this, "Sauvegarde impossible", "titre tâche déjà existant...");
-            return;
-        }
-        // Si les dates de dispo et d'échéance sont incohérentes
-        if (dispo->date() >= echeance->date()){
-                QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
-                return;
-        }
         // Si la durée est nulle
         if (duree->time().isNull()){
                 QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
                 return;
         }
-        /*if (tacheU->getTitre() != titre->text()) tacheU->setTitre(titre->text());
-        preemptive->isChecked() ? tacheU->setPreemptive(true) : tacheU->setPreemptive(false);
-        tacheU->setDescription(description->toPlainText());
-        tacheU->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
-        tacheU->setDuree(Duree(dureeH->value(), dureeM->value()));
+        if (preemptive->isChecked())
+            TM.ajouterTacheUnitaire(titre->text(),description->toPlainText(),QTime(duree->time()),dispo->date(),echeance->date(),true);
+        else
+            TM.ajouterTacheUnitaire(titre->text(),description->toPlainText(),QTime(duree->time()),dispo->date(),echeance->date(),false);
+
         PrecedenceManager& PrM = *PrecedenceManager::getInstance();
         for (int i = 0; i < predecesseurs->count(); ++i) {
             QListWidgetItem *precedent = predecesseurs->item(i);
             if (precedent->checkState() == Qt::Checked) {
-                if (!PrM.isPrecedence(TM.getTache(precedent->text()), *tacheU))
-                    PrM.ajouterPrecedence(TM.getTache(precedent->text()), *tacheU);
+                    PrM.ajouterPrecedence(TM.getTache(precedent->text()), TM.getTache(titre->text()));
             }
-            else if (precedent->checkState() == Qt::Unchecked) {
-                if (PrM.isPrecedence(TM.getTache(precedent->text()), *tacheU))
-                    PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheU);
-            }
-        }*/
-        QString cheminSauver = QFileDialog::getSaveFileName();
-        TM.save(cheminSauver);
-        QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
+        }
+        QMessageBox::information(this, "Création", "Tache créée.");
     }
 
+    //Cas de la Tache Composite
     else {
 
-        TacheManager& TM = *TacheManager::getInstance();
-        // Si le titre de la tâche en cours d'édition existe déjà et que ce n'est pas celui de la tâche chargée
-        /*if (TM.isTacheExistante(titre->text())
-            && &(TM.getTache(titre->text())) != tacheC){
-            QMessageBox::warning(this, "Sauvegarde impossible", "titre tâche déjà existant...");
-            return;
-        }*/
-        // Si les dates de dispo et d'échéance sont incohérentes
-        if (dispo->date() >= echeance->date()){
-                QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
-                return;
-        }
-        /*if (tacheC->getTitre() != titre->text()) tacheC->setTitre(titre->text());
-        tacheC->setDescription(description->toPlainText());
-        tacheC->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
+        ListTaches sT;
+        for (int i = 0; i < composantes->count(); ++i) {
+            QListWidgetItem *composant = composantes->item(i);
+            if (composant->checkState() == Qt::Checked)
+                sT << &(TM.getTache(composant->text()));
+        };
+        TM.ajouterTacheComposite(titre->text(), description->toPlainText(), dispo->date(), echeance->date(), sT);
         PrecedenceManager& PrM = *PrecedenceManager::getInstance();
         for (int i = 0; i < predecesseurs->count(); ++i) {
             QListWidgetItem *precedent = predecesseurs->item(i);
             if (precedent->checkState() == Qt::Checked) {
-               if (!PrM.isPrecedence(TM.getTache(precedent->text()), *tacheC))
-                   PrM.ajouterPrecedence(TM.getTache(precedent->text()), *tacheC);
+                    PrM.ajouterPrecedence(TM.getTache(precedent->text()), TM.getTache(titre->text()));
             }
-            else if (precedent->checkState() == Qt::Unchecked) {
-                if (PrM.isPrecedence(TM.getTache(precedent->text()), *tacheC))
-                    PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheC);
-            }
-        }*/
-        QString cheminSauver = QFileDialog::getSaveFileName();
-        TM.save(cheminSauver);
-        QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
+        }
+        QMessageBox::information(this, "Création", "Tache créée.");
 
     }
 }
@@ -443,13 +427,16 @@ void TacheEditeur::initialiserEditeur(QString nomtache){
             for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
                 QString UneTache = (*i).getTitre();
                 if (UneTache != tacheC->getTitre()){
-                    QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
-                    item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-                    if (TM.getTacheMere(*i))
-                        if (TM.getTacheMere(*i)->getTitre() == tacheC->getTitre())
-                            item->setCheckState(Qt::Checked);
-                        else item->setCheckState(Qt::Unchecked);// AND initialize check state
-                    else item->setCheckState(Qt::Unchecked);
+                    if (!TM.getTacheMere(*i)){
+                        QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+                        item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+                        item->setCheckState(Qt::Unchecked);// AND initialize check state
+                    }
+                    else if (TM.getTacheMere(*i)->getTitre() == tacheC->getTitre()){
+                        QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+                        item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+                        item->setCheckState(Qt::Checked);// AND initialize check state
+                    }
                 };
             };
         }
@@ -497,9 +484,7 @@ void TacheEditeur::sauverTache(){
                     PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheU);
             }
         }
-        QString cheminSauver = QFileDialog::getSaveFileName();
-        TM.save(cheminSauver);
-        QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
+        QMessageBox::information(this, "Edition", "Tache éditée.");
     }
 
     else {
@@ -531,9 +516,20 @@ void TacheEditeur::sauverTache(){
                     PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheC);
             }
         }
-        QString cheminSauver = QFileDialog::getSaveFileName();
-        TM.save(cheminSauver);
-        QMessageBox::information(this, "Sauvegarde", "Tache sauvegardée.");
+
+        for (int i = 0; i < composantes->count(); ++i) {
+            QListWidgetItem *composant = composantes->item(i);
+            if (composant->checkState() == Qt::Checked) {
+               if (!TM.getTacheMere(TM.getTache(composant->text())))
+                   tacheC->addSousTache(&(TM.getTache(composant->text())));
+            }
+            else if (composant->checkState() == Qt::Unchecked) {
+                if (TM.getTacheMere(TM.getTache(composant->text()))->getTitre() == tacheC->getTitre())
+                    tacheC->rmSousTache(&(TM.getTache(composant->text())));
+            }
+        }
+
+        QMessageBox::information(this, "Edition", "Tache éditée.");
 
     }
 
