@@ -205,9 +205,9 @@ private:
     QString description;
     QDate disponibilite;
     QDate echeance; // L’échéance d’un projet est une borne supérieure de l’ensemble des échéances des tâches de ce projet
-    ListTaches taches;
-    Projet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches):
-            titre(t), description(desc), disponibilite(dispo), echeance(deadline), taches(Taches){}
+    //ListTaches taches;
+    Projet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
+            titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
     friend class ProjetManager;
 public:
     QString getTitre() const { return titre; }
@@ -216,13 +216,8 @@ public:
     void setDescription(const QString& str);
     QDate getDateDisponibilite() const { return disponibilite; }
     QDate getDateEcheance() const { return echeance; }
-    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
-        if (e<disp) throw CalendarException("erreur tâche : date échéance < date disponibilité");
-        for (int i = 0; i < taches.size(); ++i)
-            if(e<taches[i]->getDateEcheance()) throw CalendarException("erreur projet : date échéance < échéance d'une tache");
-        disponibilite=disp; echeance=e;
-    }
-    const ListTaches& getTaches() const { return taches; }
+    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e);
+    ListTachesConst getTaches() const;
     void setTaches(const ListTaches& T);
     void addTache(const Tache* t);
     void rmTache(const Tache* t);

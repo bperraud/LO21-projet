@@ -112,6 +112,7 @@ void TacheComposite::rmSousTache(const Tache* t){
     TacheManager& TM = *TacheManager::getInstance();
     //if (TM.tabParent.contains(t->getTitre())){
     if (TM.tabParent.contains(t)){
+        if (TM.tabParent[t] != this) throw CalendarException("erreur, TacheComposite, tâche à supprimer n'appartient pas à this");
         //TM.tabParent.remove(t->getTitre());
         TM.tabParent.remove(t);
         return;
@@ -147,44 +148,65 @@ void TacheInformateur::visitTacheComposite(TacheComposite* TC){
 
 /* --- [BEGIN]Projet --- */
 
+void Projet::setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
+    ProjetManager& PM = *ProjetManager::getInstance();
+    if (e < disp) throw CalendarException("erreur tâche : date échéance < date disponibilité");
+    for (ProjetManager::tabParentIterator it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
+        if ((*it).value() == this)
+            if(e < (*it).key()->getDateEcheance()) throw CalendarException("erreur projet : date échéance < échéance d'une tache");
+    disponibilite = disp;
+    echeance = e;
+}
+
+ListTachesConst Projet::getTaches() const{
+    ProjetManager& PM = *ProjetManager::getInstance();
+    ListTachesConst LT = PM.tabParent.keys(this);
+    return LT;
+}
+
 void Projet::setTaches(const ListTaches &T){
+    ProjetManager& PM = *ProjetManager::getInstance();
+    TacheManager& TM = *TacheManager::getInstance();
     for (int i = 0; i < T.size(); ++i){
-        if (!TacheManager::getInstance()->isTacheExistante(T[i]->getTitre()))
+        if (!TM.isTacheExistante(T[i]->getTitre()))
             throw CalendarException("Erreur projet, tâche non trouvée");
-        if (ProjetManager::getInstance()->isTacheInProjet(*T[i]))
+        if (PM.isTacheInProjet(*T[i]))
             throw CalendarException("Erreur projet, tâche appartenant déjà à un projet");
-        ProjetManager::getInstance()->tabParent.insert(T[i]->getTitre(), this->getTitre());
+        PM.tabParent.insert(T[i], this);
     }
-    taches = T;
 }
 
 void Projet::addTache(const Tache* t){
-    for (int i = 0; i < taches.size(); ++i)
-        if (taches[i] == t) throw CalendarException("erreur, Projet, tâche déjà existante");
-    if (ProjetManager::getInstance()->isTacheInProjet(*t))
+    ProjetManager& PM = *ProjetManager::getInstance();
+    for (ProjetManager::tabParentIterator it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
+        if ((*it).key() == t && (*it).value() == this)
+            throw CalendarException("erreur, Projet, tâche déjà existante");
+    if (PM.isTacheInProjet(*t))
         throw CalendarException("Erreur projet, tâche appartenant déjà à un projet");
-    taches.append(const_cast<Tache*>(t));
-    ProjetManager::getInstance()->tabParent.insert(t->getTitre(), this->getTitre());
+    PM.tabParent.insert(t, this);
 }
 
 void Projet::rmTache(const Tache* t){
-    for (int i = 0; i < taches.size(); ++i){
-        if (taches[i] == t){
-            taches.removeAt(i);
-            ProjetManager::getInstance()->tabParent.remove(t->getTitre());
-            return;
-        }
+    ProjetManager& PM = *ProjetManager::getInstance();
+    if (PM.tabParent.contains(t)){
+        if (PM.tabParent[t] != this) throw CalendarException("erreur, Projet, tâche à supprimer n'appartient pas à this");
+        PM.tabParent.remove(t);
+        return;
     }
     throw CalendarException("erreur, Projet, tâche à supprimer non trouvée");
 }
+
+
+
 
 void Projet::ajouterInfos(QString& infos) const{
     infos.append("Titre : ").append(this->getTitre()).append("\n")
             .append("Description : ").append(this->getDescription()).append("\n")
             .append("Disponibilité : ").append(this->getDateDisponibilite().toString()).append("\n")
             .append("Échéance : ").append(this->getDateEcheance().toString()).append("\n");
-    for (int i = 0; i < taches.size(); ++i)
-        infos.append("Tâche : ").append(taches[i]->getTitre()).append("\n");
+    ListTachesConst LT = getTaches();
+    for (int i = 0; i < LT.size(); ++i)
+        infos.append("Tâche : ").append(LT[i]->getTitre()).append("\n");
 }
 
 /* --- [END]Projet --- */
