@@ -20,6 +20,7 @@
 #include "WeekView.h"
 #include "TreeView.h"
 #include "ImExManager.h"
+#include "projetcreator.h"
 
 
 int main(int argc, char *argv[]){
@@ -110,14 +111,18 @@ int main(int argc, char *argv[]){
     ProgCreator* PC = new ProgCreator;
     ImExManager* IEM = new ImExManager;
     TacheCreator* TCR = new TacheCreator;
+    ProjetCreator* ProjC = new ProjetCreator;
+    ProjetEditeur* ProjE = new ProjetEditeur;
 
-    QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator, *layoutImExManager, *layoutTacheCreator;
+    QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator, *layoutImExManager, *layoutTacheCreator, *layoutProjetCreator, *layoutProjetEditeur;
     layoutWeekView = new QVBoxLayout;
     layoutTacheEditeur = new QVBoxLayout;
     layoutTreeView = new QVBoxLayout;
     layoutProgCreator = new QVBoxLayout;
     layoutImExManager = new QVBoxLayout;
     layoutTacheCreator = new QVBoxLayout;
+    layoutProjetCreator = new QVBoxLayout;
+    layoutProjetEditeur = new QVBoxLayout;
 
     //QScrollArea* scrollareaTE = new QScrollArea;
 
@@ -128,17 +133,21 @@ int main(int argc, char *argv[]){
     layoutProgCreator->addWidget(PC);
     layoutImExManager->addWidget(IEM);
     layoutTacheCreator->addWidget(TCR);
+    layoutProjetCreator->addWidget(ProjC);
+    layoutProjetEditeur->addWidget(ProjE);
 
     //scrollareaTE->setWidget(&TE);
 
     TabManager* TabM = new TabManager(fenetre);
-    QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator, *ongletImExManager, *ongletTacheCreator;
+    QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator, *ongletImExManager, *ongletTacheCreator, *ongletProjetCreator, *ongletProjetEditeur;
     ongletWeekView = new QWidget;
     ongletTacheEditeur = new QWidget;
     ongletTreeView = new QWidget;
     ongletProgCreator = new QWidget;
     ongletImExManager = new QWidget;
     ongletTacheCreator = new QWidget;
+    ongletProjetCreator = new QWidget;
+    ongletProjetEditeur = new QWidget;
 
     ongletWeekView->setLayout(layoutWeekView);
     ongletTreeView->setLayout(layoutTreeView);
@@ -146,13 +155,19 @@ int main(int argc, char *argv[]){
     ongletProgCreator->setLayout(layoutProgCreator);
     ongletImExManager->setLayout(layoutImExManager);
     ongletTacheCreator->setLayout(layoutTacheCreator);
+    ongletProjetCreator->setLayout(layoutProjetCreator);
+    ongletProjetEditeur->setLayout(layoutProjetEditeur);
 
     TabM->getOnglets().addTab(ongletWeekView, "Vue hebdomadaire");
+    TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique des tâches && projets");
+    TabM->getOnglets().addTab(ongletTacheEditeur, "Edition de tâches");
     TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique");
     TabM->getOnglets().addTab(ongletTacheEditeur, "Onglet Tache Editeur");
     TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
     TabM->getOnglets().addTab(ongletImExManager, "Imports && exports");
     TabM->getOnglets().addTab(ongletTacheCreator, "Création de tâches");
+    TabM->getOnglets().addTab(ongletProjetCreator, "Création de projets");
+    TabM->getOnglets().addTab(ongletProjetEditeur, "Edition de projets");
 
 
 
