@@ -54,12 +54,89 @@ bool ProjetManager::isTacheInProjet(const Tache& t){
     return false;
 }
 
-//void load(const QString& f);
-//void save(const QString& f);
 
+void ProjetManager::load1(QXmlStreamReader& xml){
 
+    QString titre;
+    QString description;
+    QDate disponibilite;
+    QDate echeance;
 
-ProjetManager::~ProjetManager(){
+    xml.readNext();
+
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "projet")){
+        if(xml.tokenType() == QXmlStreamReader::StartElement){
+            if(xml.name() == "titre"){
+                xml.readNext();
+                titre = xml.text().toString();
+            }
+            if(xml.name() == "description"){
+                xml.readNext();
+                description = xml.text().toString();
+            }
+            if(xml.name() == "disponibilite"){
+                xml.readNext();
+                disponibilite = QDate::fromString(xml.text().toString(),Qt::ISODate);
+            }
+            if(xml.name() == "echeance"){
+                xml.readNext();
+                echeance = QDate::fromString(xml.text().toString(),Qt::ISODate);
+            }
+        }
+        xml.readNext();
+    }
+    ajouterProjet(titre, description, disponibilite, echeance);
 
 }
 
+void ProjetManager::load2(QXmlStreamReader& xml){
+
+    QString projet;
+    QString tache;
+
+    xml.readNext();
+
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "linkP")){
+        if(xml.tokenType() == QXmlStreamReader::StartElement){
+            if(xml.name() == "projet"){
+                xml.readNext();
+                projet = xml.text().toString();
+            }
+            if(xml.name() == "tache"){
+                xml.readNext();
+                tache = xml.text().toString();
+            }
+        }
+        xml.readNext();
+    }
+    tabParent[&TacheManager::getInstance()->getTache(tache)] = &getProjet(projet);
+
+}
+
+
+
+
+void ProjetManager::save(QXmlStreamWriter& xml){
+    // Sauvegarde des projets
+    xml.writeStartElement("projets");
+    for (int i = 0; i < projets.size(); ++i)
+        projets[i]->save(xml);
+    xml.writeEndElement();
+
+    // Sauvegarde de la hiérarchie
+    xml.writeStartElement("hierarchieP");
+    for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
+        xml.writeStartElement("linkP");
+            xml.writeTextElement("projet", (*it).value()->getTitre());
+            xml.writeTextElement("tache", (*it).key()->getTitre());
+        xml.writeEndElement();
+    }
+    xml.writeEndElement();
+}
+
+
+ProjetManager::~ProjetManager(){
+    for (int i = 0; i < projets.size(); ++i) delete projets[i];
+    projets.clear();
+    tabParent.clear();
+}

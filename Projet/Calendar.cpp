@@ -196,9 +196,6 @@ void Projet::rmTache(const Tache* t){
     throw CalendarException("erreur, Projet, tâche à supprimer non trouvée");
 }
 
-
-
-
 void Projet::ajouterInfos(QString& infos) const{
     infos.append("Titre : ").append(this->getTitre()).append("\n")
             .append("Description : ").append(this->getDescription()).append("\n")
@@ -208,6 +205,16 @@ void Projet::ajouterInfos(QString& infos) const{
     for (int i = 0; i < LT.size(); ++i)
         infos.append("Tâche : ").append(LT[i]->getTitre()).append("\n");
 }
+
+void Projet::save(QXmlStreamWriter& stream) const{
+    stream.writeStartElement("projet");
+        stream.writeTextElement("titre", this->getTitre());
+        stream.writeTextElement("description", this->getDescription());
+        stream.writeTextElement("disponibilite", this->getDateDisponibilite().toString(Qt::ISODate));
+        stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
+    stream.writeEndElement();
+}
+
 
 /* --- [END]Projet --- */
 

@@ -10,6 +10,7 @@ void LoadXML::load(const QString& f){
 
     // Cleaning
     TacheManager::getInstance()->~TacheManager();
+    ProjetManager::getInstance()->~ProjetManager();
     ProgManager::getInstance()->~ProgManager();
 
     // Load
@@ -32,7 +33,11 @@ void LoadXML::load(const QString& f){
             if(xml.name() == "taches") continue;
             if(xml.name() == "tache") TacheManager::getInstance()->load1(xml);
             if(xml.name() == "hierarchieT") continue;
-            if(xml.name() == "link") TacheManager::getInstance()->load2(xml);
+            if(xml.name() == "linkT") TacheManager::getInstance()->load2(xml);
+            if(xml.name() == "projets") continue;
+            if(xml.name() == "projet") ProjetManager::getInstance()->load1(xml);
+            if(xml.name() == "hierarchieP") continue;
+            if(xml.name() == "linkP") ProjetManager::getInstance()->load2(xml);
         }
 
     }
@@ -51,6 +56,7 @@ void LoadTXT::load(const QString& f){ qDebug() << "Load TXT" << f; }
 
 void SaveXML::save(const QString& f){
     TacheManager& TM = *TacheManager::getInstance();
+    ProjetManager& PM = *ProjetManager::getInstance();
 
     file = f;
     QFile newfile(file);
@@ -65,7 +71,8 @@ void SaveXML::save(const QString& f){
         xml.writeStartElement("calendar");
             // Sauvegarde des tâches
             TM.save1(xml);
-
+            // Sauvegarde des projets
+            PM.save(xml);
         xml.writeEndElement();
     xml.writeEndDocument();
     newfile.close();

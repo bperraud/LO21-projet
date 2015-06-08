@@ -245,9 +245,9 @@ void ProjetEditeur::editerProjet(){
         return;
     }
 
-    if (projet->getTitre() != titre->text()) projet->setTitre(titre->text());
-    projet->setDescription(description->toPlainText());
-    projet->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
+    //if (projet->getTitre() != titre->text()) projet->setTitre(titre->text());
+    //projet->setDescription(description->toPlainText());
+    //projet->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
 
     TacheManager& TM = *TacheManager::getInstance();
     for (int i = 0; i < taches->count(); ++i) {

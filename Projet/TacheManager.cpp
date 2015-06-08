@@ -120,7 +120,7 @@ void TacheManager::load2(QXmlStreamReader& xml){
 
     xml.readNext();
 
-    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "link")){
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "linkT")){
         if(xml.tokenType() == QXmlStreamReader::StartElement){
             if(xml.name() == "parent"){
                 xml.readNext();
@@ -148,7 +148,7 @@ void TacheManager::save1(QXmlStreamWriter& xml){
     // Sauvegarde de la hiérarchie
     xml.writeStartElement("hierarchieT");
     for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
-        xml.writeStartElement("link");
+        xml.writeStartElement("linkT");
             xml.writeTextElement("parent", (*it).value()->getTitre());
             xml.writeTextElement("son", (*it).key()->getTitre());
         xml.writeEndElement();

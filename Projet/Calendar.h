@@ -223,6 +223,8 @@ public:
     void rmTache(const Tache* t);
 
     void ajouterInfos(QString& infos) const;
+
+    void save(QXmlStreamWriter& stream) const;
 };
 
 typedef QList<Projet*> ListProjet;

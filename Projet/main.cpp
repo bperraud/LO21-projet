@@ -111,8 +111,8 @@ int main(int argc, char *argv[]){
     ProgCreator* PC = new ProgCreator;
     ImExManager* IEM = new ImExManager;
     TacheCreator* TCR = new TacheCreator;
-    ProjetCreator* ProjC = new ProjetCreator;
-    ProjetEditeur* ProjE = new ProjetEditeur;
+    //ProjetCreator* ProjC = new ProjetCreator;
+    //ProjetEditeur* ProjE = new ProjetEditeur;
 
     QVBoxLayout *layoutWeekView, *layoutTacheEditeur, *layoutTreeView, *layoutProgCreator, *layoutImExManager, *layoutTacheCreator, *layoutProjetCreator, *layoutProjetEditeur;
     layoutWeekView = new QVBoxLayout;
@@ -121,8 +121,8 @@ int main(int argc, char *argv[]){
     layoutProgCreator = new QVBoxLayout;
     layoutImExManager = new QVBoxLayout;
     layoutTacheCreator = new QVBoxLayout;
-    layoutProjetCreator = new QVBoxLayout;
-    layoutProjetEditeur = new QVBoxLayout;
+    //layoutProjetCreator = new QVBoxLayout;
+    //layoutProjetEditeur = new QVBoxLayout;
 
     //QScrollArea* scrollareaTE = new QScrollArea;
 
@@ -133,8 +133,8 @@ int main(int argc, char *argv[]){
     layoutProgCreator->addWidget(PC);
     layoutImExManager->addWidget(IEM);
     layoutTacheCreator->addWidget(TCR);
-    layoutProjetCreator->addWidget(ProjC);
-    layoutProjetEditeur->addWidget(ProjE);
+    //layoutProjetCreator->addWidget(ProjC);
+    //layoutProjetEditeur->addWidget(ProjE);
 
     //scrollareaTE->setWidget(&TE);
 
@@ -146,8 +146,8 @@ int main(int argc, char *argv[]){
     ongletProgCreator = new QWidget;
     ongletImExManager = new QWidget;
     ongletTacheCreator = new QWidget;
-    ongletProjetCreator = new QWidget;
-    ongletProjetEditeur = new QWidget;
+    //ongletProjetCreator = new QWidget;
+    //ongletProjetEditeur = new QWidget;
 
     ongletWeekView->setLayout(layoutWeekView);
     ongletTreeView->setLayout(layoutTreeView);
@@ -155,8 +155,8 @@ int main(int argc, char *argv[]){
     ongletProgCreator->setLayout(layoutProgCreator);
     ongletImExManager->setLayout(layoutImExManager);
     ongletTacheCreator->setLayout(layoutTacheCreator);
-    ongletProjetCreator->setLayout(layoutProjetCreator);
-    ongletProjetEditeur->setLayout(layoutProjetEditeur);
+    //ongletProjetCreator->setLayout(layoutProjetCreator);
+    //ongletProjetEditeur->setLayout(layoutProjetEditeur);
 
     TabM->getOnglets().addTab(ongletWeekView, "Vue hebdomadaire");
     TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique des tâches && projets");
@@ -166,8 +166,8 @@ int main(int argc, char *argv[]){
     TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
     TabM->getOnglets().addTab(ongletImExManager, "Imports && exports");
     TabM->getOnglets().addTab(ongletTacheCreator, "Création de tâches");
-    TabM->getOnglets().addTab(ongletProjetCreator, "Création de projets");
-    TabM->getOnglets().addTab(ongletProjetEditeur, "Edition de projets");
+    //TabM->getOnglets().addTab(ongletProjetCreator, "Création de projets");
+    //TabM->getOnglets().addTab(ongletProjetEditeur, "Edition de projets");
 
 
 
