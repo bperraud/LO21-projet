@@ -71,18 +71,6 @@ public:
     const_iterator begin() const { return const_iterator(taches.begin()); }
     const_iterator end() const { return const_iterator(taches.end()); }
 
-    /*class tabParentIterator{
-        QHash<QString, QString>::iterator current;
-        tabParentIterator(QHash<QString, QString>::iterator u):current(u){}
-        friend class TacheManager;
-    public:
-        tabParentIterator(){}
-        QHash<QString, QString>::iterator operator*() const { return current; }
-        bool operator!=(tabParentIterator it) const { return current != it.current; }
-        tabParentIterator& operator++(){ ++current ; return *this; }
-    };
-    tabParentIterator tabParentBegin(){ return tabParentIterator(tabParent.begin()); }
-    tabParentIterator tabParentEnd(){ return tabParentIterator(tabParent.end()); }*/
     class tabParentIterator{
         QHash<const Tache*, const TacheComposite*>::iterator current;
         tabParentIterator(QHash<const Tache*, const TacheComposite*>::iterator u):current(u){}

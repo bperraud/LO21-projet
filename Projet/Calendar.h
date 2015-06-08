@@ -155,6 +155,10 @@ public:
     QTime getHoraire() const { return horaire; }
     QTime getHoraireFin() const { return horaireFin; }
 
+    void save(QXmlStreamWriter& stream) const;
+
+    virtual void saveEvt(QXmlStreamWriter& stream) const =0;
+
     virtual bool isProgTache() const =0;
     virtual QString getTitre() const =0;
     virtual QString getDescription() const =0;
@@ -175,6 +179,7 @@ public:
 
     QString getLieu() const { return lieu; }
 
+    void saveEvt(QXmlStreamWriter& stream) const;
     bool isProgTache() const { return false; }
     QString getTitre() const { return titre; }
     QString getDescription() const { return description; }
@@ -188,6 +193,7 @@ private:
 public:
     const TacheUnitaire& getTache() const { return *tache; }
 
+    void saveEvt(QXmlStreamWriter& stream) const;
     virtual bool isProgTache() const { return true; }
     QString getTitre() const { return tache->getTitre(); }
     QString getDescription() const { return tache->getDescription(); }

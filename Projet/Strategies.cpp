@@ -57,6 +57,7 @@ void LoadTXT::load(const QString& f){ qDebug() << "Load TXT" << f; }
 void SaveXML::save(const QString& f){
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
+    ProgManager& ProgM = *ProgManager::getInstance();
 
     file = f;
     QFile newfile(file);
@@ -73,6 +74,8 @@ void SaveXML::save(const QString& f){
             TM.save1(xml);
             // Sauvegarde des projets
             PM.save(xml);
+            // Sauvegarde des programmations
+            ProgM.save(xml);
         xml.writeEndElement();
     xml.writeEndDocument();
     newfile.close();

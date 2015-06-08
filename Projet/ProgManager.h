@@ -8,7 +8,7 @@
 class ProgManager : public Singleton<ProgManager>{
 private:
     ListEvent programmations;
-    QHash<QString, QTime> tabDuree;
+    QHash<const TacheUnitaire*, QTime> tabDuree;
 
     friend class TacheUnitaire;
 
@@ -26,6 +26,9 @@ public:
 
     void updateDuree(const TacheUnitaire& TU, QTime d);
 
+    void load1(QXmlStreamReader& xml);
+    void load2(QXmlStreamReader& xml);
+    void save(QXmlStreamWriter& xml);
 
     class iterator{
         ListEvent::iterator current;
@@ -55,6 +58,19 @@ public:
 
     const_iterator begin() const { return const_iterator(programmations.begin()); }
     const_iterator end() const { return const_iterator(programmations.end()); }
+
+    class tabDureeIterator{
+        QHash<const TacheUnitaire*, QTime>::iterator current;
+        tabDureeIterator(QHash<const TacheUnitaire*, QTime>::iterator u):current(u){}
+        friend class ProgManager;
+    public:
+        tabDureeIterator(){}
+        QHash<const TacheUnitaire*, QTime>::iterator operator*() const { return current; }
+        bool operator!=(tabDureeIterator it) const { return current != it.current; }
+        tabDureeIterator& operator++(){ ++current ; return *this; }
+    };
+    tabDureeIterator tabDureeBegin(){ return tabDureeIterator(tabDuree.begin()); }
+    tabDureeIterator tabDureeEnd(){ return tabDureeIterator(tabDuree.end()); }
 
 };
 

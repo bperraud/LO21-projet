@@ -56,8 +56,8 @@ void TacheUnitaire::saveTache(QXmlStreamWriter& stream) const{
 QTime TacheUnitaire::getDureeRestante() const{
     ProgManager& PM = *ProgManager::getInstance();
     QTime d = duree;
-    if (PM.tabDuree.contains(titre)){
-        QTime dureeDone = PM.tabDuree.value(titre);
+    if (PM.tabDuree.contains(this)){
+        QTime dureeDone = PM.tabDuree.value(this);
         int dureeSec = QTime(0, 0).secsTo(dureeDone);
         d = d.addSecs(-dureeSec);
     }
@@ -216,6 +216,37 @@ void Projet::save(QXmlStreamWriter& stream) const{
 }
 
 
-/* --- [END]Projet --- */
+/* --- [END] Projet --- */
+
+/* --- [BEGIN] Programmations --- */
+
+void Evenement::save(QXmlStreamWriter& stream) const{
+    stream.writeStartElement("evenement");
+        stream.writeAttribute("activite", ((this)->isProgTache()) ? "false" : "true");
+        stream.writeTextElement("date", this->getDate().toString(Qt::ISODate));
+        QString str;
+        str.setNum(QTime(0, 0).secsTo(this->getHoraire())/60);
+        stream.writeTextElement("debut", str);
+        str.setNum(QTime(0, 0).secsTo(this->getHoraireFin())/60);
+        stream.writeTextElement("fin", str);
+        saveEvt(stream);
+    stream.writeEndElement();
+}
+
+void ProgrammationActivite::saveEvt(QXmlStreamWriter& stream) const{
+    stream.writeTextElement("titre", this->getTitre());
+    stream.writeTextElement("description", this->getDescription());
+    stream.writeTextElement("lieu", this->getLieu());
+}
+
+void ProgrammationTache::saveEvt(QXmlStreamWriter& stream) const{
+    stream.writeTextElement("tache", this->getTache().getTitre());
+}
+
+
+
+
+
+
 
 
