@@ -8,9 +8,8 @@
 class ProjetManager : public Singleton<ProjetManager>{
 private:
     ListProjet projets;
-
-    //QHash<QString, QString> tabParent;
     QHash<const Tache*, const Projet*> tabParent;
+
     friend ListTachesConst Projet::getTaches() const;
     friend void Projet::setTaches(const ListTaches& T);
     friend void Projet::addTache(const Tache* t);
@@ -30,8 +29,9 @@ public:
     Projet* getProjet(const Tache& t);
     const Projet* getProjet(const Tache& t)const;
 
-    //void load(const QString& f);
-    //void save(const QString& f);
+    void load1(QXmlStreamReader& xml);
+    void load2(QXmlStreamReader& xml);
+    void save(QXmlStreamWriter& xml);
 
     class iterator{
         ListProjet::iterator current;
