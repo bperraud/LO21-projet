@@ -47,8 +47,6 @@ public:
 
     virtual void saveTache(QXmlStreamWriter& stream) const =0;
     virtual bool isTacheUnitaire() const =0;
-
-    virtual void accept(TacheVisitor* v) =0;
 };
 
 typedef QList<Tache*> ListTaches;
@@ -74,9 +72,7 @@ public:
 
     void saveTache(QXmlStreamWriter& stream) const;
     bool isTacheUnitaire() const { return true; }
-    void accept(TacheVisitor* v);
 };
-
 
 class TacheComposite : public Tache{
 private:
@@ -93,13 +89,7 @@ public:
 
     void saveTache(QXmlStreamWriter&) const {}
     bool isTacheUnitaire() const { return false; }
-    void accept(TacheVisitor* v);
 };
-
-
-
-
-
 
 /* ----- [BEGIN] Précédence ----- */
 
@@ -117,30 +107,6 @@ public:
 };
 
 /* ----- [END] Précédence ----- */
-
-
-
-
-
-
-
-/* ----- [BEGIN]Design Pattern Visitor ----- */
-
-class TacheVisitor{
-public:
-    virtual void visitTacheUnitaire(TacheUnitaire* TU) =0;
-    virtual void visitTacheComposite(TacheComposite* TC) =0;
-};
-
-class TacheInformateur : public TacheVisitor{
-public:
-    void visitTacheUnitaire(TacheUnitaire* TU);
-    void visitTacheComposite(TacheComposite* TC);
-};
-
-/* ----- [END]Design Pattern Visitor ----- */
-
-
 
 
 class Evenement{ // Abstraite
@@ -167,6 +133,7 @@ public:
 };
 
 typedef QList<Evenement*> ListEvent;
+typedef QList<const Evenement*> ListEventConst;
 
 class ProgrammationActivite : public Evenement{
 private:
@@ -200,9 +167,6 @@ public:
     QString getTitre() const { return tache->getTitre(); }
     QString getDescription() const { return tache->getDescription(); }
 };
-
-
-
 
 
 /* ----- [BEGIN]Projet ----- */

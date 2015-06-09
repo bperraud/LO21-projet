@@ -26,6 +26,8 @@ public:
 
     void updateDuree(const TacheUnitaire& TU, QTime d);
 
+
+
     void loadEvts(QXmlStreamReader& xml);
     void loadDurees(QXmlStreamReader& xml);
     void save(QXmlStreamWriter& xml);

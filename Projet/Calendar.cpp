@@ -120,32 +120,6 @@ void TacheComposite::rmSousTache(const Tache* t){
     throw CalendarException("erreur, TacheComposite, tâche à supprimer non trouvée");
 }
 
-
-
-
-
-
-
-
-
-/* --- Design Pattern Visitor --- */
-
-void TacheUnitaire::accept(TacheVisitor* v){
-    v->visitTacheUnitaire(this);
-}
-void TacheComposite::accept(TacheVisitor* v){
-    v->visitTacheComposite(this);
-}
-
-void TacheInformateur::visitTacheUnitaire(TacheUnitaire* TU){
-    qDebug() << "durée : " << TU->getDuree().toString("hh'h'mm") << "\n";
-}
-void TacheInformateur::visitTacheComposite(TacheComposite* TC){
-    qDebug() << "titre tâche composite : " << QString(TC->getTitre()) << "\n";
-}
-
-
-
 /* --- [BEGIN]Projet --- */
 
 void Projet::setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){

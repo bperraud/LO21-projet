@@ -91,11 +91,6 @@ int main(int argc, char *argv[]){
     ProgM->ajouterProgrammationA(QDate(2015, 6, 3), QTime(14, 10), QTime(14, 50), "Une autre activité", "Ce que Dieu veut", "Chez nous");
     */
 
-    /*// Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*
-    TacheInformateur informateur;
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
-        (*i).accept(&informateur);
-    */
     /*
     Tache& T3U = T2;
     PrecedenceManager& PrM = *PrecedenceManager::getInstance();
