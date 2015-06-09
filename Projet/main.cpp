@@ -20,7 +20,7 @@
 #include "WeekView.h"
 #include "TreeView.h"
 #include "ImExManager.h"
-#include "projetcreator.h"
+#include "ProjetCreator.h"
 
 
 int main(int argc, char *argv[]){

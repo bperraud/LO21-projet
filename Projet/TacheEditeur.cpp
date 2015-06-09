@@ -32,11 +32,11 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
         description->setEnabled(false);
 
     dispoLabel = new QLabel("disponibilité", this);
-    dispo = new QDateEdit(this);
+    dispo = new QDateEdit(QDate::currentDate(), this);
         dispo->setEnabled(false);
 
     echeanceLabel = new QLabel("échéance", this);
-    echeance = new QDateEdit(this);
+    echeance = new QDateEdit(QDate::currentDate(), this);
         echeance->setEnabled(false);
 
     dureeLabel = new QLabel("durée", this);

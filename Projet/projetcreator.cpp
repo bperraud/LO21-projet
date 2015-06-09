@@ -1,7 +1,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "projetcreator.h"
+#include "ProjetCreator.h"
 #include "TacheManager.h"
 #include "PrecedenceManager.h"
 
