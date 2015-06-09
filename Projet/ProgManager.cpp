@@ -1,4 +1,5 @@
 #include "ProgManager.h"
+#include "TacheManager.h"
 
 ProgrammationTache* ProgManager::trouverProgrammationT(const TacheUnitaire& TU) const{
     for (int i = 0; i < programmations.size(); ++i)

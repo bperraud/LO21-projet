@@ -2,16 +2,17 @@
 #include "TacheManager.h"
 #include "ProgManager.h"
 #include "ProjetManager.h"
-//#include "PrecedenceManager.h"
+#include "PrecedenceManager.h"
 
 // ----- [BEGIN] Load Strategies -----
 
 void LoadXML::load(const QString& f){
 
     // Cleaning
-    TacheManager::getInstance()->~TacheManager();
-    ProjetManager::getInstance()->~ProjetManager();
     ProgManager::getInstance()->~ProgManager();
+    ProjetManager::getInstance()->~ProjetManager();
+    PrecedenceManager::getInstance()->~PrecedenceManager();
+    TacheManager::getInstance()->~TacheManager();
 
     // Load
     file = f;
@@ -34,6 +35,8 @@ void LoadXML::load(const QString& f){
             if(xml.name() == "tache") TacheManager::getInstance()->load1(xml);
             if(xml.name() == "hierarchieT") continue;
             if(xml.name() == "linkT") TacheManager::getInstance()->load2(xml);
+            if(xml.name() == "precedences") continue;
+            if(xml.name() == "precedence") PrecedenceManager::getInstance()->load(xml);
             if(xml.name() == "projets") continue;
             if(xml.name() == "projet") ProjetManager::getInstance()->load1(xml);
             if(xml.name() == "hierarchieP") continue;
@@ -59,6 +62,7 @@ void LoadTXT::load(const QString& f){ qDebug() << "Load TXT" << f; }
 
 void SaveXML::save(const QString& f){
     TacheManager& TM = *TacheManager::getInstance();
+    PrecedenceManager& PreM = *PrecedenceManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
     ProgManager& ProgM = *ProgManager::getInstance();
 
@@ -75,6 +79,8 @@ void SaveXML::save(const QString& f){
         xml.writeStartElement("calendar");
             // Sauvegarde des tâches
             TM.save1(xml);
+            // Sauvegarde des contraintes de précédence
+            PreM.save(xml);
             // Sauvegarde des projets
             PM.save(xml);
             // Sauvegarde des programmations

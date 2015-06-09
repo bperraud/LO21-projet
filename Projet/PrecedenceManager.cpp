@@ -1,4 +1,5 @@
 #include "PrecedenceManager.h"
+#include "TacheManager.h"
 
 void PrecedenceManager::ajouterPrecedence(const Tache &Tpred, const Tache &Tsucc){
     if (Tpred.getDateDisponibilite() > Tsucc.getDateEcheance())
@@ -36,4 +37,42 @@ bool PrecedenceManager::isPrecedence(const Tache& Tpred, const Tache& Tsucc) con
         if ((&precedences[i]->getPredecesseur() == &Tpred) && (&precedences[i]->getSuccesseur() == &Tsucc))
             return true;
     return false;
+}
+
+PrecedenceManager::~PrecedenceManager(){
+    for (int i = 0; i < precedences.size(); ++i) delete precedences[i];
+    precedences.clear();
+}
+
+
+
+void PrecedenceManager::load(QXmlStreamReader& xml){
+    QString pred, succ;
+    xml.readNext();
+
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "precedence")){
+        if(xml.tokenType() == QXmlStreamReader::StartElement){
+            if(xml.name() == "pred"){
+                xml.readNext();
+                pred = xml.text().toString();
+            }
+            if(xml.name() == "succ"){
+                xml.readNext();
+                succ = xml.text().toString();
+            }
+        }
+        xml.readNext();
+    }
+    ajouterPrecedence(TacheManager::getInstance()->getTache(pred), TacheManager::getInstance()->getTache(succ));
+}
+
+
+
+void PrecedenceManager::save(QXmlStreamWriter& xml){
+    if (!precedences.isEmpty()){
+        xml.writeStartElement("precedences");
+        for (int i = 0; i < precedences.size(); ++i)
+            precedences[i]->save(xml);
+        xml.writeEndElement();
+    }
 }

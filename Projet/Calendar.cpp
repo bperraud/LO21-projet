@@ -243,7 +243,18 @@ void ProgrammationTache::saveEvt(QXmlStreamWriter& stream) const{
     stream.writeTextElement("tache", this->getTache().getTitre());
 }
 
+/* --- [END] Programmations --- */
 
+/* --- [BEGIN] Précédences --- */
+
+void Precedence::save(QXmlStreamWriter& stream) const{
+    stream.writeStartElement("precedence");
+        stream.writeTextElement("pred", this->getPredecesseur().getTitre());
+        stream.writeTextElement("succ", this->getSuccesseur().getTitre());
+    stream.writeEndElement();
+}
+
+/* --- [END] Précédences --- */
 
 
 

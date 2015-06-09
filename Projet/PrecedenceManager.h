@@ -7,10 +7,15 @@ class PrecedenceManager: public Singleton<PrecedenceManager>{
 private:
     QList<Precedence*> precedences;
 public:
+    ~PrecedenceManager();
+
     void ajouterPrecedence(const Tache& Tpred,const Tache& Tsucc);
     void supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc);
     ListTachesConst trouverPrecedences(const Tache& Tsucc) const;
     bool isPrecedence(const Tache& Tpred, const Tache& Tsucc) const;
+
+    void load(QXmlStreamReader& xml);
+    void save(QXmlStreamWriter& xml);
 };
 
 #endif // PRECEDENCEMANAGER_H

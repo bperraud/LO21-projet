@@ -108,10 +108,12 @@ private:
     const Tache* pred;
     const Tache* succ;
     Precedence(const Tache& i, const Tache& j): pred(&i), succ(&j){}
+    friend class PrecedenceManager;
 public:
     const Tache& getPredecesseur() const { return *pred;}
     const Tache& getSuccesseur() const { return *succ;}
-    friend class PrecedenceManager;
+
+    void save(QXmlStreamWriter& stream) const;
 };
 
 /* ----- [END] Précédence ----- */
