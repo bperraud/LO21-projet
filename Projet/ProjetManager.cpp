@@ -114,24 +114,26 @@ void ProjetManager::load2(QXmlStreamReader& xml){
 }
 
 
-
-
 void ProjetManager::save(QXmlStreamWriter& xml){
     // Sauvegarde des projets
-    xml.writeStartElement("projets");
-    for (int i = 0; i < projets.size(); ++i)
-        projets[i]->save(xml);
-    xml.writeEndElement();
-
-    // Sauvegarde de la hiérarchie
-    xml.writeStartElement("hierarchieP");
-    for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
-        xml.writeStartElement("linkP");
-            xml.writeTextElement("projet", (*it).value()->getTitre());
-            xml.writeTextElement("tache", (*it).key()->getTitre());
+    if (!projets.isEmpty()){
+        xml.writeStartElement("projets");
+        for (int i = 0; i < projets.size(); ++i)
+            projets[i]->save(xml);
         xml.writeEndElement();
     }
-    xml.writeEndElement();
+
+    // Sauvegarde de la hiérarchie
+    if (!tabParent.isEmpty()){
+        xml.writeStartElement("hierarchieP");
+        for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
+            xml.writeStartElement("linkP");
+                xml.writeTextElement("projet", (*it).value()->getTitre());
+                xml.writeTextElement("tache", (*it).key()->getTitre());
+            xml.writeEndElement();
+        }
+        xml.writeEndElement();
+    }
 }
 
 

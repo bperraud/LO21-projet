@@ -140,20 +140,24 @@ void TacheManager::load2(QXmlStreamReader& xml){
 
 void TacheManager::save1(QXmlStreamWriter& xml){
     // Sauvegarde des tâches
-    xml.writeStartElement("taches");
-    for (int i = 0; i < taches.size(); ++i)
-        taches[i]->save(xml);
-    xml.writeEndElement();
-
-    // Sauvegarde de la hiérarchie
-    xml.writeStartElement("hierarchieT");
-    for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
-        xml.writeStartElement("linkT");
-            xml.writeTextElement("parent", (*it).value()->getTitre());
-            xml.writeTextElement("son", (*it).key()->getTitre());
+    if (!taches.isEmpty()){
+        xml.writeStartElement("taches");
+        for (int i = 0; i < taches.size(); ++i)
+            taches[i]->save(xml);
         xml.writeEndElement();
     }
-    xml.writeEndElement();
+
+    // Sauvegarde de la hiérarchie
+    if (!tabParent.isEmpty()){
+        xml.writeStartElement("hierarchieT");
+        for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
+            xml.writeStartElement("linkT");
+                xml.writeTextElement("parent", (*it).value()->getTitre());
+                xml.writeTextElement("son", (*it).key()->getTitre());
+            xml.writeEndElement();
+        }
+        xml.writeEndElement();
+    }
 }
 
 void TacheManager::load(const QString& f){

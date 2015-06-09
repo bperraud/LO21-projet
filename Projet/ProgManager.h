@@ -2,6 +2,7 @@
 #define PROGMANAGER_H
 
 #include "Calendar.h"
+#include "TacheManager.h"
 
 #include <QHash>
 

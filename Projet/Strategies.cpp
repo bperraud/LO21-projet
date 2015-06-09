@@ -38,8 +38,11 @@ void LoadXML::load(const QString& f){
             if(xml.name() == "projet") ProjetManager::getInstance()->load1(xml);
             if(xml.name() == "hierarchieP") continue;
             if(xml.name() == "linkP") ProjetManager::getInstance()->load2(xml);
+            if(xml.name() == "programmations") continue;
+            if(xml.name() == "evenement") ProgManager::getInstance()->load1(xml);
+            if(xml.name() == "durees") continue;
+            if(xml.name() == "dureeT") ProgManager::getInstance()->load2(xml);
         }
-
     }
     if(xml.hasError()) throw CalendarException("Erreur lecteur fichier taches, parser xml");
     xml.clear();

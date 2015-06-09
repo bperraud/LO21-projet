@@ -58,29 +58,41 @@ ProgManager::~ProgManager(){
     tabDuree.clear();
 }
 
-/*
+
 void ProgManager::load1(QXmlStreamReader& xml){
 
     QString titre;
     QString description;
-    QDate disponibilite;
-    QDate echeance;
-    QTime duree;
-    bool preemptive;
-    bool unitaire;
+    QString lieu;
+    QString tache;
+    QDate date;
+    QTime debut;
+    QTime fin;
+    bool activite;
 
     QXmlStreamAttributes attributes = xml.attributes();
-    if(attributes.hasAttribute("preemptive")){
-        QString val = attributes.value("preemptive").toString();
-        preemptive = (val == "true" ? true : false);
-        unitaire = true;
+    if(attributes.hasAttribute("activite")){
+        QString val = attributes.value("activite").toString();
+        activite = (val == "true" ? true : false);
     }
-    else unitaire = false;
+    else throw CalendarException("Erreur load Prog, pas d'attr trouvé !");
 
     xml.readNext();
 
-    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "tache")){
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "evenement")){
         if(xml.tokenType() == QXmlStreamReader::StartElement){
+            if(xml.name() == "date"){
+                xml.readNext();
+                date = QDate::fromString(xml.text().toString(),Qt::ISODate);
+            }
+            if(xml.name() == "debut"){
+                xml.readNext();
+                debut.setHMS((xml.text().toInt())/60,(xml.text().toInt())%60,0);
+            }
+            if(xml.name() == "fin"){
+                xml.readNext();
+                fin.setHMS((xml.text().toInt())/60,(xml.text().toInt())%60,0);
+            }
             if(xml.name() == "titre"){
                 xml.readNext();
                 titre = xml.text().toString();
@@ -89,68 +101,68 @@ void ProgManager::load1(QXmlStreamReader& xml){
                 xml.readNext();
                 description = xml.text().toString();
             }
-            if(xml.name() == "disponibilite"){
+            if(xml.name() == "lieu"){
                 xml.readNext();
-                disponibilite = QDate::fromString(xml.text().toString(),Qt::ISODate);
+                lieu = xml.text().toString();
             }
-            if(xml.name() == "echeance"){
+            if(xml.name() == "tache"){
                 xml.readNext();
-                echeance = QDate::fromString(xml.text().toString(),Qt::ISODate);
-            }
-            if(xml.name() == "duree"){
-                xml.readNext();
-                duree.setHMS((xml.text().toInt())/60,(xml.text().toInt())%60,0);
+                tache = xml.text().toString();
             }
         }
         xml.readNext();
     }
-    if (unitaire) ajouterTacheUnitaire(titre, description, duree, disponibilite, echeance, preemptive);
-    else ajouterTacheComposite(titre, description, disponibilite, echeance);
+    if (activite) ajouterProgrammationA(date, debut, fin, titre, description, lieu);
+    else ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)));
 }
 
 void ProgManager::load2(QXmlStreamReader& xml){
 
-    QString mere;
-    QString fille;
+    QTime duree;
+    QString tache;
 
     xml.readNext();
 
-    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "linkT")){
+    while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "dureeT")){
         if(xml.tokenType() == QXmlStreamReader::StartElement){
-            if(xml.name() == "parent"){
+            if(xml.name() == "duree"){
                 xml.readNext();
-                mere = xml.text().toString();
+                duree.setHMS((xml.text().toInt())/60,(xml.text().toInt())%60,0);
             }
-            if(xml.name() == "son"){
+            if(xml.name() == "tache"){
                 xml.readNext();
-                fille = xml.text().toString();
+                tache = xml.text().toString();
             }
         }
         xml.readNext();
     }
-    tabParent[&getTache(fille)] = &dynamic_cast<TacheComposite&>(getTache(mere));
+    tabDuree[&dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache))] = duree;
 }
-*/
+
 
 
 void ProgManager::save(QXmlStreamWriter& xml){
     // Sauvegarde des programmations
-    xml.writeStartElement("programmations");
-    for (int i = 0; i < programmations.size(); ++i)
-        programmations[i]->save(xml);
-    xml.writeEndElement();
-
-    // Sauvegarde des durees programmées
-    xml.writeStartElement("durees");
-    for (tabDureeIterator it = tabDureeBegin(); it != tabDureeEnd(); ++it){
-        xml.writeStartElement("dureeT");
-            QString str;
-            str.setNum(QTime(0, 0).secsTo((*it).value())/60);
-            xml.writeTextElement("duree", str);
-            xml.writeTextElement("tache", (*it).key()->getTitre());
+    if (!programmations.isEmpty()){
+        xml.writeStartElement("programmations");
+        for (int i = 0; i < programmations.size(); ++i)
+            programmations[i]->save(xml);
         xml.writeEndElement();
     }
-    xml.writeEndElement();
+
+    // Sauvegarde des durées programmées
+    if (!tabDuree.isEmpty()){
+        xml.writeStartElement("durees");
+        for (tabDureeIterator it = tabDureeBegin(); it != tabDureeEnd(); ++it){
+            xml.writeStartElement("dureeT");
+                QString str;
+                str.setNum(QTime(0, 0).secsTo((*it).value())/60);
+                xml.writeTextElement("duree", str);
+                xml.writeTextElement("tache", (*it).key()->getTitre());
+            xml.writeEndElement();
+        }
+        xml.writeEndElement();
+    }
 }
 
 
