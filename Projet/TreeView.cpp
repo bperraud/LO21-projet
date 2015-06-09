@@ -20,6 +20,7 @@ TreeView::TreeView(QWidget *parent) : QWidget(parent){
 
     // treeViewActivitees
     treeViewA = new QTreeView(this);
+    treeViewA->setSortingEnabled(true);
     modelA = new QStandardItemModel(this);
     treeALabels << "Type" << "Titre" << "Description" << "Lieu" << "Date" << "Début" << "Fin" << "Préemptive";
 
