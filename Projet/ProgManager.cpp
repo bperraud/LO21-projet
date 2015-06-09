@@ -41,7 +41,7 @@ void ProgManager::updateDuree(const TacheUnitaire& TU, QTime d){
     else tabDuree[&TU] = d;
 }
 
-bool ProgManager::programmationExists(const QDate& d, const QTime& h, const QTime& fin){
+bool ProgManager::programmationExists(const QDate& d, const QTime& h, const QTime& fin) const{
     for (int i = 0; i < programmations.size(); ++i)
         if (programmations[i]->getDate() == d &&
                 ((h <= programmations[i]->getHoraire() && fin > programmations[i]->getHoraire())
@@ -57,6 +57,18 @@ ProgManager::~ProgManager(){
     for (int i = 0; i < programmations.size(); ++i) delete programmations[i];
     programmations.clear();
     tabDuree.clear();
+}
+
+ListEventConst ProgManager::getProgWeek(const QDate& jour) const{
+
+
+
+}
+
+ListEventConst ProgManager::getProgProj(const Projet& projet) const{
+
+
+
 }
 
 void ProgManager::loadEvts(QXmlStreamReader& xml){
@@ -137,9 +149,7 @@ void ProgManager::loadDurees(QXmlStreamReader& xml){
     tabDuree[&dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache))] = duree;
 }
 
-
-
-void ProgManager::save(QXmlStreamWriter& xml){
+void ProgManager::save(QXmlStreamWriter& xml) const{
     // Sauvegarde des programmations
     if (!programmations.isEmpty()){
         xml.writeStartElement("programmations");
@@ -151,7 +161,7 @@ void ProgManager::save(QXmlStreamWriter& xml){
     // Sauvegarde des durées programmées
     if (!tabDuree.isEmpty()){
         xml.writeStartElement("durees");
-        for (tabDureeIterator it = tabDureeBegin(); it != tabDureeEnd(); ++it){
+        for (const_tabDureeIterator it = tabDureeBegin(); it != tabDureeEnd(); ++it){
             xml.writeStartElement("dureeT");
                 QString str;
                 str.setNum(QTime(0, 0).secsTo((*it).value())/60);
@@ -162,6 +172,3 @@ void ProgManager::save(QXmlStreamWriter& xml){
         xml.writeEndElement();
     }
 }
-
-
-

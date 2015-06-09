@@ -108,7 +108,7 @@ void ProjetManager::loadHierarchie(QXmlStreamReader& xml){
 }
 
 
-void ProjetManager::save(QXmlStreamWriter& xml){
+void ProjetManager::save(QXmlStreamWriter& xml) const{
     // Sauvegarde des projets
     if (!projets.isEmpty()){
         xml.writeStartElement("projets");
@@ -120,7 +120,7 @@ void ProjetManager::save(QXmlStreamWriter& xml){
     // Sauvegarde de la hiérarchie
     if (!tabParent.isEmpty()){
         xml.writeStartElement("hierarchieP");
-        for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
+        for (const_tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
             xml.writeStartElement("linkP");
                 xml.writeTextElement("projet", (*it).value()->getTitre());
                 xml.writeTextElement("tache", (*it).key()->getTitre());

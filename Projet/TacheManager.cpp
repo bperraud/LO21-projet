@@ -130,7 +130,7 @@ void TacheManager::loadHierarchie(QXmlStreamReader& xml){
 }
 
 
-void TacheManager::save(QXmlStreamWriter& xml){
+void TacheManager::save(QXmlStreamWriter& xml) const{
     // Sauvegarde des tâches
     if (!taches.isEmpty()){
         xml.writeStartElement("taches");
@@ -142,7 +142,7 @@ void TacheManager::save(QXmlStreamWriter& xml){
     // Sauvegarde de la hiérarchie
     if (!tabParent.isEmpty()){
         xml.writeStartElement("hierarchieT");
-        for (tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
+        for (const_tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
             xml.writeStartElement("linkT");
                 xml.writeTextElement("parent", (*it).value()->getTitre());
                 xml.writeTextElement("son", (*it).key()->getTitre());

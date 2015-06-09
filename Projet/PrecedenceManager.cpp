@@ -44,8 +44,6 @@ PrecedenceManager::~PrecedenceManager(){
     precedences.clear();
 }
 
-
-
 void PrecedenceManager::load(QXmlStreamReader& xml){
     QString pred, succ;
     xml.readNext();
@@ -66,9 +64,7 @@ void PrecedenceManager::load(QXmlStreamReader& xml){
     ajouterPrecedence(TacheManager::getInstance()->getTache(pred), TacheManager::getInstance()->getTache(succ));
 }
 
-
-
-void PrecedenceManager::save(QXmlStreamWriter& xml){
+void PrecedenceManager::save(QXmlStreamWriter& xml) const{
     if (!precedences.isEmpty()){
         xml.writeStartElement("precedences");
         for (int i = 0; i < precedences.size(); ++i)

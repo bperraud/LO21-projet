@@ -36,7 +36,7 @@ public:
 
     void loadTaches(QXmlStreamReader& xml);
     void loadHierarchie(QXmlStreamReader& xml);
-    void save(QXmlStreamWriter& xml);
+    void save(QXmlStreamWriter& xml) const;
 
     bool isEmpty() const { return taches.isEmpty(); }
 
@@ -80,6 +80,19 @@ public:
     };
     tabParentIterator tabParentBegin(){ return tabParentIterator(tabParent.begin()); }
     tabParentIterator tabParentEnd(){ return tabParentIterator(tabParent.end()); }
+
+    class const_tabParentIterator{
+        QHash<const Tache*, const TacheComposite*>::const_iterator current;
+        const_tabParentIterator(QHash<const Tache*, const TacheComposite*>::const_iterator u):current(u){}
+        friend class TacheManager;
+    public:
+        const_tabParentIterator(){}
+        QHash<const Tache*, const TacheComposite*>::const_iterator operator*() const { return current; }
+        bool operator!=(const_tabParentIterator it) const { return current != it.current; }
+        const_tabParentIterator& operator++(){ ++current ; return *this; }
+    };
+    const_tabParentIterator tabParentBegin() const { return const_tabParentIterator(tabParent.begin()); }
+    const_tabParentIterator tabParentEnd() const { return const_tabParentIterator(tabParent.end()); }
 };
 
 #endif // TACHEMANAGER_H

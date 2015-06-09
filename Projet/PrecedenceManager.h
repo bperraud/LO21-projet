@@ -15,7 +15,7 @@ public:
     bool isPrecedence(const Tache& Tpred, const Tache& Tsucc) const;
 
     void load(QXmlStreamReader& xml);
-    void save(QXmlStreamWriter& xml);
+    void save(QXmlStreamWriter& xml) const;
 
     bool isEmpty() const { return precedences.isEmpty(); }
 };
