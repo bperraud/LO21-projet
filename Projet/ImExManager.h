@@ -10,6 +10,8 @@
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QRadioButton>
+#include <QComboBox>
+#include <QDateEdit>
 
 #include "Calendar.h"
 
@@ -24,12 +26,15 @@ private:
     QButtonGroup *formatGroup, *actionGroup;
     QRadioButton *xmlRadio, *txtRadio, *loadRadio, *saveRadio;
 
-    QLabel *formatLabel, *actionLabel, *pathLabel;
+    QLabel *formatLabel, *actionLabel, *pathLabel, *weekLabel, *projLabel;
     QLineEdit *pathEdit;
     QString path, format;
-    QPushButton *findButton, *valider;
+    QPushButton *findButton, *validerAll, *validerWeek, *validerProj;
 
-    QHBoxLayout *HL1, *HL2;
+    QDateEdit *jour;
+    QComboBox *projets;
+
+    QHBoxLayout *HL1, *HL2, *HL3, *HL4;
     QVBoxLayout *VL;
 
     void switchStrategy(LoadStrategy* s){
@@ -40,16 +45,21 @@ private:
         if (saveStrategy) delete saveStrategy;
         saveStrategy = s;
     }
+    void chooseAction(QString type){ actionGroup->checkedButton() == loadRadio ? load(type) : save(type); }
+    void load(QString type);
+    void save(QString type);
+
 public:
     explicit ImExManager(QWidget *parent = 0);
     ~ImExManager();
 
 public slots:
+    void updateProj();
     void updateFormat(QAbstractButton* radioB);
     void findFile();
-    void chooseAction(){ actionGroup->checkedButton() == loadRadio ? load() : save(); }
-    void load();
-    void save();
+    void loadSaveAll(){ chooseAction("all"); }
+    void loadSaveWeek(){ chooseAction("week"); }
+    void loadSaveProj(){ chooseAction("proj"); }
 };
 
 #endif // IMEXMANAGER_H

@@ -18,7 +18,7 @@ void LoadXML::load(const QString& f){
     file = f;
     QFile fin(file);
     if (!fin.open(QIODevice::ReadOnly | QIODevice::Text))
-        throw CalendarException("Erreur ouverture fichier tâches");
+        throw CalendarException("Erreur ouverture fichier");
     QXmlStreamReader xml(&fin);
 
     while(!xml.atEnd() && !xml.hasError()){
@@ -42,17 +42,91 @@ void LoadXML::load(const QString& f){
             if(xml.name() == "dureeT") ProgManager::getInstance()->loadDurees(xml);
         }
     }
-    if(xml.hasError()) throw CalendarException("Erreur lecteur fichier taches, parser xml");
+    if(xml.hasError()) throw CalendarException("Erreur lecteur fichier, parser xml");
+    xml.clear();
+}
+
+void LoadXML::load(const QString& f, QDate jour){
+    // Cleaning
+    ProgManager::getInstance()->~ProgManager();
+
+    // Load
+    file = f;
+    QFile fin(file);
+    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw CalendarException("Erreur ouverture fichier");
+    QXmlStreamReader xml(&fin);
+
+    while(!xml.atEnd() && !xml.hasError()){
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) continue;
+        if(token == QXmlStreamReader::StartElement){
+            if(xml.name() == "calendar") continue;
+            if(xml.name() == "taches") continue;
+            if(xml.name() == "tache") continue;
+            if(xml.name() == "hierarchieT") continue;
+            if(xml.name() == "linkT") continue;
+            if(xml.name() == "precedences") continue;
+            if(xml.name() == "precedence") continue;
+            if(xml.name() == "projets") continue;
+            if(xml.name() == "projet") continue;
+            if(xml.name() == "hierarchieP") continue;
+            if(xml.name() == "linkP") continue;
+            if(xml.name() == "programmations") continue;
+            if(xml.name() == "evenement") ProgManager::getInstance()->loadEvts(xml, jour);
+            if(xml.name() == "durees") continue;
+            if(xml.name() == "dureeT") ProgManager::getInstance()->loadDurees(xml);
+        }
+    }
+    if(xml.hasError()) throw CalendarException("Erreur lecteur fichier , parser xml");
+    xml.clear();
+}
+
+void LoadXML::load(const QString& f, const Projet* projet){
+    // Cleaning
+    ProgManager::getInstance()->~ProgManager();
+
+    // Load
+    file = f;
+    QFile fin(file);
+    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw CalendarException("Erreur ouverture fichier");
+    QXmlStreamReader xml(&fin);
+
+    while(!xml.atEnd() && !xml.hasError()){
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) continue;
+        if(token == QXmlStreamReader::StartElement){
+            if(xml.name() == "calendar") continue;
+            if(xml.name() == "taches") continue;
+            if(xml.name() == "tache") continue;
+            if(xml.name() == "hierarchieT") continue;
+            if(xml.name() == "linkT") continue;
+            if(xml.name() == "precedences") continue;
+            if(xml.name() == "precedence") continue;
+            if(xml.name() == "projets") continue;
+            if(xml.name() == "projet") continue;
+            if(xml.name() == "hierarchieP") continue;
+            if(xml.name() == "linkP") continue;
+            if(xml.name() == "programmations") continue;
+            if(xml.name() == "evenement") ProgManager::getInstance()->loadEvts(xml, QDate(), projet);
+            if(xml.name() == "durees") continue;
+            if(xml.name() == "dureeT") ProgManager::getInstance()->loadDurees(xml);
+        }
+    }
+    if(xml.hasError()) throw CalendarException("Erreur lecteur fichier , parser xml");
     xml.clear();
 }
 
 void LoadTXT::load(const QString&){}
+void LoadTXT::load(const QString&, QDate){}
+void LoadTXT::load(const QString&, const Projet*){}
 
 // ----- [END] Load Strategies -----
 
 // ----- [BEGIN] Save Strategies -----
 
-void SaveXML::save(const QString& f){
+void SaveXML::save(const QString& f, QDate day, const Projet* projet){
     TacheManager& TM = *TacheManager::getInstance();
     PrecedenceManager& PreM = *PrecedenceManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
@@ -77,13 +151,16 @@ void SaveXML::save(const QString& f){
                 // Sauvegarde des projets
                 PM.save(xml);
                 // Sauvegarde des programmations
-                ProgM.save(xml);
+                ProgM.save(xml, day, projet);
             xml.writeEndElement();
         }
     xml.writeEndDocument();
     newfile.close();
 }
 
-void SaveTXT::save(const QString&){}
+
+
+void SaveTXT::save(const QString&, QDate, const Projet*){}
+
 
 // ----- [END] Save Strategies -----

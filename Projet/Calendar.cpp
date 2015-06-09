@@ -190,6 +190,10 @@ void ProgrammationActivite::saveEvt(QXmlStreamWriter& stream) const{
     stream.writeTextElement("lieu", this->getLieu());
 }
 
+const Projet& ProgrammationTache::getProjet() const{
+    return *(ProjetManager::getInstance()->getProjet(this->getTache()));
+}
+
 void ProgrammationTache::saveEvt(QXmlStreamWriter& stream) const{
     stream.writeTextElement("tache", this->getTache().getTitre());
 }

@@ -1,6 +1,7 @@
 #include <QMessageBox>
 
 #include "ImExManager.h"
+#include "ProjetManager.h"
 
 ImExManager::ImExManager(QWidget *parent) : QWidget(parent){
 
@@ -24,8 +25,20 @@ ImExManager::ImExManager(QWidget *parent) : QWidget(parent){
     findButton = new QPushButton("Sélectionner le chemin", this);
     pathEdit = new QLineEdit(this);
 
-    valider = new QPushButton("Valider", this);
-    valider->setFixedWidth(96);
+    validerAll = new QPushButton("Valider", this);
+    validerAll->setFixedWidth(96);
+
+    weekLabel = new QLabel("Programmations d'une semaine (choisir une date) :", this);
+    jour = new QDateEdit(QDate::currentDate(), this);
+
+    projLabel = new QLabel("Programmations d'un projet :", this);
+    projets = new QComboBox(this);
+
+    validerWeek = new QPushButton("Valider", this);
+    validerWeek->setFixedWidth(96);
+
+    validerProj = new QPushButton("Valider", this);
+    validerProj->setFixedWidth(96);
 
     // Layout
 
@@ -42,11 +55,25 @@ ImExManager::ImExManager(QWidget *parent) : QWidget(parent){
     HL2->addWidget(pathLabel);
     HL2->addWidget(findButton);
     HL2->addWidget(pathEdit);
-    HL2->addWidget(valider);
+    HL2->addWidget(validerAll);
+
+    HL3 = new QHBoxLayout;
+    HL3->addWidget(weekLabel);
+    HL3->addWidget(jour);
+    HL3->addStretch();
+    HL3->addWidget(validerWeek);
+
+    HL4 = new QHBoxLayout;
+    HL4->addWidget(projLabel);
+    HL4->addWidget(projets);
+    HL4->addStretch();
+    HL4->addWidget(validerProj);
 
     VL = new QVBoxLayout;
     VL->addLayout(HL1);
     VL->addLayout(HL2);
+    VL->addLayout(HL3);
+    VL->addLayout(HL4);
     VL->addStretch();
 
     this->setLayout(VL);
@@ -59,16 +86,28 @@ ImExManager::ImExManager(QWidget *parent) : QWidget(parent){
     loadRadio->setChecked(true);
     format = "Fichiers XML (*.xml)";
 
+    updateProj();
 
     // Signaux
 
     QObject::connect(formatGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(updateFormat(QAbstractButton*)));
     QObject::connect(findButton, SIGNAL(clicked()), this, SLOT(findFile()));
-    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(chooseAction()));
+    QObject::connect(validerAll, SIGNAL(clicked()), this, SLOT(loadSaveAll()));
+    QObject::connect(validerWeek, SIGNAL(clicked()), this, SLOT(loadSaveWeek()));
+    QObject::connect(validerProj, SIGNAL(clicked()), this, SLOT(loadSaveProj()));
 
 }
 
 ImExManager::~ImExManager(){}
+
+void ImExManager::updateProj(){
+    ProjetManager& PM = *ProjetManager::getInstance();
+    projets->clear();
+    for (ProjetManager::iterator it = PM.begin(); it != PM.end(); ++it)
+        projets->addItem((*it).getTitre());
+    if (!projets->count()) validerProj->setDisabled(true);
+    else validerProj->setEnabled(true);
+}
 
 void ImExManager::updateFormat(QAbstractButton* radioB){
     if (radioB == xmlRadio) format = "Fichiers XML (*.xml)";
@@ -86,22 +125,27 @@ void ImExManager::findFile(){
     }
 }
 
-
-
-void ImExManager::load(){
+void ImExManager::load(QString type){
     if (formatGroup->checkedButton() == xmlRadio) switchStrategy(new LoadXML);
     else if (formatGroup->checkedButton() == txtRadio) switchStrategy(new LoadTXT);
     if (!pathEdit->text().isEmpty()){
-        loadStrategy->load(pathEdit->text());
+        if (type == "all") loadStrategy->load(pathEdit->text());
+        else if (type == "week") loadStrategy->load(pathEdit->text(), jour->date().addDays(-jour->date().dayOfWeek()+1));
+        else if (type == "proj") loadStrategy->load(pathEdit->text(), &ProjetManager::getInstance()->getProjet(projets->currentText()));
+        else throw CalendarException("erreur chargement, type inconnu");
         QMessageBox::information(this, "Chargement", "Chargement réussi !");
+        updateProj();
     }
     else QMessageBox::information(this, "Chargement", "Chargement impossible : aucun chemin spécifié !");
 }
-void ImExManager::save(){
+void ImExManager::save(QString type){
     if (formatGroup->checkedButton() == xmlRadio) switchStrategy(new SaveXML);
     else if (formatGroup->checkedButton() == txtRadio) switchStrategy(new SaveTXT);
     if (!pathEdit->text().isEmpty()){
-        saveStrategy->save(pathEdit->text());
+        if (type == "all") saveStrategy->save(pathEdit->text());
+        else if (type == "week") saveStrategy->save(pathEdit->text(), jour->date());
+        else if (type == "proj") saveStrategy->save(pathEdit->text(), QDate(), &ProjetManager::getInstance()->getProjet(projets->currentText()));
+        else throw CalendarException("erreur sauvegarde, type inconnu");
         QMessageBox::information(this, "Sauvegarde", "Sauvegarde réussie !");
     }
     else QMessageBox::information(this, "Sauvegarde", "Sauvegarde impossible : aucun chemin spécifié !");

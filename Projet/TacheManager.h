@@ -16,7 +16,10 @@ private:
     friend void TacheComposite::addSousTache(const Tache* t) const;
     friend void TacheComposite::rmSousTache(const Tache* t);
     friend bool ProjetManager::isTacheInProjet(const Tache& t);
+    friend Projet* ProjetManager::getProjet(const Tache& t);
     friend void LoadXML::load(const QString& f);
+    friend void LoadXML::load(const QString& f, QDate jour);
+    friend void LoadXML::load(const QString& f, const Projet* projet);
 
     Tache* trouverTache(const QString& titre) const;
     void ajouterTache(Tache& T);

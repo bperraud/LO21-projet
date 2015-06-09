@@ -29,9 +29,9 @@ public:
     ListEventConst getProgWeek(const QDate& jour) const;
     ListEventConst getProgProj(const Projet& projet) const;
 
-    void loadEvts(QXmlStreamReader& xml);
+    void loadEvts(QXmlStreamReader& xml, QDate jour = QDate(), const Projet* projet = 0);
     void loadDurees(QXmlStreamReader& xml);
-    void save(QXmlStreamWriter& xml) const;
+    void save(QXmlStreamWriter& xml, QDate jour = QDate(), const Projet* projet = 0) const;
 
     bool isEmpty() const { return programmations.isEmpty(); }
 

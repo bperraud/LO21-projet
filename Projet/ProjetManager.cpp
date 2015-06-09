@@ -35,8 +35,11 @@ const Projet& ProjetManager::getProjet(const QString& titre) const{
 }
 
 Projet* ProjetManager::getProjet(const Tache& t){
+    TacheManager& TM = *TacheManager::getInstance();
     if (tabParent.contains(&t))
-        return &getProjet(tabParent.value(&t)->getTitre());
+        return const_cast<Projet*>(tabParent.value(&t));
+    else if (TM.tabParent.contains(&t))
+        return getProjet(*TM.tabParent.value(&t));
     return 0;
 }
 

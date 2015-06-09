@@ -104,6 +104,37 @@ public:
 };
 
 
+class Projet{
+private:
+    QString titre;
+    QString description;
+    QDate disponibilite;
+    QDate echeance;
+    Projet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
+            titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
+    friend class ProjetManager;
+public:
+    QString getTitre() const { return titre; }
+    void setTitre(const QString& str);
+    QString getDescription() const { return description; }
+    void setDescription(const QString& str);
+    QDate getDateDisponibilite() const { return disponibilite; }
+    QDate getDateEcheance() const { return echeance; }
+    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e);
+
+    ListTachesConst getTaches() const;
+    void setTaches(const ListTaches& T);
+    void addTache(const Tache* t);
+    void rmTache(const Tache* t);
+
+    void ajouterInfos(QString& infos) const;
+
+    void save(QXmlStreamWriter& stream) const;
+};
+
+typedef QList<Projet*> ListProjet;
+
+
 class Evenement{
 private:
     QDate date;
@@ -156,42 +187,12 @@ private:
     friend class ProgManager;
 public:
     const TacheUnitaire& getTache() const { return *tache; }
+    const Projet& getProjet() const;
 
     void saveEvt(QXmlStreamWriter& stream) const;
     virtual bool isProgTache() const { return true; }
     QString getTitre() const { return tache->getTitre(); }
     QString getDescription() const { return tache->getDescription(); }
 };
-
-
-class Projet{
-private:
-    QString titre;
-    QString description;
-    QDate disponibilite;
-    QDate echeance; // L’échéance d’un projet est une borne supérieure de l’ensemble des échéances des tâches de ce projet
-    Projet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
-            titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
-    friend class ProjetManager;
-public:
-    QString getTitre() const { return titre; }
-    void setTitre(const QString& str);
-    QString getDescription() const { return description; }
-    void setDescription(const QString& str);
-    QDate getDateDisponibilite() const { return disponibilite; }
-    QDate getDateEcheance() const { return echeance; }
-    void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e);
-
-    ListTachesConst getTaches() const;
-    void setTaches(const ListTaches& T);
-    void addTache(const Tache* t);
-    void rmTache(const Tache* t);
-
-    void ajouterInfos(QString& infos) const;
-
-    void save(QXmlStreamWriter& stream) const;
-};
-
-typedef QList<Projet*> ListProjet;
 
 #endif // CALENDAR_H

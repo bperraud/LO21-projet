@@ -1,5 +1,6 @@
 #include "ProgManager.h"
 #include "TacheManager.h"
+#include "ProjetManager.h"
 
 ProgrammationTache* ProgManager::trouverProgrammationT(const TacheUnitaire& TU) const{
     for (int i = 0; i < programmations.size(); ++i)
@@ -60,18 +61,29 @@ ProgManager::~ProgManager(){
 }
 
 ListEventConst ProgManager::getProgWeek(const QDate& jour) const{
-
-
-
+    ListEventConst LE;
+    QDate first, last;
+    first = jour.addDays(-jour.dayOfWeek()+1);
+    last = first.addDays(6);
+    for (int i = 0; i < programmations.size(); ++i){
+        QDate date = programmations[i]->getDate();
+        if (date >= first && date <= last) LE.append(programmations[i]);
+    }
+    return LE;
 }
 
 ListEventConst ProgManager::getProgProj(const Projet& projet) const{
-
-
-
+    ListEventConst LE;
+    for (int i = 0; i < programmations.size(); ++i){
+        if (programmations[i]->isProgTache()){
+            ProgrammationTache* prog = dynamic_cast<ProgrammationTache*>(programmations[i]);
+            if (&prog->getProjet() == &projet) LE.append(programmations[i]);
+        }
+    }
+    return LE;
 }
 
-void ProgManager::loadEvts(QXmlStreamReader& xml){
+void ProgManager::loadEvts(QXmlStreamReader& xml, QDate jour, const Projet *projet){
     QString titre;
     QString description;
     QString lieu;
@@ -123,8 +135,19 @@ void ProgManager::loadEvts(QXmlStreamReader& xml){
         }
         xml.readNext();
     }
-    if (activite) ajouterProgrammationA(date, debut, fin, titre, description, lieu);
-    else ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)));
+
+    if (activite){
+        if ((jour.isNull() && projet == 0) || (!jour.isNull() && date >= jour && date <= jour.addDays(6)))
+            ajouterProgrammationA(date, debut, fin, titre, description, lieu);
+    }
+    else{
+        if ((jour.isNull() && projet == 0) || (!jour.isNull() && date >= jour && date <= jour.addDays(6)))
+            ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)));
+        else if (jour.isNull() && projet != 0){
+            if (ProjetManager::getInstance()->getProjet(TacheManager::getInstance()->getTache(tache)) == projet)
+                ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)));
+        }
+    }
 }
 
 void ProgManager::loadDurees(QXmlStreamReader& xml){
@@ -149,12 +172,19 @@ void ProgManager::loadDurees(QXmlStreamReader& xml){
     tabDuree[&dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache))] = duree;
 }
 
-void ProgManager::save(QXmlStreamWriter& xml) const{
+void ProgManager::save(QXmlStreamWriter& xml, QDate jour, const Projet* projet) const{
     // Sauvegarde des programmations
-    if (!programmations.isEmpty()){
-        xml.writeStartElement("programmations");
+    ListEventConst LE;
+    if (!jour.isNull()) LE = getProgWeek(jour);
+    else if (projet != 0) LE = getProgProj(*projet);
+    else{
         for (int i = 0; i < programmations.size(); ++i)
-            programmations[i]->save(xml);
+            LE.append(programmations[i]);
+    }
+    if (!LE.isEmpty()){
+        xml.writeStartElement("programmations");
+        for (int i = 0; i < LE.size(); ++i)
+            LE[i]->save(xml);
         xml.writeEndElement();
     }
 

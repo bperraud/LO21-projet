@@ -4,6 +4,7 @@
 #include "ProgCreator.h"
 #include "WeekView.h"
 #include "TreeView.h"
+#include "ImExManager.h"
 
 TabManager::TabManager(QWidget *parent) : QWidget(parent){
 
@@ -29,6 +30,9 @@ void TabManager::switchTab(int index){
         break;
     case 3:
         qobject_cast<ProgCreator*>(Onglets->currentWidget()->layout()->itemAt(0)->widget())->updateTachesU();
+        break;
+    case 4:
+        qobject_cast<ImExManager*>(Onglets->currentWidget()->layout()->itemAt(0)->widget())->updateProj();
         break;
     }
 }
