@@ -44,7 +44,6 @@ const Projet* ProjetManager::getProjet(const Tache& t)const{
     return const_cast<ProjetManager*>(this)->getProjet(t);
 }
 
-
 bool ProjetManager::isTacheInProjet(const Tache& t){
     TacheManager& TM = *TacheManager::getInstance();
     if (ProjetManager::getInstance()->tabParent.contains(&t))
@@ -54,9 +53,7 @@ bool ProjetManager::isTacheInProjet(const Tache& t){
     return false;
 }
 
-
-void ProjetManager::load1(QXmlStreamReader& xml){
-
+void ProjetManager::loadProjets(QXmlStreamReader& xml){
     QString titre;
     QString description;
     QDate disponibilite;
@@ -86,11 +83,9 @@ void ProjetManager::load1(QXmlStreamReader& xml){
         xml.readNext();
     }
     ajouterProjet(titre, description, disponibilite, echeance);
-
 }
 
-void ProjetManager::load2(QXmlStreamReader& xml){
-
+void ProjetManager::loadHierarchie(QXmlStreamReader& xml){
     QString projet;
     QString tache;
 
@@ -110,7 +105,6 @@ void ProjetManager::load2(QXmlStreamReader& xml){
         xml.readNext();
     }
     tabParent[&TacheManager::getInstance()->getTache(tache)] = &getProjet(projet);
-
 }
 
 

@@ -26,9 +26,11 @@ public:
 
     void updateDuree(const TacheUnitaire& TU, QTime d);
 
-    void load1(QXmlStreamReader& xml);
-    void load2(QXmlStreamReader& xml);
+    void loadEvts(QXmlStreamReader& xml);
+    void loadDurees(QXmlStreamReader& xml);
     void save(QXmlStreamWriter& xml);
+
+    bool isEmpty() const { return programmations.isEmpty(); }
 
     class iterator{
         ListEvent::iterator current;

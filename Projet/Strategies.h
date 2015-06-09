@@ -21,7 +21,7 @@ class LoadXML : public LoadStrategy{
 public: void load(const QString& f);
 };
 class LoadTXT : public LoadStrategy{
-public: void load(const QString& f);
+public: void load(const QString&);
 };
 
 // ----- [END] Load Strategies -----
@@ -39,7 +39,7 @@ class SaveXML : public SaveStrategy{
 public: void save(const QString& f);
 };
 class SaveTXT : public SaveStrategy{
-public: void save(const QString& f);
+public: void save(const QString&);
 };
 
 // ----- [END] Save Strategies -----

@@ -31,19 +31,20 @@ int main(int argc, char *argv[]){
 
     //try{
 
-
-    TacheManager& TM = *TacheManager::getInstance();
-    ProjetManager& PM = *ProjetManager::getInstance();
-
-    TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",QTime(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
-    TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",QTime(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
-
     //QString chemin = QFileDialog::getOpenFileName();
     //QString chemin = "D:/Documents/Dropbox/UTC/HuTech/2014-2015/HU04/UVs/LO21/LO21-projet/Projet/taches.xml";
     /* Utiliser la ligne ci-dessous pour obtenir l'url locale exacte (et ensuite gagner du temps avec la ligne ci-dessus*/
     //QMessageBox::information(&fenetre, "chargement", chemin);
 
     //TM.load(chemin);
+
+
+    TacheManager& TM = *TacheManager::getInstance();
+    ProjetManager& PM = *ProjetManager::getInstance();
+
+    /*
+    TM.ajouterTacheUnitaire("T1","Etablir une hierarchie coherente",QTime(10, 0),QDate(2015, 2, 28),QDate(2015, 4, 15),true);
+    TM.ajouterTacheUnitaire("T2","Repartir les classes entre developpeurs",QTime(1, 30),QDate(2015, 2, 28),QDate(2015, 4, 25),true);
 
     Tache& T1 = TM.getTache("T1");
     Tache& T2 = TM.getTache("T2");
@@ -88,21 +89,19 @@ int main(int argc, char *argv[]){
     ProgM->ajouterProgrammationT(QDate(2015, 5, 28), QTime(14, 30), QTime(16, 30), T6U);
     ProgM->ajouterProgrammationA(QDate(2015, 6, 2), QTime(11, 0), QTime(12, 45), "Activité comme ça", "On peut faire plein de choses...", "À l'UTC pardi");
     ProgM->ajouterProgrammationA(QDate(2015, 6, 3), QTime(14, 10), QTime(14, 50), "Une autre activité", "Ce que Dieu veut", "Chez nous");
+    */
 
-
-    // Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*
+    /*// Test du Design pattern Visitor pour connaître dynamiquement le type réel porté par les Tache*
     TacheInformateur informateur;
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i)
         (*i).accept(&informateur);
-
-
-
-
+    */
+    /*
     Tache& T3U = T2;
     PrecedenceManager& PrM = *PrecedenceManager::getInstance();
     PrM.ajouterPrecedence(T1, T2U);
     //PrM.supprimerPrecedence(T1, T2U);
-
+    */
 
 
     WeekView* WV = new WeekView;

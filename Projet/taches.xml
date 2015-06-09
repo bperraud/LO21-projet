@@ -1,32 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taches>
-    <tache preemptive="false">
-        <titre>T1</titre>
-        <description>Établir une hiérarchie cohérente</description>
-        <disponibilite>2015-02-28</disponibilite>
-        <echeance>2015-04-15</echeance>
-        <duree>180</duree>
-    </tache>
-    <tache preemptive="false">
-        <titre>T2</titre>
-        <description>Répartir les classes entre développeurs</description>
-        <disponibilite>2015-02-28</disponibilite>
-        <echeance>2015-04-25</echeance>
-        <duree>90</duree>
-    </tache>
-    <tache preemptive="true">
-        <titre>T3</titre>
-        <description>Petit test !</description>
-        <disponibilite>2015-02-06</disponibilite>
-        <echeance>2015-06-04</echeance>
-        <duree>140</duree>
-    </tache>
-    <tache>
-        <titre>T4</titre>
-        <description>autre test</description>
-        <disponibilite>2015-07-10</disponibilite>
-        <echeance>2015-08-12</echeance>
-        <sous-tache>T1</sous-tache>
-        <sous-tache>T2</sous-tache>
-    </tache>
-</taches>
+<calendar>
+    <taches>
+        <tache preemptive="true">
+            <titre>T1</titre>
+            <description>Etablir une hierarchie coherente</description>
+            <disponibilite>2015-02-28</disponibilite>
+            <echeance>2015-04-15</echeance>
+            <duree>600</duree>
+        </tache>
+        <tache preemptive="true">
+            <titre>T2</titre>
+            <description>Repartir les classes entre developpeurs</description>
+            <disponibilite>2015-02-28</disponibilite>
+            <echeance>2015-04-25</echeance>
+            <duree>90</duree>
+        </tache>
+        <tache preemptive="true">
+            <titre>T3</titre>
+            <description>Petit test !</description>
+            <disponibilite>2015-02-06</disponibilite>
+            <echeance>2015-06-04</echeance>
+            <duree>140</duree>
+        </tache>
+        <tache>
+            <titre>T4</titre>
+            <description>autre test</description>
+            <disponibilite>2015-07-10</disponibilite>
+            <echeance>2015-08-12</echeance>
+        </tache>
+        <tache>
+            <titre>T5</titre>
+            <description>autre tacheC</description>
+            <disponibilite>2016-02-15</disponibilite>
+            <echeance>2016-08-01</echeance>
+        </tache>
+        <tache preemptive="true">
+            <titre>T6</titre>
+            <description>tache sans projet</description>
+            <disponibilite>2015-04-03</disponibilite>
+            <echeance>2015-07-23</echeance>
+            <duree>120</duree>
+        </tache>
+        <tache>
+            <titre>T7</titre>
+            <description>tache C sans projet</description>
+            <disponibilite>2015-05-20</disponibilite>
+            <echeance>2015-07-28</echeance>
+        </tache>
+    </taches>
+    <hierarchieT>
+        <linkT>
+            <parent>T4</parent>
+            <son>T1</son>
+        </linkT>
+        <linkT>
+            <parent>T4</parent>
+            <son>T3</son>
+        </linkT>
+        <linkT>
+            <parent>T5</parent>
+            <son>T2</son>
+        </linkT>
+        <linkT>
+            <parent>T5</parent>
+            <son>T4</son>
+        </linkT>
+        <linkT>
+            <parent>T7</parent>
+            <son>T6</son>
+        </linkT>
+    </hierarchieT>
+    <precedences>
+        <precedence>
+            <pred>T1</pred>
+            <succ>T2</succ>
+        </precedence>
+    </precedences>
+    <projets>
+        <projet>
+            <titre>P1</titre>
+            <description>Projet no1</description>
+            <disponibilite>2011-01-01</disponibilite>
+            <echeance>2020-01-01</echeance>
+        </projet>
+        <projet>
+            <titre>P2</titre>
+            <description>Projet no2</description>
+            <disponibilite>2012-01-01</disponibilite>
+            <echeance>2025-01-01</echeance>
+        </projet>
+    </projets>
+    <hierarchieP>
+        <linkP>
+            <projet>P1</projet>
+            <tache>T5</tache>
+        </linkP>
+    </hierarchieP>
+    <programmations>
+        <evenement activite="false">
+            <date>2015-05-26</date>
+            <debut>720</debut>
+            <fin>810</fin>
+            <tache>T2</tache>
+        </evenement>
+        <evenement activite="false">
+            <date>2015-05-28</date>
+            <debut>870</debut>
+            <fin>990</fin>
+            <tache>T6</tache>
+        </evenement>
+        <evenement activite="true">
+            <date>2015-06-02</date>
+            <debut>660</debut>
+            <fin>765</fin>
+            <titre>Activité comme ça</titre>
+            <description>On peut faire plein de choses...</description>
+            <lieu>À l'UTC pardi</lieu>
+        </evenement>
+        <evenement activite="true">
+            <date>2015-06-03</date>
+            <debut>850</debut>
+            <fin>890</fin>
+            <titre>Une autre activité</titre>
+            <description>Ce que Dieu veut</description>
+            <lieu>Chez nous</lieu>
+        </evenement>
+    </programmations>
+</calendar>

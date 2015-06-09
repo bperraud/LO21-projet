@@ -32,8 +32,4 @@ Projet de LO21 P15
 ## Todos non assignés
 
 
-* Interface
-	* Création Projet
-	* Création Tache
-	* etc.
 

@@ -29,9 +29,11 @@ public:
     Projet* getProjet(const Tache& t);
     const Projet* getProjet(const Tache& t)const;
 
-    void load1(QXmlStreamReader& xml);
-    void load2(QXmlStreamReader& xml);
+    void loadProjets(QXmlStreamReader& xml);
+    void loadHierarchie(QXmlStreamReader& xml);
     void save(QXmlStreamWriter& xml);
+
+    bool isEmpty() const { return projets.isEmpty(); }
 
     class iterator{
         ListProjet::iterator current;

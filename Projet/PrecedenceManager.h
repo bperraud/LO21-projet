@@ -16,6 +16,8 @@ public:
 
     void load(QXmlStreamReader& xml);
     void save(QXmlStreamWriter& xml);
+
+    bool isEmpty() const { return precedences.isEmpty(); }
 };
 
 #endif // PRECEDENCEMANAGER_H

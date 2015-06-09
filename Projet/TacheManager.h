@@ -9,9 +9,7 @@
 class TacheManager : public Singleton<TacheManager>{
 private:
     ListTaches taches;
-    //QHash<QString, QString> tabParent;
     QHash<const Tache*, const TacheComposite*> tabParent;
-    QString file;
 
     friend ListTachesConst TacheComposite::getSousTaches() const;
     friend void TacheComposite::setSousTaches(const ListTaches& sT);
@@ -36,12 +34,11 @@ public:
     Tache* getTacheMere(const Tache& t);
     const Tache* getTacheMere(const Tache& t) const;
 
-    void load(const QString& f);
-    void save(const QString& f);
+    void loadTaches(QXmlStreamReader& xml);
+    void loadHierarchie(QXmlStreamReader& xml);
+    void save(QXmlStreamWriter& xml);
 
-    void load1(QXmlStreamReader& xml);
-    void load2(QXmlStreamReader& xml);
-    void save1(QXmlStreamWriter& xml);
+    bool isEmpty() const { return taches.isEmpty(); }
 
     class iterator{
         ListTaches::iterator current;

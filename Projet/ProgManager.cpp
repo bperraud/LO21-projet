@@ -59,9 +59,7 @@ ProgManager::~ProgManager(){
     tabDuree.clear();
 }
 
-
-void ProgManager::load1(QXmlStreamReader& xml){
-
+void ProgManager::loadEvts(QXmlStreamReader& xml){
     QString titre;
     QString description;
     QString lieu;
@@ -117,8 +115,7 @@ void ProgManager::load1(QXmlStreamReader& xml){
     else ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)));
 }
 
-void ProgManager::load2(QXmlStreamReader& xml){
-
+void ProgManager::loadDurees(QXmlStreamReader& xml){
     QTime duree;
     QString tache;
 
