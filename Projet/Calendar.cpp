@@ -40,7 +40,6 @@ void Tache::save(QXmlStreamWriter& stream) const{
     stream.writeEndElement();
 }
 
-
 void TacheUnitaire::ajouterInfos(QString& infos) const{
     Tache::ajouterInfos(infos);
     infos.append("Durée : ").append(this->getDuree().toString("hh'h'mm")).append("\n")
@@ -64,56 +63,39 @@ QTime TacheUnitaire::getDureeRestante() const{
     return d;
 }
 
-
 void TacheComposite::ajouterInfos(QString& infos) const{
     TacheManager& TM = *TacheManager::getInstance();
     Tache::ajouterInfos(infos);
     infos.append("Sous-tâches :\n");
     for (TacheManager::tabParentIterator it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
-        /*if ((*it).value() == this->getTitre())
-            infos.append("   - ").append((*it).key()).append("\n");*/
         if ((*it).value() == this)
             infos.append("   - ").append((*it).key()->getTitre()).append("\n");
 }
 
-
-
 ListTachesConst TacheComposite::getSousTaches() const{
-    TacheManager& TM = *TacheManager::getInstance();
-    //ListTaches LT;
-    //QList<QString> LS = TacheManager::getInstance()->tabParent.keys(this->getTitre());
-    ListTachesConst LT = TM.tabParent.keys(this);
-    //for (int i = 0; i < LS.size(); ++i) LT.append(&TacheManager::getInstance()->getTache(LS[i]));
-    return LT;
+    return TacheManager::getInstance()->tabParent.keys(this);
 }
-
 
 void TacheComposite::setSousTaches(const ListTaches &sT){
     TacheManager& TM = *TacheManager::getInstance();
     for (int i = 0; i < sT.size(); ++i){
-        //if (TacheManager::getInstance()->tabParent.contains(sT[i]->getTitre()))
         if (TM.tabParent.contains(sT[i]))
             throw CalendarException("Erreur tâche composite (set), tâche déjà associée à une autre tâche");
-        //TM.tabParent.insert(sT[i]->getTitre(), this->getTitre());
         TM.tabParent.insert(sT[i], this);
     }
 }
 
 void TacheComposite::addSousTache(const Tache* t) const{
     TacheManager& TM = *TacheManager::getInstance();
-    //if (TM.tabParent.contains(t->getTitre()))
     if (TM.tabParent.contains(t))
         throw CalendarException("Erreur tâche composite (add), tâche déjà associée à une tâche");
-    //TM.tabParent.insert(t->getTitre(), this->getTitre());
     TM.tabParent.insert(t, this);
 }
 
 void TacheComposite::rmSousTache(const Tache* t){
     TacheManager& TM = *TacheManager::getInstance();
-    //if (TM.tabParent.contains(t->getTitre())){
     if (TM.tabParent.contains(t)){
         if (TM.tabParent[t] != this) throw CalendarException("erreur, TacheComposite, tâche à supprimer n'appartient pas à this");
-        //TM.tabParent.remove(t->getTitre());
         TM.tabParent.remove(t);
         return;
     }
@@ -132,11 +114,7 @@ void Projet::setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
     echeance = e;
 }
 
-ListTachesConst Projet::getTaches() const{
-    ProjetManager& PM = *ProjetManager::getInstance();
-    ListTachesConst LT = PM.tabParent.keys(this);
-    return LT;
-}
+ListTachesConst Projet::getTaches() const{ return ProjetManager::getInstance()->tabParent.keys(this); }
 
 void Projet::setTaches(const ListTaches &T){
     ProjetManager& PM = *ProjetManager::getInstance();
@@ -188,7 +166,6 @@ void Projet::save(QXmlStreamWriter& stream) const{
         stream.writeTextElement("echeance", this->getDateEcheance().toString(Qt::ISODate));
     stream.writeEndElement();
 }
-
 
 /* --- [END] Projet --- */
 

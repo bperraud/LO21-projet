@@ -12,9 +12,7 @@
 #include <QTextCodec>
 #include <QtXml>
 
-class TacheVisitor;
-
-class Tache{ // Abstraite, DP Composite
+class Tache{
 protected:
     QString titre;
     QString description;
@@ -91,7 +89,6 @@ public:
     bool isTacheUnitaire() const { return false; }
 };
 
-/* ----- [BEGIN] Précédence ----- */
 
 class Precedence{
 private:
@@ -106,10 +103,8 @@ public:
     void save(QXmlStreamWriter& stream) const;
 };
 
-/* ----- [END] Précédence ----- */
 
-
-class Evenement{ // Abstraite
+class Evenement{
 private:
     QDate date;
     QTime horaire;
@@ -169,15 +164,12 @@ public:
 };
 
 
-/* ----- [BEGIN]Projet ----- */
-
 class Projet{
 private:
     QString titre;
     QString description;
     QDate disponibilite;
     QDate echeance; // L’échéance d’un projet est une borne supérieure de l’ensemble des échéances des tâches de ce projet
-    //ListTaches taches;
     Projet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline):
             titre(t), description(desc), disponibilite(dispo), echeance(deadline){}
     friend class ProjetManager;
@@ -189,6 +181,7 @@ public:
     QDate getDateDisponibilite() const { return disponibilite; }
     QDate getDateEcheance() const { return echeance; }
     void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e);
+
     ListTachesConst getTaches() const;
     void setTaches(const ListTaches& T);
     void addTache(const Tache* t);
@@ -200,15 +193,5 @@ public:
 };
 
 typedef QList<Projet*> ListProjet;
-
-/* ----- [END]Projet ----- */
-
-
-
-
-
-
-
-
 
 #endif // CALENDAR_H
