@@ -19,6 +19,7 @@ public:
     ~ProjetManager();
 
     Projet& ajouterProjet(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& Taches=ListTaches());
+    void deleteProjet(const QString& str);
 
     bool isProjetExistant(const QString& titre) const { return trouverProjet(titre)!=0; }
     bool isTacheInProjet(const Tache& t);

@@ -24,6 +24,22 @@ Projet& ProjetManager::ajouterProjet(const QString& t, const QString& desc, cons
     return *P;
 }
 
+void ProjetManager::deleteProjet(const QString& str){
+    ProjetManager& ProjM = *ProjetManager::getInstance();
+    Projet& projetToDelete = ProjM.getProjet(str);
+
+    for (int i = 0; i != projets.size(); ++i){
+        if (&projetToDelete == projets[i])
+            projets.removeAt(i);
+    }
+
+    QList<const Tache*> tachesproj = tabParent.keys();
+    for (QList<const Tache*>::iterator i = tachesproj.begin(); i != tachesproj.end(); ++i){
+        tabParent.remove(*i);
+    };
+    delete &projetToDelete;
+}
+
 Projet& ProjetManager::getProjet(const QString& titre){
     Projet* p=trouverProjet(titre);
     if (!p) throw CalendarException("erreur, ProjetManager, projet inexistant");

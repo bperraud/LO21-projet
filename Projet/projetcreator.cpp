@@ -14,10 +14,10 @@ ProjetCreator::ProjetCreator(QWidget *parent) : QWidget(parent) {
     description = new QTextEdit(this);
 
     dispoLabel = new QLabel("disponibilité", this);
-    dispo = new QDateEdit(this);
+    dispo = new QDateEdit(QDate::currentDate(), this);
 
     echeanceLabel = new QLabel("échéance", this);
-    echeance = new QDateEdit(this);
+    echeance = new QDateEdit(QDate::currentDate(), this);
 
     tachesLabel = new QLabel("Taches:", this);
     taches = new QListWidget(this);
@@ -64,6 +64,20 @@ ProjetCreator::ProjetCreator(QWidget *parent) : QWidget(parent) {
 
     this->setLayout(VC);
 
+}
+
+void ProjetCreator::updatePC() {
+    TacheManager& TM = *TacheManager::getInstance();
+    ProjetManager& ProjM = *ProjetManager::getInstance();
+    taches->clear();
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        QString UneTache = (*i).getTitre();
+        if (!ProjM.isTacheInProjet(*i)){
+            QListWidgetItem* item = new QListWidgetItem(UneTache, taches);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+            item->setCheckState(Qt::Unchecked);// AND initialize check state
+        }
+    }
 }
 
 void ProjetCreator::creerProjet(){
@@ -123,11 +137,11 @@ ProjetEditeur::ProjetEditeur(QWidget* parent) : QWidget(parent){
         description->setEnabled(false);
 
     dispoLabel = new QLabel("disponibilité", this);
-    dispo = new QDateEdit(this);
+    dispo = new QDateEdit(QDate::currentDate(), this);
         dispo->setEnabled(false);
 
     echeanceLabel = new QLabel("échéance", this);
-    echeance = new QDateEdit(this);
+    echeance = new QDateEdit(QDate::currentDate(), this);
         echeance->setEnabled(false);
 
     tachesLabel = new QLabel("Tâches:", this);
@@ -245,9 +259,9 @@ void ProjetEditeur::editerProjet(){
         return;
     }
 
-    //if (projet->getTitre() != titre->text()) projet->setTitre(titre->text());
-    //projet->setDescription(description->toPlainText());
-    //projet->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
+    if (projet->getTitre() != titre->text()) projet->setTitre(titre->text());
+    projet->setDescription(description->toPlainText());
+    projet->setDatesDisponibiliteEcheance(dispo->date(), echeance->date());
 
     TacheManager& TM = *TacheManager::getInstance();
     for (int i = 0; i < taches->count(); ++i) {
@@ -257,7 +271,7 @@ void ProjetEditeur::editerProjet(){
                    projet->addTache(&(TM.getTache(tache->text())));
             }
             else if (tache->checkState() == Qt::Unchecked) {
-                if (ProjM.getProjet(tache->text()).getTitre() == projet->getTitre())
+                if (ProjM.getProjet(TM.getTache(tache->text())) == projet)
                     projet->rmTache(&(TM.getTache(tache->text())));
             }
         }

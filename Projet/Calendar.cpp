@@ -104,6 +104,11 @@ void TacheComposite::rmSousTache(const Tache* t){
 
 /* --- [BEGIN]Projet --- */
 
+void Projet::setTitre(const QString& str){
+    if (ProjetManager::getInstance()->isProjetExistant((str))) throw CalendarException("erreur ProjetManager : projet id déjà existant");
+    titre = str;
+}
+
 void Projet::setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
     ProjetManager& PM = *ProjetManager::getInstance();
     if (e < disp) throw CalendarException("erreur tâche : date échéance < date disponibilité");

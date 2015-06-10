@@ -33,6 +33,7 @@ private:
 
 public slots:
     void creerProjet();
+    void updatePC();
 
 public:
     explicit ProjetCreator(QWidget* parent = 0);

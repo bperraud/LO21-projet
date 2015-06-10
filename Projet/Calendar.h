@@ -117,7 +117,7 @@ public:
     QString getTitre() const { return titre; }
     void setTitre(const QString& str);
     QString getDescription() const { return description; }
-    void setDescription(const QString& str);
+    void setDescription(const QString& str) { description = str; }
     QDate getDateDisponibilite() const { return disponibilite; }
     QDate getDateEcheance() const { return echeance; }
     void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e);

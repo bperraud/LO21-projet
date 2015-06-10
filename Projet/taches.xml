@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <calendar>
     <taches>
         <tache preemptive="true">
             <titre>T1</titre>
             <description>Etablir une hierarchie coherente</description>
             <disponibilite>2015-02-28</disponibilite>
-            <echeance>2015-04-15</echeance>
+            <echeance>2015-07-15</echeance>
             <duree>600</duree>
         </tache>
         <tache preemptive="true">
             <titre>T2</titre>
             <description>Repartir les classes entre developpeurs</description>
             <disponibilite>2015-02-28</disponibilite>
-            <echeance>2015-04-25</echeance>
+            <echeance>2015-06-25</echeance>
             <duree>90</duree>
         </tache>
         <tache preemptive="true">
@@ -101,7 +101,7 @@
             <date>2015-05-26</date>
             <debut>720</debut>
             <fin>810</fin>
-            <tache>T2</tache>
+            <tache>T1</tache>
         </evenement>
         <evenement activite="false">
             <date>2015-05-28</date>
