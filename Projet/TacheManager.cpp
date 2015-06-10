@@ -1,4 +1,6 @@
 #include "TacheManager.h"
+#include "ProgManager.h"
+#include "PrecedenceManager.h"
 
 Tache* TacheManager::trouverTache(const QString& titre) const{
     for (int i = 0; i < taches.size(); ++i){
@@ -29,6 +31,51 @@ TacheComposite& TacheManager::ajouterTacheComposite(const QString& t, const QStr
         tabParent.insert(sT[i], TC);
     }
     return *TC;
+}
+
+void TacheManager::deleteTache(const QString& str) {
+    Tache& tacheToDelete = getTache(str);
+    PrecedenceManager& PrM = *PrecedenceManager::getInstance();
+
+    //Supprimer les précédences
+    ListTachesConst successeurs = PrM.trouverSuccesseurs(tacheToDelete);
+    for (int i =0; i < successeurs.size(); ++i)
+        PrM.supprimerPrecedence(tacheToDelete, *successeurs[i]);
+
+    ListTachesConst predecesseurs = PrM.trouverPrecedences(tacheToDelete);
+    for (int i =0; i < predecesseurs.size(); ++i)
+        PrM.supprimerPrecedence(*predecesseurs[i], tacheToDelete);
+
+    //Cas de la Tache Unitaire
+    if (tacheToDelete.isTacheUnitaire()) {
+        TacheUnitaire& tacheUToDelete = dynamic_cast<TacheUnitaire&>(tacheToDelete);
+
+        //Supprimer les programmations
+        ProgManager& PM = *ProgManager::getInstance();
+        PM.supprimerProgrammationT(tacheUToDelete);
+
+        //Supprimer la tâche
+        for (int i = 0; i < taches.size(); ++i)
+            if (taches[i] == &tacheUToDelete)
+                taches.removeAt(i);
+        if (getTacheMere(tacheUToDelete))
+            dynamic_cast<TacheComposite*>(getTacheMere(tacheUToDelete))->rmSousTache(&tacheUToDelete);
+        delete &tacheUToDelete;
+    }
+    //Cas de la Tache Composite
+    else {
+        TacheComposite& tacheCToDelete = dynamic_cast<TacheComposite&>(tacheToDelete);
+
+        //Supprimer la tâche
+        for (int i = 0; i < taches.size(); ++i)
+            if (taches[i] == &tacheCToDelete)
+                taches.removeAt(i);
+        QList<const Tache*> rmST = tabParent.keys(&tacheCToDelete);
+        for (int i = 0; i != rmST.size(); ++i)
+            tacheCToDelete.rmSousTache(rmST[i]);
+        delete &tacheCToDelete;
+    }
+
 }
 
 Tache& TacheManager::getTache(const QString& titre){

@@ -17,7 +17,8 @@ HEADERS += \
     Strategies.h \
     ProjetManager.h \
     PrecedenceManager.h \
-    ProjetCreator.h
+    ProjetCreator.h \
+    RemoveManager.h
 
 SOURCES += \
     Calendar.cpp \
@@ -33,4 +34,5 @@ SOURCES += \
     Strategies.cpp \
     ProjetManager.cpp \
     PrecedenceManager.cpp \
-    ProjetCreator.cpp
+    ProjetCreator.cpp \
+    RemoveManager.cpp

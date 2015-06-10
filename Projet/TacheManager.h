@@ -3,6 +3,7 @@
 
 #include "Calendar.h"
 #include "ProjetManager.h"
+#include "ProgManager.h"
 
 #include <QHash>
 
@@ -20,6 +21,7 @@ private:
     friend void LoadXML::load(const QString& f);
     friend void LoadXML::load(const QString& f, QDate jour);
     friend void LoadXML::load(const QString& f, const Projet* projet);
+    friend bool ProgManager::isPrecedenceProgramme(const QDate& d, const QTime& h, const Tache& pred) const;
 
     Tache* trouverTache(const QString& titre) const;
     void ajouterTache(Tache& T);
@@ -28,6 +30,8 @@ public:
 
     TacheUnitaire& ajouterTacheUnitaire(const QString& t, const QString& desc, const QTime& dur, const QDate& dispo, const QDate& deadline, bool preempt=false);
     TacheComposite& ajouterTacheComposite(const QString& t, const QString& desc, const QDate& dispo, const QDate& deadline, const ListTaches& sT=ListTaches());
+
+    void deleteTache(const QString& str);
 
     bool isTacheExistante(const QString& titre) const { return trouverTache(titre)!=0; }
 

@@ -40,6 +40,7 @@ public slots:
     void TacheUni();
     void TacheCompo();
     void veriftype();
+    void updateTC();
 
 public:
     explicit TacheCreator(QWidget* parent = 0);

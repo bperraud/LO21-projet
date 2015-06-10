@@ -32,6 +32,14 @@ ListTachesConst PrecedenceManager::trouverPrecedences(const Tache& Tsucc) const{
     return LT;
 }
 
+ListTachesConst PrecedenceManager::trouverSuccesseurs(const Tache& Tpred) const{
+    ListTachesConst LT;
+    for (int i = 0; i < precedences.size(); ++i)
+        if (&precedences[i]->getPredecesseur() == &Tpred)
+            LT.append(&precedences[i]->getPredecesseur());
+    return LT;
+}
+
 bool PrecedenceManager::isPrecedence(const Tache& Tpred, const Tache& Tsucc) const {
     for (int i = 0; i < precedences.size(); ++i)
         if ((&precedences[i]->getPredecesseur() == &Tpred) && (&precedences[i]->getSuccesseur() == &Tsucc))

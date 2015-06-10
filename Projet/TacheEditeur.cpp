@@ -46,7 +46,6 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
     predecesseursLabel = new QLabel("taches précédentes", this);
     predecesseurs = new QListWidget(this);
     TacheManager& TM = *TacheManager::getInstance();
-    PrecedenceManager& PrM = *PrecedenceManager::getInstance();
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
@@ -119,6 +118,28 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
 
     this->setLayout(VC);
 
+}
+
+void TacheCreator::updateTC() {
+    TacheManager& TM = *TacheManager::getInstance();
+    predecesseurs->clear();
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        QString UneTache = (*i).getTitre();
+        QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+        item->setCheckState(Qt::Unchecked);// AND initialize check state
+    };
+
+    ProjetManager& ProjM = *ProjetManager::getInstance();
+    composantes->clear();
+    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        QString UneTache = (*i).getTitre();
+        if ((!TM.getTacheMere(*i)) && (!ProjM.isTacheInProjet(*i))){
+            QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+            item->setCheckState(Qt::Unchecked);// AND initialize check state
+        }
+    };
 }
 
 void TacheCreator::veriftype(){
@@ -284,11 +305,11 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
         description->setEnabled(false);
 
     dispoLabel = new QLabel("disponibilité", this);
-    dispo = new QDateEdit(this);
+    dispo = new QDateEdit(QDate::currentDate(), this);
         dispo->setEnabled(false);
 
     echeanceLabel = new QLabel("échéance", this);
-    echeance = new QDateEdit(this);
+    echeance = new QDateEdit(QDate::currentDate(), this);
         echeance->setEnabled(false);
 
     dureeLabel = new QLabel("durée", this);
@@ -405,8 +426,10 @@ void TacheEditeur::initialiserEditeur(QString nomtache){
 
             tacheU = &dynamic_cast<TacheUnitaire&>(tacheToEdit);
 
-            if (composantes->isEnabled())
+            if (composantes->isEnabled()){
+                composantes->clear();
                 composantes->setEnabled(false);
+            };
 
             preemptive->setEnabled(true);
             preemptive->setChecked(tacheU->isPreemptive());
@@ -423,15 +446,25 @@ void TacheEditeur::initialiserEditeur(QString nomtache){
             if (duree->isEnabled())
                 duree->setEnabled(false);
 
+            ProjetManager& ProjM = *ProjetManager::getInstance();
             composantes->setEnabled(true);
             composantes->clear();
             for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
                 QString UneTache = (*i).getTitre();
                 if (UneTache != tacheC->getTitre()){
                     if (!TM.getTacheMere(*i)){
-                        QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
-                        item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
-                        item->setCheckState(Qt::Unchecked);// AND initialize check state
+                        if (!ProjM.isTacheInProjet(*i)){
+                            QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+                            item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+                            item->setCheckState(Qt::Unchecked);// AND initialize check state
+                        }
+                        else if (ProjM.isTacheInProjet(*tacheC)) {
+                             if (ProjM.getProjet(*i) == ProjM.getProjet(*tacheC)){
+                                 QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
+                                 item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
+                                 item->setCheckState(Qt::Unchecked);// AND initialize check state
+                             }
+                        }
                     }
                     else if (TM.getTacheMere(*i)->getTitre() == tacheC->getTitre()){
                         QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);

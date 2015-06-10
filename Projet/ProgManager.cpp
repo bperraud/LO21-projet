@@ -1,12 +1,36 @@
 #include "ProgManager.h"
 #include "TacheManager.h"
 #include "ProjetManager.h"
+#include "PrecedenceManager.h"
 
 ProgrammationTache* ProgManager::trouverProgrammationT(const TacheUnitaire& TU) const{
     for (int i = 0; i < programmations.size(); ++i)
         if (programmations[i]->isProgTache())
             if (&TU == &(dynamic_cast<ProgrammationTache*>(programmations[i])->getTache())) return dynamic_cast<ProgrammationTache*>(programmations[i]);
     return 0;
+}
+
+bool ProgManager::isPrecedenceProgramme(const QDate& d, const QTime& h, const Tache& pred) const{
+    if (pred.isTacheUnitaire()){
+        const TacheUnitaire& predU = dynamic_cast<const TacheUnitaire&>(pred);
+        if (programmationExists(trouverProgrammationT(predU)->getDate(), trouverProgrammationT(predU)->getHoraire(), trouverProgrammationT(predU)->getHoraireFin())){
+            if (trouverProgrammationT(predU)->getDate() == d){
+                if (trouverProgrammationT(predU)->getHoraireFin() > h) return false;
+            }
+            else if (trouverProgrammationT(predU)->getDate() > d) return false;
+        }
+        else return false;
+    }
+    else {
+        const TacheComposite& predC = dynamic_cast<const TacheComposite&>(pred);
+        TacheManager& TM = *TacheManager::getInstance();
+        ListTachesConst composants = TM.tabParent.keys(&predC);
+        for (int i = 0; i < composants.size(); ++i){
+            isPrecedenceProgramme(d, h, *composants[i]);
+        }
+    }
+
+    return true;
 }
 
 ProgrammationActivite* ProgManager::trouverProgrammationA(const ProgrammationActivite& PA) const{
@@ -22,7 +46,14 @@ void ProgManager::ajouterProgrammation(Evenement& E){
 
 void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU){
     if (trouverProgrammationT(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgManager, tâche non préemptive déjà programmée");}
-    // Rajouter les contraintes de précédence, de préemption, de disponibilité et d'échéance
+    // Contraintes de précédence, de disponibilité et d'échéance
+    if (d < TU.getDateDisponibilite() || d > TU.getDateEcheance())
+        throw CalendarException("erreur, ProgManager, incohérence programmation avec dates de disponibilité et d'échéance de la tâche");
+    PrecedenceManager& PrM = *PrecedenceManager::getInstance();
+    ListTachesConst pred = PrM.trouverPrecedences(TU);
+    for (int i =0; i < pred.size(); ++i){
+        if (!isPrecedenceProgramme(d, h, *pred[i])) throw CalendarException("Erreur, ProgManager, une tâche précédente au moins n'est pas encore accomplie sur ce créneau");
+    }
     ProgrammationTache* PT = new ProgrammationTache(d, h, fin, TU);
     ajouterProgrammation(*PT);
 }
@@ -31,6 +62,16 @@ void ProgManager::ajouterProgrammationA(const QDate& d, const QTime& h, const QT
     if (trouverProgrammationA(ProgrammationActivite(d, h, fin, t, desc, l))) {throw CalendarException("erreur, ProgManager, activité déjà existante");}
     ProgrammationActivite* PA = new ProgrammationActivite(d, h, fin, t, desc, l);
     ajouterProgrammation(*PA);
+}
+
+void ProgManager::supprimerProgrammationT(const TacheUnitaire& TU){
+    if (trouverProgrammationT(TU)){
+        for (int i = 0; i != programmations.size(); ++i)
+            if (programmations[i] == trouverProgrammationT(TU))
+                programmations.removeAt(i);
+        tabDuree.remove(&TU);
+        delete trouverProgrammationT(TU);
+    }
 }
 
 void ProgManager::updateDuree(const TacheUnitaire& TU, QTime d){
