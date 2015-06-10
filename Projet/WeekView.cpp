@@ -104,7 +104,7 @@ void WeekView::updateWeekView(){
             item = modelW->item(((*i).getHoraire().hour()-8)*4+trancheQH, (*i).getDate().dayOfWeek()-1);
             item->setText((*i).getTitre());
             if (item->row() + nbQuartsH >= 48) throw CalendarException("Erreur, WeekView, durée de la prog dépasse 20h...\n");
-            weekView->setSpan(item->row(), item->column(), nbQuartsH, 1);
+            if (nbQuartsH > 1) weekView->setSpan(item->row(), item->column(), nbQuartsH, 1);
             if ((*i).isProgTache()) item->setBackground(QBrush(QColor(190, 200, 255)));
             else item->setBackground(QBrush(QColor(255, 200, 190)));
         }
