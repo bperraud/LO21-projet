@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calendar>
+    <taches>
+        <tache>
+            <titre>LO21TC1</titre>
+            <description>Analyse du sujet</description>
+            <disponibilite>2015-02-01</disponibilite>
+            <echeance>2015-03-01</echeance>
+        </tache>
+        <tache preemptive="false">
+            <titre>LO21TU1</titre>
+            <description>Lecture du sujet</description>
+            <disponibilite>2015-02-01</disponibilite>
+            <echeance>2015-02-08</echeance>
+            <duree>60</duree>
+        </tache>
+        <tache preemptive="true">
+            <titre>LO21TU2</titre>
+            <description>UML</description>
+            <disponibilite>2015-02-09</disponibilite>
+            <echeance>2015-03-01</echeance>
+            <duree>240</duree>
+        </tache>
+        <tache>
+            <titre>LO21TC2</titre>
+            <description>Architecture</description>
+            <disponibilite>2015-03-02</disponibilite>
+            <echeance>2015-04-15</echeance>
+        </tache>
+        <tache preemptive="true">
+            <titre>LO21TU3</titre>
+            <description>Recherches</description>
+            <disponibilite>2015-03-02</disponibilite>
+            <echeance>2015-04-15</echeance>
+			<duree>600</duree>
+        </tache>
+		<tache preemptive="true">
+            <titre>LO21TU4</titre>
+            <description>Implémentation des classes de base</description>
+            <disponibilite>2015-03-02</disponibilite>
+            <echeance>2015-04-15</echeance>
+			<duree>600</duree>
+        </tache>
+        <tache>
+            <titre>LO21TC3</titre>
+            <description>Développement</description>
+            <disponibilite>2015-04-16</disponibilite>
+            <echeance>2015-06-01</echeance>
+        </tache>
+        <tache preemptive="true">
+            <titre>LO21TU5</titre>
+            <description>Recherches</description>
+            <disponibilite>2015-04-16</disponibilite>
+            <echeance>2015-06-01</echeance>
+            <duree>600</duree>
+        </tache>
+        <tache preemptive="true">
+            <titre>LO21TU6</titre>
+            <description>Développement des managers</description>
+            <disponibilite>2015-04-16</disponibilite>
+            <echeance>2015-05-15</echeance>
+            <duree>480</duree>			
+        </tache>
+		<tache preemptive="true">
+            <titre>LO21TU7</titre>
+            <description>Développement des modules</description>
+            <disponibilite>2015-04-16</disponibilite>
+            <echeance>2015-05-15</echeance>
+            <duree>480</duree>			
+        </tache>
+		<tache preemptive="true">
+            <titre>LO21TU8</titre>
+            <description>Persistance des données</description>
+            <disponibilite>2015-05-16</disponibilite>
+            <echeance>2015-06-01</echeance>
+            <duree>480</duree>			
+        </tache>
+		<tache>
+            <titre>LO21TC4</titre>
+            <description>Livrables</description>
+            <disponibilite>2015-06-02</disponibilite>
+            <echeance>2015-06-14</echeance>
+        </tache>
+        <tache preemptive="true">
+            <titre>LO21TU9</titre>
+            <description>Tests et débogage</description>
+            <disponibilite>2015-06-02</disponibilite>
+            <echeance>2015-06-09</echeance>
+            <duree>120</duree>
+        </tache>
+		<tache preemptive="false">
+            <titre>LO21TU10</titre>
+            <description>Rapport</description>
+            <disponibilite>2015-06-02</disponibilite>
+            <echeance>2015-06-12</echeance>
+            <duree>240</duree>
+        </tache>
+		<tache preemptive="false">
+            <titre>LO21TU11</titre>
+            <description>Documentation Doxygen</description>
+            <disponibilite>2015-06-02</disponibilite>
+            <echeance>2015-06-12</echeance>
+            <duree>240</duree>
+        </tache>
+		<tache preemptive="false">
+            <titre>LO21TU12</titre>
+            <description>Vidéo de présentation</description>
+            <disponibilite>2015-06-10</disponibilite>
+            <echeance>2015-06-12</echeance>
+            <duree>60</duree>
+        </tache>
+		<tache preemptive="false">
+            <titre>LO21TU13</titre>
+            <description>Archivage et mail</description>
+            <disponibilite>2015-06-13</disponibilite>
+            <echeance>2015-06-14</echeance>
+            <duree>15</duree>
+        </tache>
+		<tache>
+            <titre>NF17TC1</titre>
+            <description>Analyse</description>
+            <disponibilite>2015-02-01</disponibilite>
+            <echeance>2015-04-14</echeance>
+        </tache>
+		<tache preemptive="false">
+            <titre>NF17TU1</titre>
+            <description>Lecture du sujet</description>
+            <disponibilite>2015-02-01</disponibilite>
+            <echeance>2015-02-10</echeance>
+            <duree>60</duree>
+        </tache>
+		<tache preemptive="true">
+            <titre>NF17TU2</titre>
+            <description>UML</description>
+            <disponibilite>2015-02-11</disponibilite>
+            <echeance>2015-03-01</echeance>
+            <duree>240</duree>
+        </tache>
+		<tache>
+            <titre>NF17TC1.1</titre>
+            <description>MLD</description>
+            <disponibilite>2015-03-02</disponibilite>
+            <echeance>2015-04-14</echeance>
+        </tache>
+		<tache preemptive="true">
+            <titre>NF17TU3</titre>
+            <description>Bases</description>
+            <disponibilite>2015-03-02</disponibilite>
+            <echeance>2015-03-18</echeance>
+            <duree>240</duree>
+        </tache>
+		<tache preemptive="true">
+            <titre>NF17TU4</titre>
+            <description>Héritage</description>
+            <disponibilite>2015-03-02</disponibilite>
+            <echeance>2015-03-25</echeance>
+            <duree>240</duree>
+        </tache>
+		<tache preemptive="false">
+            <titre>NF17TU5</titre>
+            <description>Normalisation</description>
+            <disponibilite>2015-03-26</disponibilite>
+            <echeance>2015-04-14</echeance>
+            <duree>60</duree>
+        </tache>
+		<tache>
+            <titre>NF17TC2</titre>
+            <description>Analyse</description>
+            <disponibilite>2015-04-15</disponibilite>
+            <echeance>2015-06-10</echeance>
+        </tache>
+		<tache preemptive="false">
+            <titre>NF17TU6</titre>
+            <description>Tables SQL</description>
+            <disponibilite>2015-04-15</disponibilite>
+            <echeance>2015-04-22</echeance>
+            <duree>240</duree>
+        </tache>
+		<tache preemptive="true">
+            <titre>NF17TU7</titre>
+            <description>Développement web</description>
+            <disponibilite>2015-04-23</disponibilite>
+            <echeance>2015-06-01</echeance>
+            <duree>720</duree>
+        </tache>
+		<tache preemptive="true">
+            <titre>NF17TU8</titre>
+            <description>Débogage</description>
+            <disponibilite>2015-06-02</disponibilite>
+            <echeance>2015-06-10</echeance>
+            <duree>240</duree>
+        </tache>
+		<tache preemptive="true">
+            <titre>NF17TU9</titre>
+            <description>Rapports</description>
+            <disponibilite>2015-06-11</disponibilite>
+            <echeance>2015-06-16</echeance>
+            <duree>360</duree>
+        </tache>
+    </taches>
+    <hierarchieT>
+        <linkT>
+            <parent>LO21TC1</parent>
+            <son>LO21TU1</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC1</parent>
+            <son>LO21TU2</son>
+        </linkT>
+        <linkT>
+            <parent>LO21TC2</parent>
+            <son>LO21TU3</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC2</parent>
+            <son>LO21TU4</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC3</parent>
+            <son>LO21TU5</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC3</parent>
+            <son>LO21TU6</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC3</parent>
+            <son>LO21TU7</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC3</parent>
+            <son>LO21TU8</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC4</parent>
+            <son>LO21TU9</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC4</parent>
+            <son>LO21TU10</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC4</parent>
+            <son>LO21TU11</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC4</parent>
+            <son>LO21TU12</son>
+        </linkT>
+		<linkT>
+            <parent>LO21TC4</parent>
+            <son>LO21TU13</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC1</parent>
+            <son>NF17TU1</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC1</parent>
+            <son>NF17TU2</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC1</parent>
+            <son>NF17TC1.1</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC1.1</parent>
+            <son>NF17TU3</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC1.1</parent>
+            <son>NF17TU4</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC1.1</parent>
+            <son>NF17TU5</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC2</parent>
+            <son>NF17TU6</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC2</parent>
+            <son>NF17TU7</son>
+        </linkT>
+		<linkT>
+            <parent>NF17TC2</parent>
+            <son>NF17TU8</son>
+        </linkT>
+    </hierarchieT>
+    <precedences>
+        <precedence>
+            <pred>LO21TC1</pred>
+            <succ>LO21TC2</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TC2</pred>
+            <succ>LO21TC3</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TC3</pred>
+            <succ>LO21TC4</succ>
+        </precedence>
+        <precedence>
+            <pred>LO21TU1</pred>
+            <succ>LO21TU2</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TU6</pred>
+            <succ>LO21TU8</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TU7</pred>
+            <succ>LO21TU8</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TU9</pred>
+            <succ>LO21TU12</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TU10</pred>
+            <succ>LO21TU13</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TU11</pred>
+            <succ>LO21TU13</succ>
+        </precedence>
+		<precedence>
+            <pred>LO21TU12</pred>
+            <succ>LO21TU13</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TC1</pred>
+            <succ>NF17TC2</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TC2</pred>
+            <succ>NF17TU9</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TU1</pred>
+            <succ>NF17TU2</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TU2</pred>
+            <succ>NF17TC1.1</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TU3</pred>
+            <succ>NF17TU5</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TU4</pred>
+            <succ>NF17TU5</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TU6</pred>
+            <succ>NF17TU7</succ>
+        </precedence>
+		<precedence>
+            <pred>NF17TU7</pred>
+            <succ>NF17TU8</succ>
+        </precedence>
+    </precedences>
+    <projets>
+        <projet>
+            <titre>LO21</titre>
+            <description>Projet calendar de LO21</description>
+            <disponibilite>2015-02-01</disponibilite>
+            <echeance>2015-06-14</echeance>
+        </projet>
+        <projet>
+            <titre>NF17</titre>
+            <description>Projet karatekid de NF17</description>
+            <disponibilite>2015-02-01</disponibilite>
+            <echeance>2015-06-16</echeance>
+        </projet>
+    </projets>
+    <hierarchieP>
+        <linkP>
+            <projet>LO21</projet>
+            <tache>LO21TC1</tache>
+        </linkP>
+		<linkP>
+            <projet>LO21</projet>
+            <tache>LO21TC2</tache>
+        </linkP>
+		<linkP>
+            <projet>LO21</projet>
+            <tache>LO21TC3</tache>
+        </linkP>
+		<linkP>
+            <projet>LO21</projet>
+            <tache>LO21TC4</tache>
+        </linkP>
+		<linkP>
+            <projet>NF17</projet>
+            <tache>NF17TC1</tache>
+        </linkP>
+		<linkP>
+            <projet>NF17</projet>
+            <tache>NF17TC2</tache>
+        </linkP>
+		<linkP>
+            <projet>NF17</projet>
+            <tache>NF17TU9</tache>
+        </linkP>
+    </hierarchieP>
+    <programmations>
+        <evenement activite="false">
+            <date>2015-02-04</date>
+            <debut>600</debut>
+            <fin>660</fin>
+            <tache>LO21TU1</tache>
+        </evenement>
+        <evenement activite="false">
+            <date>2015-02-15</date>
+            <debut>600</debut>
+            <fin>720</fin>
+            <tache>LO21TU2</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-02-22</date>
+            <debut>600</debut>
+            <fin>720</fin>
+            <tache>LO21TU2</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-03-04</date>
+            <debut>720</debut>
+            <fin>960</fin>
+            <tache>LO21TU3</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-03-10</date>
+            <debut>720</debut>
+            <fin>960</fin>
+            <tache>LO21TU3</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-01</date>
+            <debut>960</debut>
+            <fin>1080</fin>
+            <tache>LO21TU3</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-03-06</date>
+            <debut>600</debut>
+            <fin>720</fin>
+            <tache>LO21TU4</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-03-11</date>
+            <debut>780</debut>
+            <fin>1020</fin>
+            <tache>LO21TU4</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-03</date>
+            <debut>600</debut>
+            <fin>780</fin>
+            <tache>LO21TU4</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-07</date>
+            <debut>660</debut>
+            <fin>720</fin>
+            <tache>LO21TU4</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-20</date>
+            <debut>600</debut>
+            <fin>840</fin>
+            <tache>LO21TU5</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-02</date>
+            <debut>480</debut>
+            <fin>720</fin>
+            <tache>LO21TU5</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-16</date>
+            <debut>960</debut>
+            <fin>1080</fin>
+            <tache>LO21TU5</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-18</date>
+            <debut>720</debut>
+            <fin>960</fin>
+            <tache>LO21TU6</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-06</date>
+            <debut>480</debut>
+            <fin>600</fin>
+            <tache>LO21TU6</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-21</date>
+            <debut>480</debut>
+            <fin>720</fin>
+            <tache>LO21TU7</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-13</date>
+            <debut>600</debut>
+            <fin>840</fin>
+            <tache>LO21TU7</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-18</date>
+            <debut>600</debut>
+            <fin>840</fin>
+            <tache>LO21TU8</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-22</date>
+            <debut>660</debut>
+            <fin>900</fin>
+            <tache>LO21TU8</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-02</date>
+            <debut>510</debut>
+            <fin>540</fin>
+            <tache>LO21TU9</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-06</date>
+            <debut>600</debut>
+            <fin>690</fin>
+            <tache>LO21TU9</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-05</date>
+            <debut>600</debut>
+            <fin>840</fin>
+            <tache>LO21TU10</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-05</date>
+            <debut>900</debut>
+            <fin>1140</fin>
+            <tache>LO21TU11</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-11</date>
+            <debut>1020</debut>
+            <fin>1080</fin>
+            <tache>LO21TU12</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-13</date>
+            <debut>1080</debut>
+            <fin>1095</fin>
+            <tache>LO21TU13</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-02-02</date>
+            <debut>540</debut>
+            <fin>600</fin>
+            <tache>NF17TU1</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-02-12</date>
+            <debut>600</debut>
+            <fin>720</fin>
+            <tache>NF17TU2</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-02-20</date>
+            <debut>600</debut>
+            <fin>720</fin>
+            <tache>NF17TU2</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-03-08</date>
+            <debut>480</debut>
+            <fin>720</fin>
+            <tache>NF17TU3</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-03-09</date>
+            <debut>600</debut>
+            <fin>720</fin>
+            <tache>NF17TU4</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-03-20</date>
+            <debut>960</debut>
+            <fin>1080</fin>
+            <tache>NF17TU4</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-01</date>
+            <debut>480</debut>
+            <fin>540</fin>
+            <tache>NF17TU5</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-16</date>
+            <debut>720</debut>
+            <fin>960</fin>
+            <tache>NF17TU6</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-04-26</date>
+            <debut>660</debut>
+            <fin>900</fin>
+            <tache>NF17TU7</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-04</date>
+            <debut>540</debut>
+            <fin>720</fin>
+            <tache>NF17TU7</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-05-20</date>
+            <debut>780</debut>
+            <fin>1020</fin>
+            <tache>NF17TU7</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-04</date>
+            <debut>480</debut>
+            <fin>720</fin>
+            <tache>NF17TU8</tache>
+        </evenement>
+		<evenement activite="false">
+            <date>2015-06-12</date>
+            <debut>600</debut>
+            <fin>780</fin>
+            <tache>NF17TU9</tache>
+        </evenement>
+		<evenement activite="true">
+            <date>2015-02-13</date>
+            <debut>600</debut>
+            <fin>720</fin>
+            <titre>Réunion LA22</titre>
+            <description>Réunion pour l'exposé de LA22</description>
+            <lieu>UTC, FC107</lieu>
+        </evenement>
+		<evenement activite="true">
+            <date>2015-04-19</date>
+            <debut>1080</debut>
+            <fin>1140</fin>
+            <titre>Pot de départ de Paul</titre>
+            <description>Pot de départ avec plein d'invités, d'amis, etc.</description>
+            <lieu>Chez Paul</lieu>
+        </evenement>
+		<evenement activite="true">
+            <date>2015-05-25</date>
+            <debut>1020</debut>
+            <fin>1110</fin>
+            <titre>Fête du village</titre>
+            <description>Fête du village annuelle</description>
+            <lieu>Trifouilly-les-Oies</lieu>
+        </evenement>
+    </programmations>
+	<durees>
+		<dureeT>
+			<duree>240</duree>
+			<tache>LO21TU2</tache>
+		</dureeT>
+		<dureeT>
+			<duree>600</duree>
+			<tache>LO21TU3</tache>
+		</dureeT>
+		<dureeT>
+			<duree>600</duree>
+			<tache>LO21TU4</tache>
+		</dureeT>
+		<dureeT>
+			<duree>600</duree>
+			<tache>LO21TU5</tache>
+		</dureeT>
+		<dureeT>
+			<duree>480</duree>
+			<tache>LO21TU6</tache>
+		</dureeT>
+		<dureeT>
+			<duree>480</duree>
+			<tache>LO21TU7</tache>
+		</dureeT>
+		<dureeT>
+			<duree>480</duree>
+			<tache>LO21TU8</tache>
+		</dureeT>
+		<dureeT>
+			<duree>120</duree>
+			<tache>LO21TU9</tache>
+		</dureeT>
+		<dureeT>
+			<duree>240</duree>
+			<tache>NF17TU2</tache>
+		</dureeT>
+		<dureeT>
+			<duree>240</duree>
+			<tache>NF17TU3</tache>
+		</dureeT>
+		<dureeT>
+			<duree>240</duree>
+			<tache>NF17TU4</tache>
+		</dureeT>
+		<dureeT>
+			<duree>720</duree>
+			<tache>NF17TU7</tache>
+		</dureeT>
+		<dureeT>
+			<duree>240</duree>
+			<tache>NF17TU8</tache>
+		</dureeT>
+		<dureeT>
+			<duree>180</duree>
+			<tache>NF17TU9</tache>
+		</dureeT>
+	</durees>
+</calendar>
