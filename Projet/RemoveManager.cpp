@@ -18,7 +18,7 @@ RemoveManager::RemoveManager(QWidget *parent) : QWidget(parent) {
     supprimerP = new QPushButton("Supprimer", this);
     supprimerP->setFixedWidth(96);
 
-    ChoixTacheLabel = new QLabel("Tâche à éditer :", this);
+    ChoixTacheLabel = new QLabel("Tâche à Supprimer :", this);
     ChoixTache = new QComboBox(this);
          TacheManager& TM = *TacheManager::getInstance();
          for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
@@ -40,6 +40,7 @@ RemoveManager::RemoveManager(QWidget *parent) : QWidget(parent) {
     VC = new QVBoxLayout;
         VC->addLayout(HC1);
         VC->addLayout(HC2);
+        VC->addStretch();
 
     QObject::connect(supprimerP, SIGNAL(clicked(bool)), this, SLOT(supprimerProjet()));
     QObject::connect(supprimerT, SIGNAL(clicked(bool)), this, SLOT(supprimerTache()));
@@ -73,6 +74,7 @@ void RemoveManager::supprimerProjet() {
         QMessageBox::warning(this, "Suppression impossible", "Pas de projet portant ce titre");
     else {
         ProjM.deleteProjet(ChoixProjet->currentText());
+        updateRm();
         QMessageBox::information(this, "Suppression projet", "Projet supprimé avec succès");
     }
 }
@@ -84,6 +86,8 @@ void RemoveManager::supprimerTache() {
         QMessageBox::warning(this, "Suppression impossible", "Pas de tâche portant ce titre");
     else {
         TM.deleteTache(ChoixTache->currentText());
+        updateRm();
         QMessageBox::information(this, "Suppression tâche", "Tâche supprimée avec succès");
     }
+
 }

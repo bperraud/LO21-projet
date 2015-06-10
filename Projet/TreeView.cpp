@@ -225,7 +225,6 @@ void TreeView::updateTrees(){
             else ajouterTacheTree(rootNodeT, *i);
         }
     }
-
     // Construction de treeViewA
     for (ProgManager::iterator i = ProgM.begin(); i != ProgM.end(); ++i)
         ajouterActiviteTree(rootNodeA, *i);

@@ -11,9 +11,9 @@
 
 TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
 
-    typeLabelu = new QLabel("Type: unitaire ");
+    typeLabelu = new QLabel("Type : unitaire ");
     unitaire = new QRadioButton(this);
-        unitaire->setChecked(false);
+        unitaire->setChecked(true);
 
     typeLabelc = new QLabel(" composite");
     composite = new QRadioButton(this);
@@ -111,6 +111,12 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
         VC->addLayout(HC7);
         VC->addStretch();
 
+
+    // Init
+
+    veriftype();
+
+    // Signaux
 
     QObject::connect(unitaire, SIGNAL(toggled(bool)), this, SLOT(veriftype()));
     QObject::connect(composite, SIGNAL(toggled(bool)), this, SLOT(veriftype()));

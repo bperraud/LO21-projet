@@ -121,11 +121,8 @@ int main(int argc, char *argv[]){
     layoutProjetEditeur = new QVBoxLayout;
     layoutRemoveManager = new QVBoxLayout;
 
-    //QScrollArea* scrollareaTE = new QScrollArea;
-
     layoutWeekView->addWidget(WV);
     layoutTreeView->addWidget(TV);
-    //layoutTacheEditeur->addWidget(&scrollareaTE);
     layoutTacheEditeur->addWidget(TE);
     layoutProgCreator->addWidget(PC);
     layoutImExManager->addWidget(IEM);
@@ -133,8 +130,6 @@ int main(int argc, char *argv[]){
     layoutProjetCreator->addWidget(ProjC);
     layoutProjetEditeur->addWidget(ProjE);
     layoutRemoveManager->addWidget(RM);
-
-    //scrollareaTE->setWidget(&TE);
 
     TabManager* TabM = new TabManager(fenetre);
     QWidget *ongletWeekView, *ongletTacheEditeur, *ongletTreeView, *ongletProgCreator, *ongletImExManager, *ongletTacheCreator, *ongletProjetCreator, *ongletProjetEditeur, *ongletRemoveManager;
@@ -164,8 +159,6 @@ int main(int argc, char *argv[]){
     TabM->getOnglets().addTab(ongletProjetCreator, "Création de projets");
     TabM->getOnglets().addTab(ongletTacheEditeur, "Edition de tâches");
     TabM->getOnglets().addTab(ongletProjetEditeur, "Edition de projets");
-    //TabM->getOnglets().addTab(ongletTreeView, "Vue synthétique");
-    //TabM->getOnglets().addTab(ongletTacheEditeur, "Onglet Tache Editeur");
     TabM->getOnglets().addTab(ongletProgCreator, "Programmer un événement");
     TabM->getOnglets().addTab(ongletRemoveManager, "Suppression");
     TabM->getOnglets().addTab(ongletImExManager, "Imports && exports");

@@ -33,8 +33,8 @@ void ProjetManager::deleteProjet(const QString& str){
             projets.removeAt(i);
     }
 
-    QList<const Tache*> tachesproj = tabParent.keys();
-    for (QList<const Tache*>::iterator i = tachesproj.begin(); i != tachesproj.end(); ++i){
+    QList<const Tache*> tachesproj = tabParent.keys(&projetToDelete);
+    for (ListTachesConst::iterator i = tachesproj.begin(); i != tachesproj.end(); ++i){
         tabParent.remove(*i);
     };
     delete &projetToDelete;

@@ -24,10 +24,8 @@ TacheComposite& TacheManager::ajouterTacheComposite(const QString& t, const QStr
     TacheComposite* TC = new TacheComposite(t, desc, dispo, deadline);
     ajouterTache(*TC);
     for (int i = 0; i < sT.size(); ++i){
-        //if (tabParent.contains(sT[i]->getTitre()))
         if (tabParent.contains(sT[i]))
             throw CalendarException("erreur, TacheManager::ajouterTacheComposite, sous-tâche déjà subordonnée à une tâche");
-        //tabParent.insert(sT[i]->getTitre(), TC->getTitre());
         tabParent.insert(sT[i], TC);
     }
     return *TC;
@@ -70,12 +68,13 @@ void TacheManager::deleteTache(const QString& str) {
         for (int i = 0; i < taches.size(); ++i)
             if (taches[i] == &tacheCToDelete)
                 taches.removeAt(i);
-        QList<const Tache*> rmST = tabParent.keys(&tacheCToDelete);
+        ListTachesConst rmST = tabParent.keys(&tacheCToDelete);
         for (int i = 0; i != rmST.size(); ++i)
             tacheCToDelete.rmSousTache(rmST[i]);
+        if (getTacheMere(tacheCToDelete))
+            dynamic_cast<TacheComposite*>(getTacheMere(tacheCToDelete))->rmSousTache(&tacheCToDelete);
         delete &tacheCToDelete;
     }
-
 }
 
 Tache& TacheManager::getTache(const QString& titre){
