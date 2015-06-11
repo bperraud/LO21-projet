@@ -6,7 +6,6 @@ HEADERS += \
     Calendar.h \
     TacheEditeur.h \
     CalendarException.h \
-    Singleton.h \
     TacheManager.h \
     TreeView.h \
     WeekView.h \
@@ -18,7 +17,8 @@ HEADERS += \
     ProjetManager.h \
     PrecedenceManager.h \
     ProjetCreator.h \
-    RemoveManager.h
+    RemoveManager.h \
+    Template.h
 
 SOURCES += \
     Calendar.cpp \

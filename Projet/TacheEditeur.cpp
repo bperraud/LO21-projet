@@ -46,7 +46,7 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
     predecesseursLabel = new QLabel("Tâches précédentes :", this);
     predecesseurs = new QListWidget(this);
     TacheManager& TM = *TacheManager::getInstance();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
@@ -57,7 +57,7 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
 
     composantesLabel = new QLabel("Tâche composite de :", this);
     composantes = new QListWidget(this);
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         if (!TM.getTacheMere(*i)){
             QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
@@ -131,7 +131,7 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
 void TacheCreator::updateTC() {
     TacheManager& TM = *TacheManager::getInstance();
     predecesseurs->clear();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable); // set checkable flag
@@ -140,7 +140,7 @@ void TacheCreator::updateTC() {
 
     ProjetManager& ProjM = *ProjetManager::getInstance();
     composantes->clear();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         if ((!TM.getTacheMere(*i)) && (!ProjM.isTacheInProjet(*i))){
             QListWidgetItem* item = new QListWidgetItem(UneTache, composantes);
@@ -299,7 +299,7 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
     ChoixTacheLabel = new QLabel("Tâche à éditer :", this);
     ChoixTache = new QComboBox(this);
         TacheManager& TM = *TacheManager::getInstance();
-        for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
             QString UneTache = (*i).getTitre();
             ChoixTache->addItem(UneTache);
         }
@@ -423,7 +423,7 @@ void TacheEditeur::initialiserEditeur(QString nomtache){
         predecesseurs->setEnabled(true);
         predecesseurs->clear();
         PrecedenceManager& PrM = *PrecedenceManager::getInstance();
-        for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
             QString UneTache = (*i).getTitre();
             if (UneTache != tacheToEdit.getTitre()) {
                 QListWidgetItem* item = new QListWidgetItem(UneTache, predecesseurs);
@@ -461,7 +461,7 @@ void TacheEditeur::initialiserEditeur(QString nomtache){
             ProjetManager& ProjM = *ProjetManager::getInstance();
             composantes->setEnabled(true);
             composantes->clear();
-            for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+            for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
                 QString UneTache = (*i).getTitre();
                 if (UneTache != tacheC->getTitre()){
                     if (!TM.getTacheMere(*i)){
@@ -584,7 +584,7 @@ void TacheEditeur::sauverTache(){
 void TacheEditeur::updateT(){
     TacheManager& TM = *TacheManager::getInstance();
     ChoixTache->clear();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         ChoixTache->addItem(UneTache);
     }

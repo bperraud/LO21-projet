@@ -23,7 +23,7 @@ ProjetCreator::ProjetCreator(QWidget *parent) : QWidget(parent) {
     taches = new QListWidget(this);
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& ProjM = *ProjetManager::getInstance();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         if (!ProjM.isTacheInProjet(*i)){
             QListWidgetItem* item = new QListWidgetItem(UneTache, taches);
@@ -70,7 +70,7 @@ void ProjetCreator::updatePC() {
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& ProjM = *ProjetManager::getInstance();
     taches->clear();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
         if (!ProjM.isTacheInProjet(*i)){
             QListWidgetItem* item = new QListWidgetItem(UneTache, taches);
@@ -221,7 +221,7 @@ void ProjetEditeur::initialiserEditeur(QString nomprojet){
         taches->setEnabled(true);
         taches->clear();
         TacheManager& TM = *TacheManager::getInstance();
-        for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+        for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
             QString UneTache = (*i).getTitre();
             if (ProjM.isTacheInProjet(*i)){
                 if (ProjM.getProjet(*i)->getTitre() == projetToEdit.getTitre()){

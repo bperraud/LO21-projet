@@ -2,7 +2,7 @@
 #define CALENDAR_H
 
 #include "CalendarException.h"
-#include "Singleton.h"
+#include "Template.h"
 #include "Strategies.h"
 
 #include <QString>
@@ -194,28 +194,5 @@ public:
     QString getTitre() const { return tache->getTitre(); }
     QString getDescription() const { return tache->getDescription(); }
 };
-
-
-
-
-template <class host, typename T> class iterator{
-    typename QList<T*>::iterator current;
-    iterator(typename QList<T*>::iterator u):current(u){}
-public:
-    iterator(){}
-    T& operator*() const { return **current; }
-    bool operator!=(iterator it) const { return current != it.current; }
-    iterator& operator++(){ ++current ; return *this; }
-};
-
-
-
-
-
-
-
-
-
-
 
 #endif // CALENDAR_H

@@ -154,7 +154,7 @@ void ProgCreator::updateTachesU(){
     ProjetManager& PM = *ProjetManager::getInstance();
     ProgManager& ProgM = *ProgManager::getInstance();
     tachesU->clear();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         if ((*i).isTacheUnitaire() && PM.isTacheInProjet(*i)){
             TacheUnitaire& TU = dynamic_cast<TacheUnitaire&>(*i);
             QString titre = TU.getTitre();

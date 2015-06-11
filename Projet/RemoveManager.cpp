@@ -21,7 +21,7 @@ RemoveManager::RemoveManager(QWidget *parent) : QWidget(parent) {
     ChoixTacheLabel = new QLabel("Tâche à Supprimer :", this);
     ChoixTache = new QComboBox(this);
          TacheManager& TM = *TacheManager::getInstance();
-         for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+         for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
             QString UneTache = (*i).getTitre();
             ChoixTache->addItem(UneTache);
          }
@@ -60,7 +60,7 @@ void RemoveManager::updateRm() {
 
     ChoixTache->clear();
     TacheManager& TM = *TacheManager::getInstance();
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
        QString UneTache = (*i).getTitre();
        ChoixTache->addItem(UneTache);
     }

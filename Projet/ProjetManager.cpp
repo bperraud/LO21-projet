@@ -12,7 +12,7 @@ Projet& ProjetManager::ajouterProjet(const QString& t, const QString& desc, cons
     Projet* P = new Projet(t, desc, dispo, deadline);
     if (trouverProjet(P->getTitre()))
         throw CalendarException("erreur, ProjetManager, projet déjà existant");
-    for (TacheManager::iterator i = TacheManager::getInstance()->begin(); i != TacheManager::getInstance()->end(); ++i)
+    for (Iterator<TacheManager, Tache> i = TacheManager::getInstance()->begin(); i != TacheManager::getInstance()->end(); ++i)
         if ((*i).getTitre() == P->getTitre())
             throw CalendarException("erreur, ProjetManager, tâche portant déjà ce nom");
     for (int i = 0; i < Taches.size(); ++i){

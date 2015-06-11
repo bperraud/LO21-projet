@@ -47,7 +47,7 @@ public:
 
     bool isEmpty() const { return taches.isEmpty(); }
 
-    class iterator{
+    /*class iterator{
         ListTaches::iterator current;
         iterator(ListTaches::iterator u):current(u){}
         friend class TacheManager;
@@ -58,9 +58,11 @@ public:
         iterator& operator++(){ ++current ; return *this; }
     };
     iterator begin(){ return iterator(taches.begin()); }
-    iterator end(){ return iterator(taches.end()); }
+    iterator end(){ return iterator(taches.end()); }*/
+    Iterator<TacheManager, Tache> begin(){ return Iterator<TacheManager, Tache>(taches.begin()); }
+    Iterator<TacheManager, Tache> end(){ return Iterator<TacheManager, Tache>(taches.end()); }
 
-
+    /*
     class const_iterator{
         ListTaches::const_iterator current;
         const_iterator(ListTaches::const_iterator u):current(u){}
@@ -74,6 +76,9 @@ public:
     };
     const_iterator begin() const { return const_iterator(taches.begin()); }
     const_iterator end() const { return const_iterator(taches.end()); }
+    */
+    const_Iterator<TacheManager, Tache> begin() const { return const_Iterator<TacheManager, Tache>(taches.begin()); }
+    const_Iterator<TacheManager, Tache> end() const { return const_Iterator<TacheManager, Tache>(taches.end()); }
 
     class tabParentIterator{
         QHash<const Tache*, const TacheComposite*>::iterator current;

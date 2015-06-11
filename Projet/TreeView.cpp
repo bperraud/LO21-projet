@@ -218,7 +218,7 @@ void TreeView::updateTrees(){
     for (ProjetManager::iterator i = PM.begin(); i != PM.end(); ++i){
         ajouterProjetTree(rootNodeP, *i);
     }
-    for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
+    for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         if (!TM.getTacheMere(*i)){
             Projet* P = PM.getProjet(*i);
             if (P) ajouterTacheTree(modelP->findItems(P->getTitre()).first(), *i);
