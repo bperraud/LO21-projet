@@ -108,7 +108,7 @@ void ProjetCreator::creerProjet(){
         };
     ProjM.ajouterProjet(titre->text(), description->toPlainText(), dispo->date(), echeance->date(), T);
 
-    QMessageBox::information(this, "Création", "Tache créée.");
+    QMessageBox::information(this, "Création", "Projet créé.");
 
 }
 
@@ -276,7 +276,7 @@ void ProjetEditeur::editerProjet(){
             }
         }
 
-    QMessageBox::information(this, "Edition", "Tache éditée.");
+    QMessageBox::information(this, "Edition", "Projet édité.");
 
 }
 

@@ -25,7 +25,7 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
 
     preemptive = new QCheckBox(this);
     preemptive->setEnabled(false);
-    preemptiveLabel = new QLabel("preemptive", this);
+    preemptiveLabel = new QLabel("préemptive", this);
 
     descriptionLabel = new QLabel("description", this);
     description = new QTextEdit(this);
@@ -40,10 +40,10 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
         echeance->setEnabled(false);
 
     dureeLabel = new QLabel("durée", this);
-    duree = new QTimeEdit(this);
+    duree = new QTimeEdit(QTime(1, 0), this);
         duree->setEnabled(false);
 
-    predecesseursLabel = new QLabel("taches précédentes", this);
+    predecesseursLabel = new QLabel("Tâches précédentes :", this);
     predecesseurs = new QListWidget(this);
     TacheManager& TM = *TacheManager::getInstance();
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
@@ -55,7 +55,7 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
         predecesseurs->setEnabled(false);
 
 
-    composantesLabel = new QLabel("Tache composite de:", this);
+    composantesLabel = new QLabel("Tâche composite de :", this);
     composantes = new QListWidget(this);
     for (TacheManager::iterator i = TM.begin(); i != TM.end(); ++i){
         QString UneTache = (*i).getTitre();
@@ -87,8 +87,10 @@ TacheCreator::TacheCreator(QWidget *parent) : QWidget(parent) {
     HC4 = new QHBoxLayout;
         HC4->addWidget(dispoLabel);
         HC4->addWidget(dispo);
+        HC4->addStretch();
         HC4->addWidget(echeanceLabel);
         HC4->addWidget(echeance);
+        HC4->addStretch();
         HC4->addWidget(dureeLabel);
         HC4->addWidget(duree);
     HC5 = new QHBoxLayout;
@@ -219,10 +221,14 @@ void TacheCreator::TacheCompo(){
 
 void TacheCreator::creerTache(){
 
-    if (titre->text() == "")
+    if (titre->text() == ""){
         QMessageBox::warning(this, "Création impossible", "Pas de titre renseigné, impossible de créer la tâche.");
-    if (description->toPlainText() == "")
+        return;
+    }
+    if (description->toPlainText() == ""){
         QMessageBox::warning(this, "Création impossible", "Pas de description renseignée, impossible de créer la tâche.");
+        return;
+    }
 
     TacheManager& TM = *TacheManager::getInstance();
     // Si le titre de la tâche en cours de création existe déjà
@@ -232,17 +238,17 @@ void TacheCreator::creerTache(){
     }
     // Si les dates de dispo et d'échéance sont incohérentes
     if (dispo->date() >= echeance->date()){
-            QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
-            return;
+        QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
+        return;
     }
 
     //Cas de la Tache Unitaire
     if ((preemptive->isEnabled()) && (!composantes->isEnabled())) {
 
         // Si la durée est nulle
-        if (duree->time().isNull()){
-                QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
-                return;
+        if (duree->time() == QTime(0, 0)){
+            QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
+            return;
         }
         if (preemptive->isChecked())
             TM.ajouterTacheUnitaire(titre->text(),description->toPlainText(),QTime(duree->time()),dispo->date(),echeance->date(),true);
@@ -256,7 +262,7 @@ void TacheCreator::creerTache(){
                     PrM.ajouterPrecedence(TM.getTache(precedent->text()), TM.getTache(titre->text()));
             }
         }
-        QMessageBox::information(this, "Création", "Tache créée.");
+        QMessageBox::information(this, "Création", "Tâche créée.");
     }
 
     //Cas de la Tache Composite
@@ -276,7 +282,7 @@ void TacheCreator::creerTache(){
                     PrM.ajouterPrecedence(TM.getTache(precedent->text()), TM.getTache(titre->text()));
             }
         }
-        QMessageBox::information(this, "Création", "Tache créée.");
+        QMessageBox::information(this, "Création", "Tâche créée.");
 
     }
 }
@@ -323,11 +329,11 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
         duree->setEnabled(false);
 
 
-    predecesseursLabel = new QLabel("taches précédentes", this);
+    predecesseursLabel = new QLabel("Tâches précédentes :", this);
     predecesseurs = new QListWidget(this);
         predecesseurs->setEnabled(false);
 
-    composantesLabel = new QLabel("Tache composite de:", this);
+    composantesLabel = new QLabel("Tâche composite de :", this);
     composantes = new QListWidget(this);
         composantes->setEnabled(false);
 
@@ -499,13 +505,13 @@ void TacheEditeur::sauverTache(){
         }
         // Si les dates de dispo et d'échéance sont incohérentes
         if (dispo->date() >= echeance->date()){
-                QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
-                return;
+            QMessageBox::warning(this, "Sauvegarde impossible", "Incohérence de dates...");
+            return;
         }
         // Si la durée est nulle
-        if (duree->time().isNull()){
-                QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
-                return;
+        if (duree->time() == QTime(0, 0)){
+            QMessageBox::warning(this, "Sauvegarde impossible", "Durée nulle...");
+            return;
         }
         if (tacheU->getTitre() != titre->text()) tacheU->setTitre(titre->text());
         preemptive->isChecked() ? tacheU->setPreemptive(true) : tacheU->setPreemptive(false);
@@ -524,7 +530,7 @@ void TacheEditeur::sauverTache(){
                     PrM.supprimerPrecedence(TM.getTache(precedent->text()), *tacheU);
             }
         }
-        QMessageBox::information(this, "Edition", "Tache éditée.");
+        QMessageBox::information(this, "Edition", "Tâche éditée.");
     }
 
     else {
@@ -569,7 +575,7 @@ void TacheEditeur::sauverTache(){
             }
         }
 
-        QMessageBox::information(this, "Edition", "Tache éditée.");
+        QMessageBox::information(this, "Edition", "Tâche éditée.");
 
     }
 
