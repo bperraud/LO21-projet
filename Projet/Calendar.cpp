@@ -67,7 +67,7 @@ void TacheComposite::ajouterInfos(QString& infos) const{
     TacheManager& TM = *TacheManager::getInstance();
     Tache::ajouterInfos(infos);
     infos.append("Sous-tâches :\n");
-    for (TacheManager::tabParentIterator it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
+    for (HashIterator<TacheManager, Tache, TacheComposite> it = TM.tabParentBegin(); it != TM.tabParentEnd(); ++it)
         if ((*it).value() == this)
             infos.append("   - ").append((*it).key()->getTitre()).append("\n");
 }
@@ -112,7 +112,7 @@ void Projet::setTitre(const QString& str){
 void Projet::setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e){
     ProjetManager& PM = *ProjetManager::getInstance();
     if (e < disp) throw CalendarException("erreur tâche : date échéance < date disponibilité");
-    for (ProjetManager::tabParentIterator it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
+    for (HashIterator<ProjetManager, Tache, Projet> it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
         if ((*it).value() == this)
             if(e < (*it).key()->getDateEcheance()) throw CalendarException("erreur projet : date échéance < échéance d'une tache");
     disponibilite = disp;
@@ -135,7 +135,7 @@ void Projet::setTaches(const ListTaches &T){
 
 void Projet::addTache(const Tache* t){
     ProjetManager& PM = *ProjetManager::getInstance();
-    for (ProjetManager::tabParentIterator it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
+    for (HashIterator<ProjetManager, Tache, Projet> it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)
         if ((*it).key() == t && (*it).value() == this)
             throw CalendarException("erreur, Projet, tâche déjà existante");
     if (PM.isTacheInProjet(*t))

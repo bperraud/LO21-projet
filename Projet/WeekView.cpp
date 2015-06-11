@@ -92,7 +92,7 @@ void WeekView::updateWeekView(){
 
     // Traitement des programmations
     ProgManager& ProgM = *ProgManager::getInstance();
-    for (ProgManager::iterator i = ProgM.begin(); i != ProgM.end(); ++i){
+    for (Iterator<ProgManager, Evenement> i = ProgM.begin(); i != ProgM.end(); ++i){
         if ((*i).getDate() >= date.addDays(-date.dayOfWeek()+1) && (*i).getDate() <= date.addDays(-date.dayOfWeek()+7)){
             QStandardItem* item;
             int dureeEnMin = ((*i).getHoraireFin().minute() + (*i).getHoraireFin().hour()*60

@@ -215,7 +215,7 @@ void TreeView::updateTrees(){
     rootNodeA = modelA->invisibleRootItem();
 
     // Construction de treeViewP et treeViewT
-    for (ProjetManager::iterator i = PM.begin(); i != PM.end(); ++i){
+    for (Iterator<ProjetManager, Projet> i = PM.begin(); i != PM.end(); ++i){
         ajouterProjetTree(rootNodeP, *i);
     }
     for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
@@ -226,7 +226,7 @@ void TreeView::updateTrees(){
         }
     }
     // Construction de treeViewA
-    for (ProgManager::iterator i = ProgM.begin(); i != ProgM.end(); ++i)
+    for (Iterator<ProgManager, Evenement> i = ProgM.begin(); i != ProgM.end(); ++i)
         ajouterActiviteTree(rootNodeA, *i);
 
     treeViewP->expandAll();

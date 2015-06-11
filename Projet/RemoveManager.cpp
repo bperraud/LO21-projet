@@ -10,7 +10,7 @@ RemoveManager::RemoveManager(QWidget *parent) : QWidget(parent) {
     ChoixProjetLabel = new QLabel("Projet à supprimer :", this);
     ChoixProjet = new QComboBox(this);
         ProjetManager& ProjM = *ProjetManager::getInstance();
-        for (ProjetManager::iterator i = ProjM.begin(); i != ProjM.end(); ++i){
+        for (Iterator<ProjetManager, Projet> i = ProjM.begin(); i != ProjM.end(); ++i){
             QString UnProjet = (*i).getTitre();
             ChoixProjet->addItem(UnProjet);
         }
@@ -53,7 +53,7 @@ void RemoveManager::updateRm() {
 
     ChoixProjet->clear();
     ProjetManager& ProjM = *ProjetManager::getInstance();
-    for (ProjetManager::iterator i = ProjM.begin(); i != ProjM.end(); ++i){
+    for (Iterator<ProjetManager, Projet> i = ProjM.begin(); i != ProjM.end(); ++i){
         QString UnProjet = (*i).getTitre();
         ChoixProjet->addItem(UnProjet);
     }

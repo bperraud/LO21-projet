@@ -139,7 +139,7 @@ void ProjetManager::save(QXmlStreamWriter& xml) const{
     // Sauvegarde de la hiérarchie
     if (!tabParent.isEmpty()){
         xml.writeStartElement("hierarchieP");
-        for (const_tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
+        for (const_HashIterator<ProjetManager, Tache, Projet> it = tabParentBegin(); it != tabParentEnd(); ++it){
             xml.writeStartElement("linkP");
                 xml.writeTextElement("projet", (*it).value()->getTitre());
                 xml.writeTextElement("tache", (*it).key()->getTitre());

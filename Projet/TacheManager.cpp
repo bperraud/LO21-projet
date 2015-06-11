@@ -188,7 +188,7 @@ void TacheManager::save(QXmlStreamWriter& xml) const{
     // Sauvegarde de la hiérarchie
     if (!tabParent.isEmpty()){
         xml.writeStartElement("hierarchieT");
-        for (const_tabParentIterator it = tabParentBegin(); it != tabParentEnd(); ++it){
+        for (const_HashIterator<TacheManager, Tache, TacheComposite> it = tabParentBegin(); it != tabParentEnd(); ++it){
             xml.writeStartElement("linkT");
                 xml.writeTextElement("parent", (*it).value()->getTitre());
                 xml.writeTextElement("son", (*it).key()->getTitre());

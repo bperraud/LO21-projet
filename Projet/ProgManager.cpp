@@ -232,7 +232,7 @@ void ProgManager::save(QXmlStreamWriter& xml, QDate jour, const Projet* projet) 
     // Sauvegarde des durées programmées
     if (!tabDuree.isEmpty()){
         xml.writeStartElement("durees");
-        for (const_tabDureeIterator it = tabDureeBegin(); it != tabDureeEnd(); ++it){
+        for (const_HashIterator<ProgManager, TacheUnitaire, QTime> it = tabDureeBegin(); it != tabDureeEnd(); ++it){
             xml.writeStartElement("dureeT");
                 QString str;
                 str.setNum(QTime(0, 0).secsTo((*it).value())/60);

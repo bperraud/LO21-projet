@@ -19,6 +19,12 @@ public:
     void save(QXmlStreamWriter& xml) const;
 
     bool isEmpty() const { return precedences.isEmpty(); }
+
+    Iterator<PrecedenceManager, Precedence> begin(){ return Iterator<PrecedenceManager, Precedence>(precedences.begin()); }
+    Iterator<PrecedenceManager, Precedence> end(){ return Iterator<PrecedenceManager, Precedence>(precedences.end()); }
+
+    const_Iterator<PrecedenceManager, Precedence> begin() const { return const_Iterator<PrecedenceManager, Precedence>(precedences.begin()); }
+    const_Iterator<PrecedenceManager, Precedence> end() const { return const_Iterator<PrecedenceManager, Precedence>(precedences.end()); }
 };
 
 #endif // PRECEDENCEMANAGER_H

@@ -123,7 +123,7 @@ ProjetEditeur::ProjetEditeur(QWidget* parent) : QWidget(parent){
     ChoixProjetLabel = new QLabel("Projet à éditer :", this);
     ChoixProjet = new QComboBox(this);
         ProjetManager& ProjM = *ProjetManager::getInstance();
-        for (ProjetManager::iterator i = ProjM.begin(); i != ProjM.end(); ++i){
+        for (Iterator<ProjetManager, Projet> i = ProjM.begin(); i != ProjM.end(); ++i){
             QString UnProjet = (*i).getTitre();
             ChoixProjet->addItem(UnProjet);
         }
@@ -283,7 +283,7 @@ void ProjetEditeur::editerProjet(){
 void ProjetEditeur::updateProjEdit(){
     ProjetManager& ProjM = *ProjetManager::getInstance();
     ChoixProjet->clear();
-    for (ProjetManager::iterator i = ProjM.begin(); i != ProjM.end(); ++i){
+    for (Iterator<ProjetManager, Projet> i = ProjM.begin(); i != ProjM.end(); ++i){
         QString UnProjet = (*i).getTitre();
         ChoixProjet->addItem(UnProjet);
     }

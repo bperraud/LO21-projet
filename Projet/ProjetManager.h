@@ -36,60 +36,17 @@ public:
 
     bool isEmpty() const { return projets.isEmpty(); }
 
-    class iterator{
-        ListProjet::iterator current;
-        iterator(ListProjet::iterator u):current(u){}
-        friend class ProjetManager;
-    public:
-        iterator(){}
-        Projet& operator*() const { return **current; }
-        bool operator!=(iterator it) const { return current != it.current; }
-        iterator& operator++(){ ++current ; return *this; }
-    };
+    Iterator<ProjetManager, Projet> begin(){ return Iterator<ProjetManager, Projet>(projets.begin()); }
+    Iterator<ProjetManager, Projet> end(){ return Iterator<ProjetManager, Projet>(projets.end()); }
 
-    iterator begin(){ return iterator(projets.begin()); }
-    iterator end(){ return iterator(projets.end()); }
+    const_Iterator<ProjetManager, Projet> begin() const { return const_Iterator<ProjetManager, Projet>(projets.begin()); }
+    const_Iterator<ProjetManager, Projet> end() const { return const_Iterator<ProjetManager, Projet>(projets.end()); }
 
+    HashIterator<ProjetManager, Tache, Projet> tabParentBegin(){ return HashIterator<ProjetManager, Tache, Projet>(tabParent.begin()); }
+    HashIterator<ProjetManager, Tache, Projet> tabParentEnd(){ return HashIterator<ProjetManager, Tache, Projet>(tabParent.end()); }
 
-    class const_iterator{
-        ListProjet::const_iterator current;
-        const_iterator(ListProjet::const_iterator u):current(u){}
-        friend class ProjetManager;
-    public:
-        const_iterator(){}
-        const Projet& operator*() const { return **current; }
-        bool operator!=(const_iterator it) const { return current != it.current; }
-        const_iterator& operator++(){ ++current; return *this; }
-
-    };
-    const_iterator begin() const { return const_iterator(projets.begin()); }
-    const_iterator end() const { return const_iterator(projets.end()); }
-
-    class tabParentIterator{
-        QHash<const Tache*, const Projet*>::iterator current;
-        tabParentIterator(QHash<const Tache*, const Projet*>::iterator u):current(u){}
-        friend class ProjetManager;
-    public:
-        tabParentIterator(){}
-        QHash<const Tache*, const Projet*>::iterator operator*() const { return current; }
-        bool operator!=(tabParentIterator it) const { return current != it.current; }
-        tabParentIterator& operator++(){ ++current ; return *this; }
-    };
-    tabParentIterator tabParentBegin(){ return tabParentIterator(tabParent.begin()); }
-    tabParentIterator tabParentEnd(){ return tabParentIterator(tabParent.end()); }
-
-    class const_tabParentIterator{
-        QHash<const Tache*, const Projet*>::const_iterator current;
-        const_tabParentIterator(QHash<const Tache*, const Projet*>::const_iterator u):current(u){}
-        friend class ProjetManager;
-    public:
-        const_tabParentIterator(){}
-        QHash<const Tache*, const Projet*>::const_iterator operator*() const { return current; }
-        bool operator!=(const_tabParentIterator it) const { return current != it.current; }
-        const_tabParentIterator& operator++(){ ++current ; return *this; }
-    };
-    const_tabParentIterator tabParentBegin() const { return const_tabParentIterator(tabParent.begin()); }
-    const_tabParentIterator tabParentEnd() const { return const_tabParentIterator(tabParent.end()); }
+    const_HashIterator<ProjetManager, Tache, Projet> tabParentBegin() const { return const_HashIterator<ProjetManager, Tache, Projet>(tabParent.begin()); }
+    const_HashIterator<ProjetManager, Tache, Projet> tabParentEnd() const { return const_HashIterator<ProjetManager, Tache, Projet>(tabParent.end()); }
 };
 
 #endif // PROJETMANAGER_H

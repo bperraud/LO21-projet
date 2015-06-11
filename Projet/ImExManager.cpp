@@ -103,7 +103,7 @@ ImExManager::~ImExManager(){}
 void ImExManager::updateProj(){
     ProjetManager& PM = *ProjetManager::getInstance();
     projets->clear();
-    for (ProjetManager::iterator it = PM.begin(); it != PM.end(); ++it)
+    for (Iterator<ProjetManager, Projet> it = PM.begin(); it != PM.end(); ++it)
         projets->addItem((*it).getTitre());
     if (!projets->count()) validerProj->setDisabled(true);
     else validerProj->setEnabled(true);

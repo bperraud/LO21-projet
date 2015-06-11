@@ -39,60 +39,17 @@ public:
 
     bool isEmpty() const { return programmations.isEmpty(); }
 
-    class iterator{
-        ListEvent::iterator current;
-        iterator(ListEvent::iterator u):current(u){}
-        friend class ProgManager;
-    public:
-        iterator(){}
-        Evenement& operator*() const { return **current; }
-        bool operator!=(iterator it) const { return current != it.current; }
-        iterator& operator++(){ ++current ; return *this; }
-    };
+    Iterator<ProgManager, Evenement> begin(){ return Iterator<ProgManager, Evenement>(programmations.begin()); }
+    Iterator<ProgManager, Evenement> end(){ return Iterator<ProgManager, Evenement>(programmations.end()); }
 
-    iterator begin(){ return iterator(programmations.begin()); }
-    iterator end(){ return iterator(programmations.end()); }
+    const_Iterator<ProgManager, Evenement> begin() const { return const_Iterator<ProgManager, Evenement>(programmations.begin()); }
+    const_Iterator<ProgManager, Evenement> end() const { return const_Iterator<ProgManager, Evenement>(programmations.end()); }
 
-    class const_iterator{
-        ListEvent::const_iterator current;
-        const_iterator(ListEvent::const_iterator u):current(u){}
-        friend class ProgManager;
-    public:
-        const_iterator(){}
-        const Evenement& operator*() const { return **current; }
-        bool operator!=(const_iterator it) const { return current != it.current; }
-        const_iterator& operator++(){ ++current; return *this; }
+    HashIterator<ProgManager, TacheUnitaire, QTime> tabDureeBegin(){ return HashIterator<ProgManager, TacheUnitaire, QTime>(tabDuree.begin()); }
+    HashIterator<ProgManager, TacheUnitaire, QTime> tabDureeEnd(){ return HashIterator<ProgManager, TacheUnitaire, QTime>(tabDuree.end()); }
 
-    };
-
-    const_iterator begin() const { return const_iterator(programmations.begin()); }
-    const_iterator end() const { return const_iterator(programmations.end()); }
-
-    class tabDureeIterator{
-        QHash<const TacheUnitaire*, QTime>::iterator current;
-        tabDureeIterator(QHash<const TacheUnitaire*, QTime>::iterator u):current(u){}
-        friend class ProgManager;
-    public:
-        tabDureeIterator(){}
-        QHash<const TacheUnitaire*, QTime>::iterator operator*() const { return current; }
-        bool operator!=(tabDureeIterator it) const { return current != it.current; }
-        tabDureeIterator& operator++(){ ++current ; return *this; }
-    };
-    tabDureeIterator tabDureeBegin(){ return tabDureeIterator(tabDuree.begin()); }
-    tabDureeIterator tabDureeEnd(){ return tabDureeIterator(tabDuree.end()); }
-
-    class const_tabDureeIterator{
-        QHash<const TacheUnitaire*, QTime>::const_iterator current;
-        const_tabDureeIterator(QHash<const TacheUnitaire*, QTime>::const_iterator u):current(u){}
-        friend class ProgManager;
-    public:
-        const_tabDureeIterator(){}
-        QHash<const TacheUnitaire*, QTime>::const_iterator operator*() const { return current; }
-        bool operator!=(const_tabDureeIterator it) const { return current != it.current; }
-        const_tabDureeIterator& operator++(){ ++current ; return *this; }
-    };
-    const_tabDureeIterator tabDureeBegin() const { return const_tabDureeIterator(tabDuree.begin()); }
-    const_tabDureeIterator tabDureeEnd() const { return const_tabDureeIterator(tabDuree.end()); }
+    const_HashIterator<ProgManager, TacheUnitaire, QTime> tabDureeBegin() const { return const_HashIterator<ProgManager, TacheUnitaire, QTime>(tabDuree.begin()); }
+    const_HashIterator<ProgManager, TacheUnitaire, QTime> tabDureeEnd() const { return const_HashIterator<ProgManager, TacheUnitaire, QTime>(tabDuree.end()); }
 };
 
 #endif // PROGMANAGER_H
