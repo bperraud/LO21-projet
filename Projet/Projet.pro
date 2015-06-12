@@ -17,7 +17,9 @@ HEADERS += \
     PrecedenceManager.h \
     ProjetCreator.h \
     RemoveManager.h \
-    Template.h
+    Template.h \
+    ProjetEditeur.h \
+    TacheCreator.h
 
 SOURCES += \
     Calendar.cpp \
@@ -34,4 +36,6 @@ SOURCES += \
     ProjetManager.cpp \
     PrecedenceManager.cpp \
     ProjetCreator.cpp \
-    RemoveManager.cpp
+    RemoveManager.cpp \
+    TacheCreator.cpp \
+    ProjetEditeur.cpp

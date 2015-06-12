@@ -1,11 +1,13 @@
 #include "TabManager.h"
 
 #include "TacheEditeur.h"
+#include "TacheCreator.h"
 #include "ProgCreator.h"
 #include "WeekView.h"
 #include "TreeView.h"
 #include "ImExManager.h"
 #include "ProjetCreator.h"
+#include "ProjetEditeur.h"
 #include "RemoveManager.h"
 
 TabManager::TabManager(QWidget *parent) : QWidget(parent){
