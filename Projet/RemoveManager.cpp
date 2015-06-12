@@ -67,25 +67,26 @@ void RemoveManager::updateRm() {
 
 }
 
-void RemoveManager::supprimerProjet() {
+void RemoveManager::supprimerProjet(){
 
     ProjetManager& ProjM = *ProjetManager::getInstance();
     if (!ProjM.isProjetExistant(ChoixProjet->currentText()))
         QMessageBox::warning(this, "Suppression impossible", "Pas de projet portant ce titre");
-    else {
+    else{
+        ListTachesConst LT = ProjM.getProjet(ChoixProjet->currentText()).getTaches();
+        for (int i = 0; i < LT.size(); ++i) TacheManager::getInstance()->deleteTache(LT[i]->getTitre());
         ProjM.deleteProjet(ChoixProjet->currentText());
-        qDebug()<<"apres deleteProjet";
         updateRm();
         QMessageBox::information(this, "Suppression projet", "Projet supprimé avec succès");
     }
 }
 
-void RemoveManager::supprimerTache() {
+void RemoveManager::supprimerTache(){
 
     TacheManager& TM = *TacheManager::getInstance();
     if (!TM.isTacheExistante(ChoixTache->currentText()))
         QMessageBox::warning(this, "Suppression impossible", "Pas de tâche portant ce titre");
-    else {
+    else{
         TM.deleteTache(ChoixTache->currentText());
         updateRm();
         QMessageBox::information(this, "Suppression tâche", "Tâche supprimée avec succès");

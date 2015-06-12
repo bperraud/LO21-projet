@@ -133,6 +133,7 @@ void Projet::setTaches(const ListTaches &T){
     }
 }
 
+
 void Projet::addTache(const Tache* t){
     ProjetManager& PM = *ProjetManager::getInstance();
     for (HashIterator<ProjetManager, Tache, Projet> it = PM.tabParentBegin(); it != PM.tabParentEnd(); ++it)

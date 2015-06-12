@@ -123,6 +123,7 @@ public:
     void setDatesDisponibiliteEcheance(const QDate& disp, const QDate& e);
 
     ListTachesConst getTaches() const;
+
     void setTaches(const ListTaches& T);
     void addTache(const Tache* t);
     void rmTache(const Tache* t);

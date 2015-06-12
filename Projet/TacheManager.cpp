@@ -74,6 +74,9 @@ void TacheManager::deleteTache(const QString& str) {
         if (getTacheMere(tacheCToDelete))
             dynamic_cast<TacheComposite*>(getTacheMere(tacheCToDelete))->rmSousTache(&tacheCToDelete);
         delete &tacheCToDelete;
+
+        //Supprimer les sous-tâches
+         for (int i = 0; i < rmST.size(); ++i) deleteTache(rmST[i]->getTitre());
     }
 }
 

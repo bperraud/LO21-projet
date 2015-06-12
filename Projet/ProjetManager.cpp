@@ -28,7 +28,7 @@ void ProjetManager::deleteProjet(const QString& str){
     ProjetManager& ProjM = *ProjetManager::getInstance();
     Projet& projetToDelete = ProjM.getProjet(str);
 
-    for (int i = 0; i != projets.size(); ++i){
+    for (int i = 0; i < projets.size(); ++i){
         if (&projetToDelete == projets[i])
             projets.removeAt(i);
     }
