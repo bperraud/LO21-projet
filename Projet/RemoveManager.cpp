@@ -73,8 +73,6 @@ void RemoveManager::supprimerProjet(){
     if (!ProjM.isProjetExistant(ChoixProjet->currentText()))
         QMessageBox::warning(this, "Suppression impossible", "Pas de projet portant ce titre");
     else{
-        ListTachesConst LT = ProjM.getProjet(ChoixProjet->currentText()).getTaches();
-        for (int i = 0; i < LT.size(); ++i) TacheManager::getInstance()->deleteTache(LT[i]->getTitre());
         ProjM.deleteProjet(ChoixProjet->currentText());
         updateRm();
         QMessageBox::information(this, "Suppression projet", "Projet supprimé avec succès");
