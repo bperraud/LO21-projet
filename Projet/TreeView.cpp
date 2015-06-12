@@ -112,7 +112,6 @@ void TreeView::ajouterTacheTree(QStandardItem* pere, const Tache& tache){
 }
 
 void TreeView::ajouterActiviteTree(QStandardItem* root, const Evenement& evt){
-    qDebug()<<"debut ajouterAT";
     QList<QStandardItem*> row;
     QStandardItem* item;
     if (!evt.isProgTache()){
