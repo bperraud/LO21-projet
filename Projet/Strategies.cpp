@@ -47,6 +47,7 @@ void LoadXML::load(const QString& f){
 }
 
 void LoadXML::load(const QString& f, QDate jour){
+    for (Iterator<TacheManager, Tache> it = TacheManager::getInstance()->begin(); it != TacheManager::getInstance()->end(); ++it)
     // Cleaning
     ProgManager::getInstance()->~ProgManager();
 

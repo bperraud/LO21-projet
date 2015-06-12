@@ -103,8 +103,14 @@ void ImExManager::updateProj(){
     projets->clear();
     for (Iterator<ProjetManager, Projet> it = PM.begin(); it != PM.end(); ++it)
         projets->addItem((*it).getTitre());
-    if (!projets->count()) validerProj->setDisabled(true);
-    else validerProj->setEnabled(true);
+    if (!projets->count()){
+        validerWeek->setDisabled(true);
+        validerProj->setDisabled(true);
+    }
+    else{
+        validerWeek->setEnabled(true);
+        validerProj->setEnabled(true);
+    }
 }
 
 void ImExManager::updateFormat(QAbstractButton* radioB){

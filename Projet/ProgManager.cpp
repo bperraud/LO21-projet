@@ -21,6 +21,7 @@ bool ProgManager::isPrecedenceProgramme(const QDate& d, const QTime& h, const Ta
                 if (LPT[i]->getDate() == d && LPT[i]->getHoraireFin() > h) return false;
                 else if (LPT[i]->getDate() > d) return false;
             }
+            return true;
         }
         else return false;
     }
@@ -29,11 +30,11 @@ bool ProgManager::isPrecedenceProgramme(const QDate& d, const QTime& h, const Ta
         TacheManager& TM = *TacheManager::getInstance();
         ListTachesConst composants = TM.tabParent.keys(&predC);
         for (int i = 0; i < composants.size(); ++i){
-            isPrecedenceProgramme(d, h, *composants[i]);
+            if (!isPrecedenceProgramme(d, h, *composants[i]))
+                return false;
         }
+        return true;
     }
-
-    return true;
 }
 
 ProgrammationActivite* ProgManager::getProgA(const QString titre){
@@ -56,6 +57,7 @@ void ProgManager::ajouterProgrammation(Evenement& E){
 }
 
 void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU){
+
     if (progTacheExists(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgManager, tâche non préemptive déjà programmée");}
     // Contraintes de précédence, de disponibilité et d'échéance
     if (d < TU.getDateDisponibilite() || d > TU.getDateEcheance())
@@ -63,10 +65,12 @@ void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QT
     PrecedenceManager& PrM = *PrecedenceManager::getInstance();
     ListTachesConst pred = PrM.trouverPrecedences(TU);
     for (int i =0; i < pred.size(); ++i){
+
         if (!isPrecedenceProgramme(d, h, *pred[i])) throw CalendarException("Erreur, ProgManager, une tâche précédente au moins n'est pas encore accomplie sur ce créneau");
     }
     ProgrammationTache* PT = new ProgrammationTache(d, h, fin, TU);
     ajouterProgrammation(*PT);
+
 }
 
 void ProgManager::ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l){
@@ -146,6 +150,7 @@ ListEventConst ProgManager::getProgProj(const Projet& projet) const{
 }
 
 void ProgManager::loadEvts(QXmlStreamReader& xml, QDate jour, const Projet *projet){
+
     QString titre;
     QString description;
     QString lieu;
