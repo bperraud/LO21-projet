@@ -337,7 +337,6 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
     composantes = new QListWidget(this);
         composantes->setEnabled(false);
 
-    annuler = new QPushButton("Annuler", this);
     sauver = new QPushButton("Sauver", this);
         sauver->setEnabled(false);
 
@@ -367,7 +366,6 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
         HC5->addWidget(composantesLabel);
         HC5->addWidget(composantes);
     HC6 = new QHBoxLayout;
-        HC6->addWidget(annuler);
         HC6->addWidget(sauver);
 
     VC = new QVBoxLayout;
@@ -391,7 +389,6 @@ TacheEditeur::TacheEditeur(QWidget* parent) : QWidget(parent){
 
     QObject::connect(ChoixTache, SIGNAL(currentTextChanged(QString)), this, SLOT(initialiserEditeur(QString)));
 
-    QObject::connect(annuler, SIGNAL(clicked()), this, SLOT(close()));
     QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(sauverTache()));
 
     this->setLayout(VC);

@@ -61,25 +61,19 @@ private:
     QTimeEdit *duree;
     QDateEdit *dispo, *echeance;
     QListWidget *predecesseurs, *composantes;
-    QPushButton *annuler, *sauver;
+    QPushButton *sauver;
 
     TacheUnitaire* tacheU;
     TacheComposite* tacheC;
 
 public slots:
     void activerSauver(){ sauver->setEnabled(true); }
-    //void sauverTacheU();
-    //void sauverTacheC();
     void sauverTache();
     void initialiserEditeur(QString);
     void updateT();
 
 public:
-    //explicit TacheEditeur(TacheUnitaire& tacheToEdit, QWidget* parent = 0);
-    //explicit TacheEditeur(TacheComposite& tachetoEdit, QWidget* parent = 0);
-    //explicit TacheEditeur(Tache& tacheToEdit, QWidget* parent = 0);
     explicit TacheEditeur(QWidget* parent = 0);
-
 };
 
 #endif
