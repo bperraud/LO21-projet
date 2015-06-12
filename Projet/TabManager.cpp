@@ -17,7 +17,14 @@ TabManager::TabManager(QWidget *parent) : QWidget(parent){
 
 }
 
-TabManager::~TabManager(){}
+TabManager::~TabManager(){
+    for (int i = 0; i < Onglets->count(); ++i){
+        delete Onglets->widget(i)->layout()->itemAt(0);
+        delete Onglets->widget(i)->layout();
+        delete Onglets->widget(i);
+    }
+    delete Onglets;
+}
 
 void TabManager::switchTab(int index){
     switch (index){
