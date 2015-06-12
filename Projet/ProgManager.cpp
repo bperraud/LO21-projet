@@ -56,21 +56,21 @@ void ProgManager::ajouterProgrammation(Evenement& E){
     programmations.append(&E);
 }
 
-void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU){
-
+void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU, bool doPredCheck){
     if (progTacheExists(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgManager, tâche non préemptive déjà programmée");}
     // Contraintes de précédence, de disponibilité et d'échéance
     if (d < TU.getDateDisponibilite() || d > TU.getDateEcheance())
         throw CalendarException("erreur, ProgManager, incohérence programmation avec dates de disponibilité et d'échéance de la tâche");
     PrecedenceManager& PrM = *PrecedenceManager::getInstance();
-    ListTachesConst pred = PrM.trouverPrecedences(TU);
-    for (int i =0; i < pred.size(); ++i){
 
-        if (!isPrecedenceProgramme(d, h, *pred[i])) throw CalendarException("Erreur, ProgManager, une tâche précédente au moins n'est pas encore accomplie sur ce créneau");
+    if (doPredCheck){
+        ListTachesConst pred = PrM.trouverPrecedences(TU);
+        for (int i =0; i < pred.size(); ++i)
+            if (!isPrecedenceProgramme(d, h, *pred[i])) throw CalendarException("Erreur, ProgManager, une tâche précédente au moins n'est pas encore accomplie sur ce créneau");
     }
+
     ProgrammationTache* PT = new ProgrammationTache(d, h, fin, TU);
     ajouterProgrammation(*PT);
-
 }
 
 void ProgManager::ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l){
@@ -209,7 +209,7 @@ void ProgManager::loadEvts(QXmlStreamReader& xml, QDate jour, const Projet *proj
     }
     else{
         if ((jour.isNull() && projet == 0) || (!jour.isNull() && date >= jour && date <= jour.addDays(6)))
-            ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)));
+            ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)), false);
         else if (jour.isNull() && projet != 0){
             if (ProjetManager::getInstance()->getProjet(TacheManager::getInstance()->getTache(tache)) == projet)
                 ajouterProgrammationT(date, debut, fin, dynamic_cast<TacheUnitaire&>(TacheManager::getInstance()->getTache(tache)));
