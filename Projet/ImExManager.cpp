@@ -127,7 +127,11 @@ void ImExManager::findFile(){
 
 void ImExManager::load(QString type){
     if (formatGroup->checkedButton() == xmlRadio) switchStrategy(new LoadXML);
-    else if (formatGroup->checkedButton() == txtRadio) switchStrategy(new LoadTXT);
+    else if (formatGroup->checkedButton() == txtRadio){
+        switchStrategy(new LoadTXT);
+        QMessageBox::warning(this, "Chargement", "Annulation, fonction non encore implémentée dans cette version !");
+        return;
+    }
     if (!pathEdit->text().isEmpty()){
         if (type == "all") loadStrategy->load(pathEdit->text());
         else if (type == "week") loadStrategy->load(pathEdit->text(), jour->date().addDays(-jour->date().dayOfWeek()+1));
@@ -136,11 +140,15 @@ void ImExManager::load(QString type){
         QMessageBox::information(this, "Chargement", "Chargement réussi !");
         updateProj();
     }
-    else QMessageBox::information(this, "Chargement", "Chargement impossible : aucun chemin spécifié !");
+    else QMessageBox::warning(this, "Chargement", "Chargement impossible : aucun chemin spécifié !");
 }
 void ImExManager::save(QString type){
     if (formatGroup->checkedButton() == xmlRadio) switchStrategy(new SaveXML);
-    else if (formatGroup->checkedButton() == txtRadio) switchStrategy(new SaveTXT);
+    else if (formatGroup->checkedButton() == txtRadio){
+        switchStrategy(new SaveTXT);
+        QMessageBox::warning(this, "Chargement", "Annulation, fonction non encore implémentée dans cette version !");
+        return;
+    }
     if (!pathEdit->text().isEmpty()){
         if (type == "all") saveStrategy->save(pathEdit->text());
         else if (type == "week") saveStrategy->save(pathEdit->text(), jour->date());
@@ -148,6 +156,6 @@ void ImExManager::save(QString type){
         else throw CalendarException("erreur sauvegarde, type inconnu");
         QMessageBox::information(this, "Sauvegarde", "Sauvegarde réussie !");
     }
-    else QMessageBox::information(this, "Sauvegarde", "Sauvegarde impossible : aucun chemin spécifié !");
+    else QMessageBox::warning(this, "Sauvegarde", "Sauvegarde impossible : aucun chemin spécifié !");
 
 }
