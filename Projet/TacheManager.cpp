@@ -50,7 +50,7 @@ void TacheManager::deleteTache(const QString& str) {
 
         //Supprimer les programmations
         ProgManager& PM = *ProgManager::getInstance();
-        PM.supprimerProgrammationT(tacheUToDelete);
+        PM.supprimerProgrammationsT(tacheUToDelete);
 
         //Supprimer la tâche
         for (int i = 0; i < taches.size(); ++i)
@@ -78,12 +78,12 @@ void TacheManager::deleteTache(const QString& str) {
 }
 
 Tache& TacheManager::getTache(const QString& titre){
-    Tache* t=trouverTache(titre);
+    Tache* t = trouverTache(titre);
     if (!t) throw CalendarException("erreur, TacheManager, tache inexistante");
     return *t;
 }
 
-const Tache& TacheManager::getTache(const QString& titre)const{
+const Tache& TacheManager::getTache(const QString& titre) const{
     return const_cast<TacheManager*>(this)->getTache(titre);
 }
 
@@ -94,7 +94,7 @@ Tache* TacheManager::getTacheMere(const Tache& t){
     return 0;
 }
 
-const Tache* TacheManager::getTacheMere(const Tache& t)const{
+const Tache* TacheManager::getTacheMere(const Tache& t) const{
     return const_cast<TacheManager*>(this)->getTacheMere(t);
 }
 

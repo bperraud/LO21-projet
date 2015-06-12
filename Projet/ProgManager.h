@@ -19,12 +19,15 @@ public:
     void ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU);
     void ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l);
 
-    void supprimerProgrammationT(const TacheUnitaire& TU);
+    void supprimerProgrammationsT(const TacheUnitaire& TU);
 
     bool programmationExists(const QDate& d, const QTime& h, const QTime& fin) const;
+    bool progTacheExists(const TacheUnitaire& TU) const;
 
-    ProgrammationTache* trouverProgrammationT(const TacheUnitaire& TU) const;
-    ProgrammationActivite* trouverProgrammationA(const ProgrammationActivite& PA) const;
+    QList<ProgrammationTache*> getProgsT(const TacheUnitaire& TU) const;
+
+    ProgrammationActivite* getProgA(const QString titre);
+    const ProgrammationActivite* getProgA(const QString titre) const;
 
     bool isPrecedenceProgramme(const QDate& d, const QTime& h, const Tache& pred) const;
 

@@ -74,6 +74,7 @@ void RemoveManager::supprimerProjet() {
         QMessageBox::warning(this, "Suppression impossible", "Pas de projet portant ce titre");
     else {
         ProjM.deleteProjet(ChoixProjet->currentText());
+        qDebug()<<"apres deleteProjet";
         updateRm();
         QMessageBox::information(this, "Suppression projet", "Projet supprimé avec succès");
     }
@@ -89,5 +90,4 @@ void RemoveManager::supprimerTache() {
         updateRm();
         QMessageBox::information(this, "Suppression tâche", "Tâche supprimée avec succès");
     }
-
 }

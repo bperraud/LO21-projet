@@ -3,25 +3,28 @@
 #include "ProjetManager.h"
 #include "PrecedenceManager.h"
 
-ProgrammationTache* ProgManager::trouverProgrammationT(const TacheUnitaire& TU) const{
+QList<ProgrammationTache*> ProgManager::getProgsT(const TacheUnitaire& TU) const{
+    QList<ProgrammationTache*> LPT;
     for (int i = 0; i < programmations.size(); ++i)
         if (programmations[i]->isProgTache())
-            if (&TU == &(dynamic_cast<ProgrammationTache*>(programmations[i])->getTache())) return dynamic_cast<ProgrammationTache*>(programmations[i]);
-    return 0;
+            if (&TU == &(dynamic_cast<ProgrammationTache*>(programmations[i])->getTache()))
+                LPT.append(dynamic_cast<ProgrammationTache*>(programmations[i]));
+    return LPT;
 }
 
 bool ProgManager::isPrecedenceProgramme(const QDate& d, const QTime& h, const Tache& pred) const{
     if (pred.isTacheUnitaire()){
         const TacheUnitaire& predU = dynamic_cast<const TacheUnitaire&>(pred);
-        if (programmationExists(trouverProgrammationT(predU)->getDate(), trouverProgrammationT(predU)->getHoraire(), trouverProgrammationT(predU)->getHoraireFin())){
-            if (trouverProgrammationT(predU)->getDate() == d){
-                if (trouverProgrammationT(predU)->getHoraireFin() > h) return false;
+        if (progTacheExists(predU)){
+            QList<ProgrammationTache*> LPT = getProgsT(predU);
+            for (int i = 0 ; i < LPT.size(); ++i){
+                if (LPT[i]->getDate() == d && LPT[i]->getHoraireFin() > h) return false;
+                else if (LPT[i]->getDate() > d) return false;
             }
-            else if (trouverProgrammationT(predU)->getDate() > d) return false;
         }
         else return false;
     }
-    else {
+    else{
         const TacheComposite& predC = dynamic_cast<const TacheComposite&>(pred);
         TacheManager& TM = *TacheManager::getInstance();
         ListTachesConst composants = TM.tabParent.keys(&predC);
@@ -33,10 +36,18 @@ bool ProgManager::isPrecedenceProgramme(const QDate& d, const QTime& h, const Ta
     return true;
 }
 
-ProgrammationActivite* ProgManager::trouverProgrammationA(const ProgrammationActivite& PA) const{
+ProgrammationActivite* ProgManager::getProgA(const QString titre){
     for (int i = 0; i < programmations.size(); ++i)
-        if (&PA == programmations[i]) dynamic_cast<ProgrammationActivite*>(programmations[i]);
+        if (!programmations[i]->isProgTache()){
+            ProgrammationActivite* ProgA = dynamic_cast<ProgrammationActivite*>(programmations[i]);
+            if (ProgA && ProgA->getTitre() == titre)
+                return ProgA;
+        }
     return 0;
+}
+
+const ProgrammationActivite* ProgManager::getProgA(const QString titre) const{
+    return const_cast<ProgManager*>(this)->getProgA(titre);
 }
 
 void ProgManager::ajouterProgrammation(Evenement& E){
@@ -45,7 +56,7 @@ void ProgManager::ajouterProgrammation(Evenement& E){
 }
 
 void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QTime& fin, const TacheUnitaire& TU){
-    if (trouverProgrammationT(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgManager, tâche non préemptive déjà programmée");}
+    if (progTacheExists(TU) && !TU.isPreemptive()) {throw CalendarException("erreur, ProgManager, tâche non préemptive déjà programmée");}
     // Contraintes de précédence, de disponibilité et d'échéance
     if (d < TU.getDateDisponibilite() || d > TU.getDateEcheance())
         throw CalendarException("erreur, ProgManager, incohérence programmation avec dates de disponibilité et d'échéance de la tâche");
@@ -59,19 +70,20 @@ void ProgManager::ajouterProgrammationT(const QDate& d, const QTime& h, const QT
 }
 
 void ProgManager::ajouterProgrammationA(const QDate& d, const QTime& h, const QTime& fin, const QString& t, const QString& desc, const QString& l){
-    if (trouverProgrammationA(ProgrammationActivite(d, h, fin, t, desc, l))) {throw CalendarException("erreur, ProgManager, activité déjà existante");}
+    if (getProgA(t)) {throw CalendarException("erreur, ProgManager, activité déjà existante");}
     ProgrammationActivite* PA = new ProgrammationActivite(d, h, fin, t, desc, l);
     ajouterProgrammation(*PA);
 }
 
-void ProgManager::supprimerProgrammationT(const TacheUnitaire& TU){
-    if (trouverProgrammationT(TU)){
-        for (int i = 0; i != programmations.size(); ++i)
-            if (programmations[i] == trouverProgrammationT(TU))
-                programmations.removeAt(i);
-        tabDuree.remove(&TU);
-        delete trouverProgrammationT(TU);
+void ProgManager::supprimerProgrammationsT(const TacheUnitaire& TU){
+    QList<ProgrammationTache*> LPT = getProgsT(TU);
+    for (int i = 0; i < LPT.size(); ++i){
+        for (int j = 0; j < programmations.size(); ++j)
+            if (programmations[j] == LPT[i])
+                programmations.removeAt(j);
+        delete LPT[i];
     }
+    tabDuree.remove(&TU);
 }
 
 void ProgManager::updateDuree(const TacheUnitaire& TU, QTime d){
@@ -92,6 +104,15 @@ bool ProgManager::programmationExists(const QDate& d, const QTime& h, const QTim
                 )
            )
             return true;
+    return false;
+}
+
+bool ProgManager::progTacheExists(const TacheUnitaire& TU) const{
+    for (int i = 0; i < programmations.size(); ++i){
+        if (programmations[i]->isProgTache())
+            if (&dynamic_cast<ProgrammationTache*>(programmations[i])->getTache() == &TU)
+                return true;
+    }
     return false;
 }
 

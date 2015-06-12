@@ -161,7 +161,7 @@ void ProgCreator::updateTachesU(){
             if (TU.isPreemptive() && TU.getDureeRestante() > QTime(0, 0)){
                 tachesU->addItem(titre);
             }
-            else if (!TU.isPreemptive() && !ProgM.trouverProgrammationT(TU))
+            else if (!TU.isPreemptive() && !ProgM.progTacheExists(TU))
                 tachesU->addItem(titre);
         }
     }

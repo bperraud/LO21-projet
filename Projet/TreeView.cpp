@@ -112,6 +112,7 @@ void TreeView::ajouterTacheTree(QStandardItem* pere, const Tache& tache){
 }
 
 void TreeView::ajouterActiviteTree(QStandardItem* root, const Evenement& evt){
+    qDebug()<<"debut ajouterAT";
     QList<QStandardItem*> row;
     QStandardItem* item;
     if (!evt.isProgTache()){
@@ -140,6 +141,7 @@ void TreeView::ajouterActiviteTree(QStandardItem* root, const Evenement& evt){
     }
     else{
         const ProgrammationTache& progT = dynamic_cast<const ProgrammationTache&>(evt);
+            qDebug()<<"progT "<<progT.getDate().toString()<<", "<<progT.getHoraire().toString();
             item = new QStandardItem("Tâche");
             item->setEditable(false);
             row.append(item);
@@ -193,7 +195,7 @@ void TreeView::afficherInfos(const QModelIndex& index){
 }
 
 void TreeView::updateTrees(){
-
+    qDebug()<<"updateTrees";
     TacheManager& TM = *TacheManager::getInstance();
     ProjetManager& PM = *ProjetManager::getInstance();
     ProgManager& ProgM = *ProgManager::getInstance();
@@ -218,6 +220,7 @@ void TreeView::updateTrees(){
     for (Iterator<ProjetManager, Projet> i = PM.begin(); i != PM.end(); ++i){
         ajouterProjetTree(rootNodeP, *i);
     }
+    qDebug()<<"après treeViewP";
     for (Iterator<TacheManager, Tache> i = TM.begin(); i != TM.end(); ++i){
         if (!TM.getTacheMere(*i)){
             Projet* P = PM.getProjet(*i);
@@ -225,10 +228,11 @@ void TreeView::updateTrees(){
             else ajouterTacheTree(rootNodeT, *i);
         }
     }
+    qDebug()<<"après treeViewT";
     // Construction de treeViewA
     for (Iterator<ProgManager, Evenement> i = ProgM.begin(); i != ProgM.end(); ++i)
         ajouterActiviteTree(rootNodeA, *i);
-
+    qDebug()<<"après treeViewA";
     treeViewP->expandAll();
     treeViewT->expandAll();
 }

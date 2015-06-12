@@ -15,7 +15,7 @@ void PrecedenceManager::ajouterPrecedence(const Tache &Tpred, const Tache &Tsucc
 }
 
 void PrecedenceManager::supprimerPrecedence(const Tache& Tpred, const Tache& Tsucc){
-    if (PrecedenceManager::isPrecedence(Tpred, Tsucc)){
+    if (isPrecedence(Tpred, Tsucc)){
         for (int i = 0; i < precedences.size(); ++i)
             if (&precedences[i]->getPredecesseur() == &Tpred && &precedences[i]->getSuccesseur() == &Tsucc)
                 precedences.removeAt(i);
@@ -36,7 +36,7 @@ ListTachesConst PrecedenceManager::trouverSuccesseurs(const Tache& Tpred) const{
     ListTachesConst LT;
     for (int i = 0; i < precedences.size(); ++i)
         if (&precedences[i]->getPredecesseur() == &Tpred)
-            LT.append(&precedences[i]->getPredecesseur());
+            LT.append(&precedences[i]->getSuccesseur());
     return LT;
 }
 
