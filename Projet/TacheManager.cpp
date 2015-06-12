@@ -31,9 +31,10 @@ TacheComposite& TacheManager::ajouterTacheComposite(const QString& t, const QStr
     return *TC;
 }
 
-void TacheManager::deleteTache(const QString& str) {
+void TacheManager::deleteTache(const QString& str){
     Tache& tacheToDelete = getTache(str);
     PrecedenceManager& PrM = *PrecedenceManager::getInstance();
+    ProjetManager& PM = *ProjetManager::getInstance();
 
     //Supprimer les précédences
     ListTachesConst successeurs = PrM.trouverSuccesseurs(tacheToDelete);
@@ -45,7 +46,7 @@ void TacheManager::deleteTache(const QString& str) {
         PrM.supprimerPrecedence(*predecesseurs[i], tacheToDelete);
 
     //Cas de la Tache Unitaire
-    if (tacheToDelete.isTacheUnitaire()) {
+    if (tacheToDelete.isTacheUnitaire()){
         TacheUnitaire& tacheUToDelete = dynamic_cast<TacheUnitaire&>(tacheToDelete);
 
         //Supprimer les programmations
@@ -58,10 +59,9 @@ void TacheManager::deleteTache(const QString& str) {
                 taches.removeAt(i);
         if (getTacheMere(tacheUToDelete))
             dynamic_cast<TacheComposite*>(getTacheMere(tacheUToDelete))->rmSousTache(&tacheUToDelete);
-        delete &tacheUToDelete;
     }
     //Cas de la Tache Composite
-    else {
+    else{
         TacheComposite& tacheCToDelete = dynamic_cast<TacheComposite&>(tacheToDelete);
 
         //Supprimer la tâche
@@ -73,11 +73,17 @@ void TacheManager::deleteTache(const QString& str) {
             tacheCToDelete.rmSousTache(rmST[i]);
         if (getTacheMere(tacheCToDelete))
             dynamic_cast<TacheComposite*>(getTacheMere(tacheCToDelete))->rmSousTache(&tacheCToDelete);
-        delete &tacheCToDelete;
+
 
         //Supprimer les sous-tâches
          for (int i = 0; i < rmST.size(); ++i) deleteTache(rmST[i]->getTitre());
     }
+
+    //Suppression de l'appartenance à un projet
+    if (PM.getProjet(tacheToDelete))
+        PM.getProjet(tacheToDelete)->rmTache(&tacheToDelete);
+
+    delete &tacheToDelete;
 }
 
 Tache& TacheManager::getTache(const QString& titre){
