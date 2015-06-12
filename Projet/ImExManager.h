@@ -18,8 +18,6 @@
 class ImExManager : public QWidget{
 Q_OBJECT
 private:
-    //QFileDialog
-
     LoadStrategy* loadStrategy;
     SaveStrategy* saveStrategy;
 

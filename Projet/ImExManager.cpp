@@ -5,8 +5,6 @@
 
 ImExManager::ImExManager(QWidget *parent) : QWidget(parent){
 
-    //setMinimumHeight(800);
-
     formatLabel = new QLabel("Format :", this);
     formatGroup = new QButtonGroup(this);
     xmlRadio = new QRadioButton("XML", this);
